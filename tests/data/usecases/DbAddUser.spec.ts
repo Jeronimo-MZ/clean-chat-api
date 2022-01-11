@@ -98,5 +98,15 @@ describe("DbAddUser", () => {
             ...addUserParams,
             password: hasherSpy.digest,
         });
+        expect(addUserRepositorySpy.callsCount).toBe(1);
+    });
+
+    it("should throw if AddUserRepository throws", async () => {
+        const { sut, addUserRepositorySpy } = makeSut();
+        jest.spyOn(addUserRepositorySpy, "add").mockImplementationOnce(
+            throwError,
+        );
+        const promise = sut.add(mockAddUserParams());
+        expect(promise).rejects.toThrow();
     });
 });
