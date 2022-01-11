@@ -80,6 +80,16 @@ describe("DbAddUser", () => {
         expect(addUserRepositorySpy.callsCount).toBe(0);
     });
 
+    it("should throw if LoadUserByUsernameRepository throws", async () => {
+        const { sut, loadUserByUsernameRepositorySpy } = makeSut();
+        jest.spyOn(
+            loadUserByUsernameRepositorySpy,
+            "loadByUsername",
+        ).mockImplementationOnce(throwError);
+        const promise = sut.add(mockAddUserParams());
+        expect(promise).rejects.toThrow();
+    });
+
     it("should call AddUserRepository with correct values", async () => {
         const { sut, addUserRepositorySpy, hasherSpy } = makeSut();
         const addUserParams = mockAddUserParams();
