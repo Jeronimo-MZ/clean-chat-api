@@ -62,7 +62,8 @@ describe("DbAddUser", () => {
     });
 
     it("should return UsernameInUseError if LoadUserByUsernameRepository returns a User", async () => {
-        const { sut } = makeSut();
+        const { sut, loadUserByUsernameRepositorySpy } = makeSut();
+        loadUserByUsernameRepositorySpy.result = mockUserModel();
         const result = await sut.add(mockAddUserParams());
         expect(result).toEqual(new UsernameInUseError());
     });
@@ -108,5 +109,11 @@ describe("DbAddUser", () => {
         );
         const promise = sut.add(mockAddUserParams());
         expect(promise).rejects.toThrow();
+    });
+
+    it("should return an user on success", async () => {
+        const { sut, addUserRepositorySpy } = makeSut();
+        const result = await sut.add(mockAddUserParams());
+        expect(result).toEqual(addUserRepositorySpy.result);
     });
 });
