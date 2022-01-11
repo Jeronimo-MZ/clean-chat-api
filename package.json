@@ -5,5 +5,8 @@
         "name": "Jerónimo Matavel",
         "url": "https://github.com/Jeronimo-MZ"
     },
-    "license": "MIT"
+    "license": "MIT",
+    "devDependencies": {
+        "git-commit-msg-linter": "^3.3.3"
+    }
 }
