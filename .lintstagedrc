@@ -1,0 +1,7 @@
+
+{
+    "*.ts": [
+        "yarn lint:fix",
+        "yarn run test:staged"
+    ]
+}
