@@ -23,8 +23,12 @@ export class DbAddUser implements AddUser {
             username,
         );
         if (!user) {
-            await this.hasher.hash(password);
-            await this.addUserRepository.add({ username, password, name });
+            const hashedPassword = await this.hasher.hash(password);
+            await this.addUserRepository.add({
+                username,
+                password: hashedPassword,
+                name,
+            });
         }
         return new UsernameInUseError();
     }

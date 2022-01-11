@@ -81,9 +81,12 @@ describe("DbAddUser", () => {
     });
 
     it("should call AddUserRepository with correct values", async () => {
-        const { sut, addUserRepositorySpy } = makeSut();
+        const { sut, addUserRepositorySpy, hasherSpy } = makeSut();
         const addUserParams = mockAddUserParams();
         await sut.add(addUserParams);
-        expect(addUserRepositorySpy.input).toEqual(addUserParams);
+        expect(addUserRepositorySpy.input).toEqual({
+            ...addUserParams,
+            password: hasherSpy.digest,
+        });
     });
 });
