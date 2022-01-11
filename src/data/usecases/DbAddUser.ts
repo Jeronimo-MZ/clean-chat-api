@@ -19,9 +19,13 @@ export class DbAddUser implements AddUser {
         username,
         name,
     }: AddUser.Params): Promise<User | UsernameInUseError> {
-        await this.loadUserByUsernameRepository.loadByUsername(username);
-        await this.hasher.hash(password);
-        await this.addUserRepository.add({ username, password, name });
+        const user = await this.loadUserByUsernameRepository.loadByUsername(
+            username,
+        );
+        if (!user) {
+            await this.hasher.hash(password);
+            await this.addUserRepository.add({ username, password, name });
+        }
         return new UsernameInUseError();
     }
 }
