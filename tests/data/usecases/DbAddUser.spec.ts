@@ -1,19 +1,23 @@
 import { DbAddUser } from "@/data/usecases";
-import { HasherSpy } from "@/tests/data/mocks";
+import { HasherSpy, LoadUserByUsernameRepositorySpy } from "@/tests/data/mocks";
 import { mockAddUserParams, throwError } from "@/tests/domain/mocks";
 
 type SutTypes = {
     sut: DbAddUser;
     hasherSpy: HasherSpy;
+    loadUserByUsernameRepositorySpy: LoadUserByUsernameRepositorySpy;
 };
 
 const makeSut = (): SutTypes => {
     const hasherSpy = new HasherSpy();
-    const sut = new DbAddUser(hasherSpy);
+    const loadUserByUsernameRepositorySpy =
+        new LoadUserByUsernameRepositorySpy();
+    const sut = new DbAddUser(hasherSpy, loadUserByUsernameRepositorySpy);
 
     return {
         sut,
         hasherSpy,
+        loadUserByUsernameRepositorySpy,
     };
 };
 
@@ -30,5 +34,14 @@ describe("DbAddUser", () => {
         jest.spyOn(hasherSpy, "hash").mockImplementationOnce(throwError);
         const promise = sut.add(mockAddUserParams());
         expect(promise).rejects.toThrow();
+    });
+
+    it("should call LoadUserByUsernameRepository with correct username", async () => {
+        const { sut, loadUserByUsernameRepositorySpy } = makeSut();
+        const addUserParams = mockAddUserParams();
+        await sut.add(addUserParams);
+        expect(loadUserByUsernameRepositorySpy.username).toBe(
+            addUserParams.username,
+        );
     });
 });
