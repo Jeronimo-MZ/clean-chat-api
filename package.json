@@ -1,0 +1,9 @@
+{
+    "name": "chat-app-api",
+    "version": "0.0.1",
+    "author": {
+        "name": "Jerónimo Matavel",
+        "url": "https://github.com/Jeronimo-MZ"
+    },
+    "license": "MIT"
+}
