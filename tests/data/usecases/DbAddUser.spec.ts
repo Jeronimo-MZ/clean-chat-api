@@ -1,24 +1,35 @@
 import { DbAddUser } from "@/data/usecases";
 import { UsernameInUseError } from "@/domain/errors";
-import { HasherSpy, LoadUserByUsernameRepositorySpy } from "@/tests/data/mocks";
+import {
+    AddUserRepositorySpy,
+    HasherSpy,
+    LoadUserByUsernameRepositorySpy,
+} from "@/tests/data/mocks";
 import { mockAddUserParams, throwError } from "@/tests/domain/mocks";
 
 type SutTypes = {
     sut: DbAddUser;
     hasherSpy: HasherSpy;
     loadUserByUsernameRepositorySpy: LoadUserByUsernameRepositorySpy;
+    addUserRepositorySpy: AddUserRepositorySpy;
 };
 
 const makeSut = (): SutTypes => {
     const hasherSpy = new HasherSpy();
     const loadUserByUsernameRepositorySpy =
         new LoadUserByUsernameRepositorySpy();
-    const sut = new DbAddUser(hasherSpy, loadUserByUsernameRepositorySpy);
+    const addUserRepositorySpy = new AddUserRepositorySpy();
+    const sut = new DbAddUser(
+        hasherSpy,
+        loadUserByUsernameRepositorySpy,
+        addUserRepositorySpy,
+    );
 
     return {
         sut,
         hasherSpy,
         loadUserByUsernameRepositorySpy,
+        addUserRepositorySpy,
     };
 };
 
@@ -50,5 +61,12 @@ describe("DbAddUser", () => {
         const { sut } = makeSut();
         const result = await sut.add(mockAddUserParams());
         expect(result).toEqual(new UsernameInUseError());
+    });
+
+    it("should call AddUserRepository with correct values", async () => {
+        const { sut, addUserRepositorySpy } = makeSut();
+        const addUserParams = mockAddUserParams();
+        await sut.add(addUserParams);
+        expect(addUserRepositorySpy.input).toEqual(addUserParams);
     });
 });
