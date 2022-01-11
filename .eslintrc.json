@@ -1,0 +1,46 @@
+{
+    "env": {
+        "es2021": true,
+        "node": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:prettier/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": 13,
+        "sourceType": "module",
+        "project": "./tsconfig.json"
+    },
+    "plugins": [
+        "@typescript-eslint",
+        "prettier",
+        "simple-import-sort",
+        "import"
+    ],
+    "rules": {
+        "simple-import-sort/imports": "error",
+        "simple-import-sort/exports": "error",
+        "import/first": "error",
+        "import/newline-after-import": "error",
+        "import/no-duplicates": "error",
+        "indent": "off",
+        "prettier/prettier": "error",
+        "camelcase": "error",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/explicit-module-boundary-types": [
+            "error",
+            { "allowArgumentsExplicitlyTypedAsAny": true }
+        ],
+        "@typescript-eslint/no-unused-vars": [
+            "error",
+            { "argsIgnorePattern": "_" }
+        ],
+        "@typescript-eslint/no-namespace": "off",
+        "linebreak-style": ["error", "unix"],
+        "quotes": ["error", "double"],
+        "semi": ["error", "always"]
+    }
+}
