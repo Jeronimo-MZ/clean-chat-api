@@ -7,7 +7,7 @@ export class LoadUserByUsernameRepositorySpy
     implements LoadUserByUsernameRepository
 {
     username: string;
-    result: User | null = mockUserModel();
+    result: User | null = null;
 
     async loadByUsername(username: string): Promise<User | null> {
         this.username = username;
@@ -18,9 +18,11 @@ export class LoadUserByUsernameRepositorySpy
 export class AddUserRepositorySpy implements AddUserRepository {
     input: AddUserRepository.Input;
     result: User = mockUserModel();
+    callsCount = 0;
 
     async add(input: AddUserRepository.Input): Promise<User> {
         this.input = input;
+        this.callsCount++;
         return this.result;
     }
 }

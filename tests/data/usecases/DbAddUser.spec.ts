@@ -5,7 +5,11 @@ import {
     HasherSpy,
     LoadUserByUsernameRepositorySpy,
 } from "@/tests/data/mocks";
-import { mockAddUserParams, throwError } from "@/tests/domain/mocks";
+import {
+    mockAddUserParams,
+    mockUserModel,
+    throwError,
+} from "@/tests/domain/mocks";
 
 type SutTypes = {
     sut: DbAddUser;
@@ -61,6 +65,19 @@ describe("DbAddUser", () => {
         const { sut } = makeSut();
         const result = await sut.add(mockAddUserParams());
         expect(result).toEqual(new UsernameInUseError());
+    });
+
+    it("should not call Hasher and AddUserRepository if LoadUserByUsernameRepository returns a User", async () => {
+        const {
+            sut,
+            hasherSpy,
+            addUserRepositorySpy,
+            loadUserByUsernameRepositorySpy,
+        } = makeSut();
+        loadUserByUsernameRepositorySpy.result = mockUserModel();
+        await sut.add(mockAddUserParams());
+        expect(hasherSpy.callsCount).toBe(0);
+        expect(addUserRepositorySpy.callsCount).toBe(0);
     });
 
     it("should call AddUserRepository with correct values", async () => {
