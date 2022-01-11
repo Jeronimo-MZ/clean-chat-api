@@ -1,4 +1,5 @@
 import { DbAddUser } from "@/data/usecases";
+import { UsernameInUseError } from "@/domain/errors";
 import { HasherSpy, LoadUserByUsernameRepositorySpy } from "@/tests/data/mocks";
 import { mockAddUserParams, throwError } from "@/tests/domain/mocks";
 
@@ -43,5 +44,11 @@ describe("DbAddUser", () => {
         expect(loadUserByUsernameRepositorySpy.username).toBe(
             addUserParams.username,
         );
+    });
+
+    it("should return UsernameInUseError if LoadUserByUsernameRepository returns a User", async () => {
+        const { sut } = makeSut();
+        const result = await sut.add(mockAddUserParams());
+        expect(result).toEqual(new UsernameInUseError());
     });
 });
