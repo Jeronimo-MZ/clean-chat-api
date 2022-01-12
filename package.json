@@ -8,6 +8,7 @@
     "license": "MIT",
     "devDependencies": {
         "@faker-js/faker": "^5.5.3",
+        "@types/bcrypt": "^5.0.0",
         "@types/faker": "^5.5.9",
         "@types/jest": "^27.4.0",
         "@types/node": "^17.0.8",
@@ -36,5 +37,8 @@
         "test:staged": "yarn test --findRelatedTests",
         "test:watch": "yarn test --watch",
         "test:ci": "yarn test --coverage"
+    },
+    "dependencies": {
+        "bcrypt": "^5.0.1"
     }
 }
