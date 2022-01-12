@@ -27,4 +27,10 @@ describe("BcryptAdapter", () => {
         const promise = sut.hash(plaintext);
         await expect(promise).rejects.toThrow();
     });
+
+    it("should return a valid hash on success", async () => {
+        const sut = makeSut();
+        const hash = await sut.hash(plaintext);
+        expect(hash).toBe(generatedHash);
+    });
 });
