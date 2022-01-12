@@ -2,6 +2,7 @@ import faker from "@faker-js/faker";
 import bcrypt from "bcrypt";
 
 import { BcryptAdapter } from "@/infra/cryptography/BcryptAdapter";
+import { throwError } from "@/tests/domain/mocks";
 
 const generatedHash = faker.random.alphaNumeric(30);
 const salt = faker.datatype.number();
@@ -18,5 +19,12 @@ describe("BcryptAdapter", () => {
         const hashSpy = jest.spyOn(bcrypt, "hash");
         await sut.hash(plaintext);
         expect(hashSpy).toHaveBeenCalledWith(plaintext, salt);
+    });
+
+    it("should throw if bcrypt throws", async () => {
+        const sut = makeSut();
+        jest.spyOn(bcrypt, "hash").mockImplementationOnce(throwError);
+        const promise = sut.hash(plaintext);
+        await expect(promise).rejects.toThrow();
     });
 });
