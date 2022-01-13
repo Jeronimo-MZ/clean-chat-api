@@ -1,6 +1,7 @@
 import faker from "@faker-js/faker";
 
 import {
+    CompareFieldsValidation,
     MinLengthValidation,
     RequiredFieldValidation,
     UsernameValidation,
@@ -25,6 +26,15 @@ describe("ValidationBuilder", () => {
         const field = faker.database.column();
         const validations = sut.field(field).username().build();
         expect(validations).toEqual([new UsernameValidation(field)]);
+    });
+
+    it("should return CompareFieldsValidation", () => {
+        const field = faker.database.column();
+        const fieldToCompare = faker.database.column();
+        const validations = sut.field(field).equals(fieldToCompare).build();
+        expect(validations).toEqual([
+            new CompareFieldsValidation(field, fieldToCompare),
+        ]);
     });
 
     it("should return a list of validations", () => {
