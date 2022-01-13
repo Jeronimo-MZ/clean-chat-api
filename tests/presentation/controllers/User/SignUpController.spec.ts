@@ -3,20 +3,23 @@ import faker from "@faker-js/faker";
 import { SignUpController } from "@/presentation/controllers";
 import { ServerError } from "@/presentation/errors";
 import { badRequest, serverError } from "@/presentation/helpers";
-import { throwError } from "@/tests/domain/mocks";
+import { AddUserSpy, throwError } from "@/tests/domain/mocks";
 import { ValidationSpy } from "@/tests/validation/mocks";
 
 type SutTypes = {
     sut: SignUpController;
     validationSpy: ValidationSpy;
+    addUserSpy: AddUserSpy;
 };
 
 const makeSut = (): SutTypes => {
+    const addUserSpy = new AddUserSpy();
     const validationSpy = new ValidationSpy();
-    const sut = new SignUpController(validationSpy);
+    const sut = new SignUpController(validationSpy, addUserSpy);
     return {
         sut,
         validationSpy,
+        addUserSpy,
     };
 };
 const mockRequest = (): SignUpController.Request => {
@@ -51,5 +54,18 @@ describe("SignUp Controller", () => {
         );
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
+    });
+
+    it("should call AddUser with correct values", async () => {
+        const { sut, addUserSpy } = makeSut();
+
+        const request = mockRequest();
+
+        await sut.handle(request);
+        expect(addUserSpy.params).toEqual({
+            name: request.name,
+            username: request.username,
+            password: request.password,
+        });
     });
 });

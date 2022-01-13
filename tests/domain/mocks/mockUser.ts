@@ -1,5 +1,6 @@
 import faker from "@faker-js/faker";
 
+import { UsernameInUseError } from "@/domain/errors";
 import { User } from "@/domain/models";
 import { AddUser } from "@/domain/usecases";
 
@@ -15,3 +16,12 @@ export const mockUserModel = (): User => ({
     username: faker.internet.userName(),
     id: faker.datatype.uuid(),
 });
+
+export class AddUserSpy implements AddUser {
+    params: AddUser.Params;
+    result: User | UsernameInUseError = mockUserModel();
+    async add(params: AddUser.Params): Promise<User | UsernameInUseError> {
+        this.params = params;
+        return this.result;
+    }
+}
