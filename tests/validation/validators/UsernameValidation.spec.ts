@@ -1,5 +1,6 @@
 import faker from "@faker-js/faker";
 
+import { InvalidUsernameError } from "@/validation/errors";
 import { UsernameValidation } from "@/validation/validators";
 
 type SutTypes = {
@@ -22,5 +23,21 @@ describe("UsernameValidation", () => {
         expect(sut.validate({ [field]: "user.name" })).toBeNull();
         expect(sut.validate({ [field]: "user.n4me" })).toBeNull();
         expect(sut.validate({ [field]: "username" })).toBeNull();
+    });
+
+    it("should return InvalidUsernameError if an invalid username is provided", () => {
+        const { sut } = makeSut();
+        expect(sut.validate({ [field]: "user name" })).toEqual(
+            new InvalidUsernameError(field),
+        );
+        expect(sut.validate({ [field]: "" })).toEqual(
+            new InvalidUsernameError(field),
+        );
+        expect(sut.validate({ [field]: "aa" })).toEqual(
+            new InvalidUsernameError(field),
+        );
+        expect(sut.validate({ [field]: "username$" })).toEqual(
+            new InvalidUsernameError(field),
+        );
     });
 });
