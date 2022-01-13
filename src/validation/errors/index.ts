@@ -1,2 +1,2 @@
+export * from "./MinLengthError";
 export * from "./RequiredFieldError";
-export * from "./ValidationError";

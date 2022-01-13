@@ -1,7 +1,5 @@
-import { ValidationError } from "@/validation/errors";
-
 export interface Validation {
-    validate(input: Validation.Input): ValidationError | null;
+    validate(input: Validation.Input): Error | null;
 }
 
 export namespace Validation {
