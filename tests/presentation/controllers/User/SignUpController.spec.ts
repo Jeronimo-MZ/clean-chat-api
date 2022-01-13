@@ -3,7 +3,7 @@ import faker from "@faker-js/faker";
 import { UsernameInUseError } from "@/domain/errors";
 import { SignUpController } from "@/presentation/controllers";
 import { ServerError } from "@/presentation/errors";
-import { badRequest, forbidden, serverError } from "@/presentation/helpers";
+import { badRequest, forbidden, ok, serverError } from "@/presentation/helpers";
 import { AddUserSpy, throwError } from "@/tests/domain/mocks";
 import { ValidationSpy } from "@/tests/validation/mocks";
 
@@ -89,5 +89,13 @@ describe("SignUp Controller", () => {
         addUserSpy.result = new UsernameInUseError();
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(forbidden(addUserSpy.result));
+    });
+
+    it("should return 200 if valid data is provided", async () => {
+        const { sut, addUserSpy } = makeSut();
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toEqual(
+            ok({ user: { ...addUserSpy.result, password: undefined } }),
+        );
     });
 });
