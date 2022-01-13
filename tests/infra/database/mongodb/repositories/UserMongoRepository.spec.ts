@@ -36,5 +36,18 @@ describe("UserMongoRepository", () => {
             expect(user.password).toBe(userParams.password);
             expect(user.avatar).toBeFalsy();
         });
+
+        it("should save username in lowercase", async () => {
+            const sut = makeSut();
+            const userParams = mockAddUserParams();
+            const user = await sut.add({
+                name: userParams.name,
+                password: userParams.password,
+                username: userParams.username.toUpperCase(),
+            });
+
+            expect(user).toBeTruthy();
+            expect(user.username).toBe(userParams.username.toLowerCase());
+        });
     });
 });
