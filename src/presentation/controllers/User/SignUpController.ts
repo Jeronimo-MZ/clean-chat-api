@@ -14,10 +14,10 @@ export class SignUpController
         request: SignUpController.Request,
     ): Promise<HttpResponse<SignUpController.Response>> {
         try {
-            const { name, username, password } = request;
-            await this.addUser.add({ name, username, password });
             const error = this.validation.validate(request);
             if (error) return badRequest(error);
+            const { name, username, password } = request;
+            await this.addUser.add({ name, username, password });
             return undefined as any;
         } catch (error) {
             return serverError(error as Error);
