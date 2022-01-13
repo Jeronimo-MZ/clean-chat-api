@@ -23,7 +23,6 @@ export class SignUpController
                 password,
             });
             if (userOrError instanceof Error) return forbidden(userOrError);
-            console.log(userOrError);
             return ok({ user: { ...userOrError, password: undefined } });
         } catch (error) {
             return serverError(error as Error);
