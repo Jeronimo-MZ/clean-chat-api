@@ -1,5 +1,9 @@
 import { AddUser } from "@/domain/usecases";
-import { badRequest, serverError } from "@/presentation/helpers/http";
+import {
+    badRequest,
+    forbidden,
+    serverError,
+} from "@/presentation/helpers/http";
 import { Controller, HttpResponse } from "@/presentation/protocols";
 import { Validation } from "@/validation/protocols";
 
@@ -17,7 +21,13 @@ export class SignUpController
             const error = this.validation.validate(request);
             if (error) return badRequest(error);
             const { name, username, password } = request;
-            await this.addUser.add({ name, username, password });
+            const userOrError = await this.addUser.add({
+                name,
+                username,
+                password,
+            });
+            if (userOrError instanceof Error) return forbidden(userOrError);
+
             return undefined as any;
         } catch (error) {
             return serverError(error as Error);
