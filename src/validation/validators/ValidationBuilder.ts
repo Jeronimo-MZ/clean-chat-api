@@ -4,6 +4,8 @@ import {
     RequiredFieldValidation,
 } from "@/validation/validators";
 
+import { UsernameValidation } from "./UsernameValidation";
+
 export class ValidationBuilder {
     private constructor(
         private readonly fieldName: string,
@@ -21,6 +23,11 @@ export class ValidationBuilder {
 
     min(length: number): ValidationBuilder {
         this.validations.push(new MinLengthValidation(this.fieldName, length));
+        return this;
+    }
+
+    username(): ValidationBuilder {
+        this.validations.push(new UsernameValidation(this.fieldName));
         return this;
     }
 
