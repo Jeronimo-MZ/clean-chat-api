@@ -1,3 +1,4 @@
+import { AddUser } from "@/domain/usecases";
 import { badRequest, serverError } from "@/presentation/helpers/http";
 import { Controller, HttpResponse } from "@/presentation/protocols";
 import { Validation } from "@/validation/protocols";
@@ -5,11 +6,16 @@ import { Validation } from "@/validation/protocols";
 export class SignUpController
     implements Controller<SignUpController.Request, SignUpController.Response>
 {
-    constructor(private readonly validation: Validation) {}
+    constructor(
+        private readonly validation: Validation,
+        private readonly addUser: AddUser,
+    ) {}
     async handle(
         request: SignUpController.Request,
     ): Promise<HttpResponse<SignUpController.Response>> {
         try {
+            const { name, username, password } = request;
+            await this.addUser.add({ name, username, password });
             const error = this.validation.validate(request);
             if (error) return badRequest(error);
             return undefined as any;
