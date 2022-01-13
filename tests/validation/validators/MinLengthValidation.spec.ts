@@ -1,5 +1,6 @@
 import faker from "@faker-js/faker";
 
+import { MinLengthError } from "@/validation/errors";
 import { MinLengthValidation } from "@/validation/validators";
 
 const field = faker.random.word();
@@ -31,5 +32,13 @@ describe("Min Length Validation", () => {
             [field]: faker.random.alphaNumeric(minLength + 1),
         });
         expect(error).toBeNull();
+    });
+
+    it("should return an MinLengthError if value length is lesser than min length", () => {
+        const { sut } = makeSut();
+        const error = sut.validate({
+            [field]: faker.random.alphaNumeric(minLength - 1),
+        });
+        expect(error).toEqual(new MinLengthError(field, minLength));
     });
 });
