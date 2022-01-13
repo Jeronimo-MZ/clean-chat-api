@@ -1,3 +1,4 @@
+import faker from "@faker-js/faker";
 import { Collection } from "mongodb";
 
 import {
@@ -48,6 +49,14 @@ describe("UserMongoRepository", () => {
 
             expect(user).toBeTruthy();
             expect(user.username).toBe(userParams.username.toLowerCase());
+        });
+    });
+
+    describe("loadByUsername()", () => {
+        it("should return null if loadByUsername fails", async () => {
+            const sut = makeSut();
+            const user = await sut.loadByUsername(faker.internet.userName());
+            expect(user).toBeNull();
         });
     });
 });
