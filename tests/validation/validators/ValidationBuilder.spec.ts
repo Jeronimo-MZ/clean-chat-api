@@ -26,4 +26,20 @@ describe("ValidationBuilder", () => {
         const validations = sut.field(field).username().build();
         expect(validations).toEqual([new UsernameValidation(field)]);
     });
+
+    it("should return a list of validations", () => {
+        const field = faker.database.column();
+        const length = faker.datatype.number();
+        const validations = sut
+            .field(field)
+            .required()
+            .min(length)
+            .username()
+            .build();
+        expect(validations).toEqual([
+            new RequiredFieldValidation(field),
+            new MinLengthValidation(field, length),
+            new UsernameValidation(field),
+        ]);
+    });
 });
