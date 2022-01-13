@@ -17,7 +17,13 @@ export class UserMongoRepository
         return MongoHelper.map(input);
     }
 
-    async loadByUsername(_username: string): Promise<User | null> {
-        return null;
+    async loadByUsername(username: string): Promise<User | null> {
+        const usersCollection = await MongoHelper.getCollection(
+            CollectionNames.USER,
+        );
+        const user = await usersCollection.findOne({
+            username: username.toLowerCase(),
+        });
+        return user ? MongoHelper.map(user) : null;
     }
 }
