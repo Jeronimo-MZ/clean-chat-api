@@ -1,8 +1,9 @@
 import faker from "@faker-js/faker";
 
+import { UsernameInUseError } from "@/domain/errors";
 import { SignUpController } from "@/presentation/controllers";
 import { ServerError } from "@/presentation/errors";
-import { badRequest, serverError } from "@/presentation/helpers";
+import { badRequest, forbidden, serverError } from "@/presentation/helpers";
 import { AddUserSpy, throwError } from "@/tests/domain/mocks";
 import { ValidationSpy } from "@/tests/validation/mocks";
 
@@ -81,5 +82,12 @@ describe("SignUp Controller", () => {
         jest.spyOn(addUserSpy, "add").mockImplementationOnce(throwError);
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
+    });
+
+    it("should return 403 if AddUser returns an Error", async () => {
+        const { sut, addUserSpy } = makeSut();
+        addUserSpy.result = new UsernameInUseError();
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toEqual(forbidden(addUserSpy.result));
     });
 });
