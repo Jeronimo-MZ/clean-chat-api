@@ -7,7 +7,9 @@ export class CompareFieldsValidation implements Validation {
         private readonly fieldToCompare: string,
     ) {}
 
-    validate(_input: Validation.Input): NotMatchingFieldsError | null {
-        return null;
+    validate(input: Validation.Input): NotMatchingFieldsError | null {
+        return input[this.field] === input[this.fieldToCompare]
+            ? null
+            : new NotMatchingFieldsError(this.field, this.fieldToCompare);
     }
 }
