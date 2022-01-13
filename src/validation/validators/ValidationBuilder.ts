@@ -4,6 +4,7 @@ import {
     RequiredFieldValidation,
 } from "@/validation/validators";
 
+import { CompareFieldsValidation } from "./CompareFieldsValidation";
 import { UsernameValidation } from "./UsernameValidation";
 
 export class ValidationBuilder {
@@ -28,6 +29,13 @@ export class ValidationBuilder {
 
     username(): ValidationBuilder {
         this.validations.push(new UsernameValidation(this.fieldName));
+        return this;
+    }
+
+    equals(fieldToCompare: string): ValidationBuilder {
+        this.validations.push(
+            new CompareFieldsValidation(this.fieldName, fieldToCompare),
+        );
         return this;
     }
 
