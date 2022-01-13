@@ -8,7 +8,8 @@ export class UserMongoRepository implements AddUserRepository {
         const usersCollection = await MongoHelper.getCollection(
             CollectionNames.USER,
         );
-        await usersCollection.insertOne(input);
+        input.username = input.username.toLowerCase();
+        await usersCollection.insertOne(input); // propery _id added to input
         return MongoHelper.map(input);
     }
 }
