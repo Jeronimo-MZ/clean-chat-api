@@ -1,9 +1,13 @@
-import { AddUserRepository } from "@/data/protocols/database";
+import {
+    AddUserRepository,
+    LoadUserByUsernameRepository,
+} from "@/data/protocols/database";
 import { User } from "@/domain/models";
+import { CollectionNames, MongoHelper } from "@/infra/database/mongodb";
 
-import { CollectionNames, MongoHelper } from "..";
-
-export class UserMongoRepository implements AddUserRepository {
+export class UserMongoRepository
+    implements AddUserRepository, LoadUserByUsernameRepository
+{
     async add(input: AddUserRepository.Input): Promise<User> {
         const usersCollection = await MongoHelper.getCollection(
             CollectionNames.USER,
@@ -11,5 +15,9 @@ export class UserMongoRepository implements AddUserRepository {
         input.username = input.username.toLowerCase();
         await usersCollection.insertOne(input); // propery _id added to input
         return MongoHelper.map(input);
+    }
+
+    async loadByUsername(_username: string): Promise<User | null> {
+        return null;
     }
 }
