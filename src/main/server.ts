@@ -2,23 +2,33 @@ import "dotenv/config";
 import "@/main/config/nodeExceptionHandlers";
 
 import { MongoHelper } from "@/infra/database/mongodb";
-import { app, env, exitSignals, ExitStatus, setupRoutes } from "@/main/config";
+import {
+    app,
+    env,
+    exitSignals,
+    ExitStatus,
+    setupLogger,
+    setupRoutes,
+} from "@/main/config";
+
+import { pinoLogger } from "./adapters";
 
 const PORT = env.port;
 
+setupLogger(app);
 setupRoutes(app);
 
 const exitWithError = (error: any) => {
-    console.error(`App exited with error: ${error}`);
+    pinoLogger.error(`App exited with error: ${error}`);
     process.exit(ExitStatus.Failure);
 };
 (async () => {
     try {
         await MongoHelper.connect(env.mongoUrl);
-        console.info("Connected to MongoDb");
+        pinoLogger.info("Connected to MongoDb");
 
         const currentApp = app.listen(PORT, () =>
-            console.info(`server started on port: ${PORT}`),
+            pinoLogger.info(`server started on port: ${PORT}`),
         );
 
         for (const exitSignal of exitSignals) {
@@ -30,7 +40,7 @@ const exitWithError = (error: any) => {
                             error ? reject(error) : resolve(true),
                         );
                     });
-                    console.info("App exited with success");
+                    pinoLogger.info("App exited with success");
                     process.exit(ExitStatus.Success);
                 } catch (error) {
                     exitWithError(error);
