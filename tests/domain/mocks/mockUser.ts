@@ -20,8 +20,10 @@ export const mockUserModel = (): User => ({
 export class AddUserSpy implements AddUser {
     params: AddUser.Params;
     result: User | UsernameInUseError = mockUserModel();
+    callsCount = 0;
     async add(params: AddUser.Params): Promise<User | UsernameInUseError> {
         this.params = params;
+        this.callsCount++;
         return this.result;
     }
 }

@@ -68,4 +68,11 @@ describe("SignUp Controller", () => {
             password: request.password,
         });
     });
+
+    it("should not call AddUser if Validation fails", async () => {
+        const { sut, validationSpy, addUserSpy } = makeSut();
+        validationSpy.error = new Error(faker.random.word());
+        await sut.handle(mockRequest());
+        expect(addUserSpy.callsCount).toBe(0);
+    });
 });
