@@ -1,9 +1,5 @@
 import { AddUser } from "@/domain/usecases";
-import {
-    badRequest,
-    forbidden,
-    serverError,
-} from "@/presentation/helpers/http";
+import { badRequest, forbidden, ok, serverError } from "@/presentation/helpers";
 import { Controller, HttpResponse } from "@/presentation/protocols";
 import { Validation } from "@/validation/protocols";
 
@@ -27,8 +23,8 @@ export class SignUpController
                 password,
             });
             if (userOrError instanceof Error) return forbidden(userOrError);
-
-            return undefined as any;
+            console.log(userOrError);
+            return ok({ user: { ...userOrError, password: undefined } });
         } catch (error) {
             return serverError(error as Error);
         }
@@ -44,7 +40,10 @@ export namespace SignUpController {
     };
 
     export type Response = {
-        username: string;
-        name: string;
+        user: {
+            id: string;
+            username: string;
+            name: string;
+        };
     };
 }
