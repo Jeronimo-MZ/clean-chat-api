@@ -1,5 +1,6 @@
 import faker from "@faker-js/faker";
 
+import { NotMatchingFieldsError } from "@/validation/errors";
 import { CompareFieldsValidation } from "@/validation/validators";
 
 const field = faker.random.word();
@@ -18,5 +19,16 @@ describe("CompareFieldsValidation", () => {
             [fieldToCompare]: value,
         });
         expect(error).toBeNull();
+    });
+
+    it("should return NotMatchingFieldsError if validation fails", () => {
+        const sut = makeSut();
+        const error = sut.validate({
+            [field]: faker.random.word(),
+            [fieldToCompare]: faker.random.word(),
+        });
+        expect(error).toEqual(
+            new NotMatchingFieldsError(field, fieldToCompare),
+        );
     });
 });
