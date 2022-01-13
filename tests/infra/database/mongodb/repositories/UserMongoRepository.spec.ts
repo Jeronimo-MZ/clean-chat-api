@@ -58,5 +58,21 @@ describe("UserMongoRepository", () => {
             const user = await sut.loadByUsername(faker.internet.userName());
             expect(user).toBeNull();
         });
+
+        it("should return a user on success", async () => {
+            const sut = makeSut();
+            const addUserParams = mockAddUserParams();
+            const { insertedId } = await usersCollection.insertOne({
+                ...addUserParams,
+                username: addUserParams.username.toLowerCase(),
+            });
+            const user = await sut.loadByUsername(addUserParams.username);
+
+            expect(user).toBeTruthy();
+            expect(user?.id).toBe(insertedId.toHexString());
+            expect(user?.name).toBe(addUserParams.name);
+            expect(user?.username).toBe(addUserParams.username.toLowerCase());
+            expect(user?.password).toBe(addUserParams.password);
+        });
     });
 });
