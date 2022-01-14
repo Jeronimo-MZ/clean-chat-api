@@ -18,8 +18,11 @@ export class DbAuthentication implements Authentication {
             username,
         );
         if (user) {
-            await this.encrypterSpy.encrypt(user.id);
-            await this.hashComparer.compare(password, user.password);
+            const isValid = await this.hashComparer.compare(
+                password,
+                user.password,
+            );
+            if (isValid) await this.encrypterSpy.encrypt(user.id);
         }
         return new InvalidCredentialsError();
     }
