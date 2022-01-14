@@ -66,4 +66,11 @@ describe("DbAuthentication", () => {
             loadUserByUsernameRepositorySpy.result?.password,
         );
     });
+
+    it("should return InvalidCredentialsError if HashComparer returns false", async () => {
+        const { sut, hashComparerSpy } = makeSut();
+        hashComparerSpy.isValid = false;
+        const output = await sut.auth(mockAuthenticationInput());
+        expect(output).toEqual(new InvalidCredentialsError());
+    });
 });
