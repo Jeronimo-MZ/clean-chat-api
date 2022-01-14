@@ -1,4 +1,5 @@
 import { DbAuthentication } from "@/data/usecases";
+import { InvalidCredentialsError } from "@/domain/errors";
 import { LoadUserByUsernameRepositorySpy } from "@/tests/data/mocks";
 import { mockAuthenticationInput } from "@/tests/domain/mocks";
 
@@ -22,5 +23,12 @@ describe("DbAuthentication", () => {
         expect(loadUserByUsernameRepositorySpy.username).toBe(
             authenticationInput.username,
         );
+    });
+
+    it("should return InvalidCredentialsError if LoadUserByUsernameRepository returns null", async () => {
+        const { sut, loadUserByUsernameRepositorySpy } = makeSut();
+        loadUserByUsernameRepositorySpy.result = null;
+        const output = await sut.auth(mockAuthenticationInput());
+        expect(output).toEqual(new InvalidCredentialsError());
     });
 });
