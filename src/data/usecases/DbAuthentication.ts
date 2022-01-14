@@ -21,19 +21,18 @@ export class DbAuthentication implements Authentication {
         const user = await this.loadUserByUsernameRepository.loadByUsername(
             username,
         );
-        if (user) {
-            const isValid = await this.hashComparer.compare(
-                password,
-                user.password,
-            );
-            if (isValid) {
-                const token = await this.encrypterSpy.encrypt(user.id);
-                await this.updateAccessTokenRepository.updateAccessToken(
-                    user.id,
-                    token,
-                );
-            }
-        }
-        return new InvalidCredentialsError();
+        if (!user) return new InvalidCredentialsError();
+        const isValid = await this.hashComparer.compare(
+            password,
+            user.password,
+        );
+        if (!isValid) return new InvalidCredentialsError();
+        const token = await this.encrypterSpy.encrypt(user.id);
+        await this.updateAccessTokenRepository.updateAccessToken(
+            user.id,
+            token,
+        );
+
+        return { token };
     }
 }
