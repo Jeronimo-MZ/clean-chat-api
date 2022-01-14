@@ -1,7 +1,7 @@
 import { InvalidCredentialsError } from "../errors";
 
 export interface Authentication {
-    auth(input: Authentication.Input): Authentication.Output;
+    auth(input: Authentication.Input): Promise<Authentication.Output>;
 }
 
 export namespace Authentication {
