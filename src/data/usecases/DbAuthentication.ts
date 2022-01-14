@@ -2,11 +2,13 @@ import { HashComparer } from "@/data/protocols/cryptography";
 import { LoadUserByUsernameRepository } from "@/data/protocols/database";
 import { InvalidCredentialsError } from "@/domain/errors";
 import { Authentication } from "@/domain/usecases";
+import { EncrypterSpy } from "@/tests/data/mocks";
 
 export class DbAuthentication implements Authentication {
     constructor(
         private readonly loadUserByUsernameRepository: LoadUserByUsernameRepository,
         private readonly hashComparer: HashComparer,
+        private readonly encrypterSpy: EncrypterSpy,
     ) {}
     async auth({
         username,
@@ -15,7 +17,10 @@ export class DbAuthentication implements Authentication {
         const user = await this.loadUserByUsernameRepository.loadByUsername(
             username,
         );
-        if (user) await this.hashComparer.compare(password, user.password);
+        if (user) {
+            await this.encrypterSpy.encrypt(user.id);
+            await this.hashComparer.compare(password, user.password);
+        }
         return new InvalidCredentialsError();
     }
 }
