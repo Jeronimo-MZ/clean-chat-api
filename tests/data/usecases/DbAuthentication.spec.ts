@@ -107,4 +107,11 @@ describe("DbAuthentication", () => {
         const promise = sut.auth(mockAuthenticationInput());
         expect(promise).rejects.toThrow();
     });
+
+    it("should not call Encrypter if HashComparer returns false", async () => {
+        const { sut, hashComparerSpy, encrypterSpy } = makeSut();
+        hashComparerSpy.isValid = false;
+        await sut.auth(mockAuthenticationInput());
+        expect(encrypterSpy.callsCount).toBe(0);
+    });
 });
