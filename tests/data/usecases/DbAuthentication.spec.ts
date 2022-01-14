@@ -1,7 +1,7 @@
 import { DbAuthentication } from "@/data/usecases";
 import { InvalidCredentialsError } from "@/domain/errors";
 import { LoadUserByUsernameRepositorySpy } from "@/tests/data/mocks";
-import { mockAuthenticationInput } from "@/tests/domain/mocks";
+import { mockAuthenticationInput, throwError } from "@/tests/domain/mocks";
 
 type SutTypes = {
     sut: DbAuthentication;
@@ -30,5 +30,15 @@ describe("DbAuthentication", () => {
         loadUserByUsernameRepositorySpy.result = null;
         const output = await sut.auth(mockAuthenticationInput());
         expect(output).toEqual(new InvalidCredentialsError());
+    });
+
+    it("should throw if LoadUserByUsernameRepository throws", async () => {
+        const { sut, loadUserByUsernameRepositorySpy } = makeSut();
+        jest.spyOn(
+            loadUserByUsernameRepositorySpy,
+            "loadByUsername",
+        ).mockImplementationOnce(throwError);
+        const promise = sut.auth(mockAuthenticationInput());
+        expect(promise).rejects.toThrow();
     });
 });
