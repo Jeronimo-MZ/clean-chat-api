@@ -1,7 +1,7 @@
 import faker from "@faker-js/faker";
 
 import { User } from "@/domain/models";
-import { AddUser } from "@/domain/usecases";
+import { AddUser, Authentication } from "@/domain/usecases";
 
 export const mockAddUserInput = (): AddUser.Input => ({
     name: faker.name.findName(),
@@ -26,3 +26,8 @@ export class AddUserSpy implements AddUser {
         return this.output;
     }
 }
+
+export const mockAuthenticationInput = (): Authentication.Input => ({
+    username: faker.internet.userName(),
+    password: faker.internet.password(),
+});
