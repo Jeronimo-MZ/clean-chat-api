@@ -4,6 +4,7 @@ import {
     EncrypterSpy,
     HashComparerSpy,
     LoadUserByUsernameRepositorySpy,
+    UpdateAccessTokenRepositorySpy,
 } from "@/tests/data/mocks";
 import {
     mockAuthenticationInput,
@@ -16,6 +17,7 @@ type SutTypes = {
     loadUserByUsernameRepositorySpy: LoadUserByUsernameRepositorySpy;
     hashComparerSpy: HashComparerSpy;
     encrypterSpy: EncrypterSpy;
+    updateAccessTokenRepositorySpy: UpdateAccessTokenRepositorySpy;
 };
 
 const makeSut = (): SutTypes => {
@@ -24,17 +26,20 @@ const makeSut = (): SutTypes => {
     loadUserByUsernameRepositorySpy.result = mockUserModel();
     const hashComparerSpy = new HashComparerSpy();
     const encrypterSpy = new EncrypterSpy();
+    const updateAccessTokenRepositorySpy = new UpdateAccessTokenRepositorySpy();
 
     const sut = new DbAuthentication(
         loadUserByUsernameRepositorySpy,
         hashComparerSpy,
         encrypterSpy,
+        updateAccessTokenRepositorySpy,
     );
     return {
         sut,
         loadUserByUsernameRepositorySpy,
         hashComparerSpy,
         encrypterSpy,
+        updateAccessTokenRepositorySpy,
     };
 };
 
@@ -113,5 +118,21 @@ describe("DbAuthentication", () => {
         hashComparerSpy.isValid = false;
         await sut.auth(mockAuthenticationInput());
         expect(encrypterSpy.callsCount).toBe(0);
+    });
+
+    it("should call UpdateAccessTokenRepository with correct values", async () => {
+        const {
+            sut,
+            updateAccessTokenRepositorySpy,
+            loadUserByUsernameRepositorySpy,
+            encrypterSpy,
+        } = makeSut();
+        await sut.auth(mockAuthenticationInput());
+        expect(updateAccessTokenRepositorySpy.id).toBe(
+            loadUserByUsernameRepositorySpy.result?.id,
+        );
+        expect(updateAccessTokenRepositorySpy.token).toBe(
+            encrypterSpy.ciphertext,
+        );
     });
 });

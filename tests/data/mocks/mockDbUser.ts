@@ -1,4 +1,7 @@
-import { AddUserRepository } from "@/data/protocols/database";
+import {
+    AddUserRepository,
+    UpdateAccessTokenRepository,
+} from "@/data/protocols/database";
 import { LoadUserByUsernameRepository } from "@/data/protocols/database/LoadUserByUsernameRepository";
 import { User } from "@/domain/models";
 import { mockUserModel } from "@/tests/domain/mocks";
@@ -24,5 +27,17 @@ export class AddUserRepositorySpy implements AddUserRepository {
         this.input = input;
         this.callsCount++;
         return this.result;
+    }
+}
+
+export class UpdateAccessTokenRepositorySpy
+    implements UpdateAccessTokenRepository
+{
+    id: string;
+    token: string;
+
+    async updateAccessToken(id: string, token: string): Promise<void> {
+        this.id = id;
+        this.token = token;
     }
 }
