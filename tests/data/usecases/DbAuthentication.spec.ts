@@ -1,6 +1,7 @@
 import { DbAuthentication } from "@/data/usecases";
 import { InvalidCredentialsError } from "@/domain/errors";
 import {
+    EncrypterSpy,
     HashComparerSpy,
     LoadUserByUsernameRepositorySpy,
 } from "@/tests/data/mocks";
@@ -14,6 +15,7 @@ type SutTypes = {
     sut: DbAuthentication;
     loadUserByUsernameRepositorySpy: LoadUserByUsernameRepositorySpy;
     hashComparerSpy: HashComparerSpy;
+    encrypterSpy: EncrypterSpy;
 };
 
 const makeSut = (): SutTypes => {
@@ -21,12 +23,19 @@ const makeSut = (): SutTypes => {
         new LoadUserByUsernameRepositorySpy();
     loadUserByUsernameRepositorySpy.result = mockUserModel();
     const hashComparerSpy = new HashComparerSpy();
+    const encrypterSpy = new EncrypterSpy();
 
     const sut = new DbAuthentication(
         loadUserByUsernameRepositorySpy,
         hashComparerSpy,
+        encrypterSpy,
     );
-    return { sut, loadUserByUsernameRepositorySpy, hashComparerSpy };
+    return {
+        sut,
+        loadUserByUsernameRepositorySpy,
+        hashComparerSpy,
+        encrypterSpy,
+    };
 };
 
 describe("DbAuthentication", () => {
@@ -81,5 +90,14 @@ describe("DbAuthentication", () => {
         );
         const promise = sut.auth(mockAuthenticationInput());
         expect(promise).rejects.toThrow();
+    });
+
+    it("should call Encrypter with correct value", async () => {
+        const { sut, encrypterSpy, loadUserByUsernameRepositorySpy } =
+            makeSut();
+        await sut.auth(mockAuthenticationInput());
+        expect(encrypterSpy.plaintext).toBe(
+            loadUserByUsernameRepositorySpy.result?.id,
+        );
     });
 });
