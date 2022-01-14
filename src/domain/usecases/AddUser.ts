@@ -2,12 +2,14 @@ import { UsernameInUseError } from "@/domain/errors";
 import { User } from "@/domain/models";
 
 export interface AddUser {
-    add(data: AddUser.Params): Promise<User | UsernameInUseError>;
+    add(data: AddUser.Input): Promise<AddUser.Output>;
 }
 export namespace AddUser {
-    export type Params = {
+    export type Input = {
         username: string;
         name: string;
         password: string;
     };
+
+    export type Output = User | UsernameInUseError;
 }

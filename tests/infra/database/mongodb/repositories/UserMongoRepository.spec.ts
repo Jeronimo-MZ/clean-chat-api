@@ -6,7 +6,7 @@ import {
     MongoHelper,
     UserMongoRepository,
 } from "@/infra/database/mongodb";
-import { mockAddUserParams } from "@/tests/domain/mocks";
+import { mockAddUserInput } from "@/tests/domain/mocks";
 
 const makeSut = (): UserMongoRepository => new UserMongoRepository();
 
@@ -27,28 +27,28 @@ describe("UserMongoRepository", () => {
     describe("add()", () => {
         it("should return a user on success", async () => {
             const sut = makeSut();
-            const userParams = mockAddUserParams();
-            const user = await sut.add(userParams);
+            const userInput = mockAddUserInput();
+            const user = await sut.add(userInput);
 
             expect(user).toBeTruthy();
             expect(user.id).toBeTruthy();
-            expect(user.name).toBe(userParams.name);
-            expect(user.username).toBe(userParams.username);
-            expect(user.password).toBe(userParams.password);
+            expect(user.name).toBe(userInput.name);
+            expect(user.username).toBe(userInput.username);
+            expect(user.password).toBe(userInput.password);
             expect(user.avatar).toBeFalsy();
         });
 
         it("should save username in lowercase", async () => {
             const sut = makeSut();
-            const userParams = mockAddUserParams();
+            const userInput = mockAddUserInput();
             const user = await sut.add({
-                name: userParams.name,
-                password: userParams.password,
-                username: userParams.username.toUpperCase(),
+                name: userInput.name,
+                password: userInput.password,
+                username: userInput.username.toUpperCase(),
             });
 
             expect(user).toBeTruthy();
-            expect(user.username).toBe(userParams.username.toLowerCase());
+            expect(user.username).toBe(userInput.username.toLowerCase());
         });
     });
 
@@ -61,18 +61,18 @@ describe("UserMongoRepository", () => {
 
         it("should return a user on success", async () => {
             const sut = makeSut();
-            const addUserParams = mockAddUserParams();
+            const addUserInput = mockAddUserInput();
             const { insertedId } = await usersCollection.insertOne({
-                ...addUserParams,
-                username: addUserParams.username.toLowerCase(),
+                ...addUserInput,
+                username: addUserInput.username.toLowerCase(),
             });
-            const user = await sut.loadByUsername(addUserParams.username);
+            const user = await sut.loadByUsername(addUserInput.username);
 
             expect(user).toBeTruthy();
             expect(user?.id).toBe(insertedId.toHexString());
-            expect(user?.name).toBe(addUserParams.name);
-            expect(user?.username).toBe(addUserParams.username.toLowerCase());
-            expect(user?.password).toBe(addUserParams.password);
+            expect(user?.name).toBe(addUserInput.name);
+            expect(user?.username).toBe(addUserInput.username.toLowerCase());
+            expect(user?.password).toBe(addUserInput.password);
         });
     });
 });

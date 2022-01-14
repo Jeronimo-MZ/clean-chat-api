@@ -4,7 +4,6 @@ import {
     LoadUserByUsernameRepository,
 } from "@/data/protocols/database";
 import { UsernameInUseError } from "@/domain/errors";
-import { User } from "@/domain/models";
 import { AddUser } from "@/domain/usecases";
 
 export class DbAddUser implements AddUser {
@@ -18,7 +17,7 @@ export class DbAddUser implements AddUser {
         password,
         username,
         name,
-    }: AddUser.Params): Promise<User | UsernameInUseError> {
+    }: AddUser.Input): Promise<AddUser.Output> {
         const user = await this.loadUserByUsernameRepository.loadByUsername(
             username,
         );

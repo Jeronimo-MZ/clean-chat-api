@@ -63,7 +63,7 @@ describe("SignUp Controller", () => {
         const request = mockRequest();
 
         await sut.handle(request);
-        expect(addUserSpy.params).toEqual({
+        expect(addUserSpy.input).toEqual({
             name: request.name,
             username: request.username,
             password: request.password,
@@ -86,16 +86,16 @@ describe("SignUp Controller", () => {
 
     it("should return 403 if AddUser returns an Error", async () => {
         const { sut, addUserSpy } = makeSut();
-        addUserSpy.result = new UsernameInUseError();
+        addUserSpy.output = new UsernameInUseError();
         const httpResponse = await sut.handle(mockRequest());
-        expect(httpResponse).toEqual(forbidden(addUserSpy.result));
+        expect(httpResponse).toEqual(forbidden(addUserSpy.output));
     });
 
     it("should return 200 if valid data is provided", async () => {
         const { sut, addUserSpy } = makeSut();
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(
-            ok({ user: { ...addUserSpy.result, password: undefined } }),
+            ok({ user: { ...addUserSpy.output, password: undefined } }),
         );
     });
 });
