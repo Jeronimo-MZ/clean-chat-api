@@ -1,18 +1,32 @@
 import { DbAuthentication } from "@/data/usecases";
 import { InvalidCredentialsError } from "@/domain/errors";
-import { LoadUserByUsernameRepositorySpy } from "@/tests/data/mocks";
-import { mockAuthenticationInput, throwError } from "@/tests/domain/mocks";
+import {
+    HashComparerSpy,
+    LoadUserByUsernameRepositorySpy,
+} from "@/tests/data/mocks";
+import {
+    mockAuthenticationInput,
+    mockUserModel,
+    throwError,
+} from "@/tests/domain/mocks";
 
 type SutTypes = {
     sut: DbAuthentication;
     loadUserByUsernameRepositorySpy: LoadUserByUsernameRepositorySpy;
+    hashComparerSpy: HashComparerSpy;
 };
 
 const makeSut = (): SutTypes => {
     const loadUserByUsernameRepositorySpy =
         new LoadUserByUsernameRepositorySpy();
-    const sut = new DbAuthentication(loadUserByUsernameRepositorySpy);
-    return { sut, loadUserByUsernameRepositorySpy };
+    loadUserByUsernameRepositorySpy.result = mockUserModel();
+    const hashComparerSpy = new HashComparerSpy();
+
+    const sut = new DbAuthentication(
+        loadUserByUsernameRepositorySpy,
+        hashComparerSpy,
+    );
+    return { sut, loadUserByUsernameRepositorySpy, hashComparerSpy };
 };
 
 describe("DbAuthentication", () => {
@@ -40,5 +54,16 @@ describe("DbAuthentication", () => {
         ).mockImplementationOnce(throwError);
         const promise = sut.auth(mockAuthenticationInput());
         expect(promise).rejects.toThrow();
+    });
+
+    it("should call HashComparer with correct values", async () => {
+        const { sut, hashComparerSpy, loadUserByUsernameRepositorySpy } =
+            makeSut();
+        const authenticationInput = mockAuthenticationInput();
+        await sut.auth(authenticationInput);
+        expect(hashComparerSpy.plaintext).toBe(authenticationInput.password);
+        expect(hashComparerSpy.digest).toBe(
+            loadUserByUsernameRepositorySpy.result?.password,
+        );
     });
 });
