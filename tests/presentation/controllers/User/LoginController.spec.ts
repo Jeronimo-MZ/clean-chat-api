@@ -3,7 +3,7 @@ import faker from "@faker-js/faker";
 import { InvalidCredentialsError } from "@/domain/errors";
 import { LoginController } from "@/presentation/controllers";
 import { ServerError } from "@/presentation/errors";
-import { badRequest, forbidden, serverError } from "@/presentation/helpers";
+import { badRequest, forbidden, ok, serverError } from "@/presentation/helpers";
 import { AuthenticationSpy, throwError } from "@/tests/domain/mocks";
 import { ValidationSpy } from "@/tests/validation/mocks";
 
@@ -82,5 +82,11 @@ describe("LoginController", () => {
         authenticationSpy.output = new InvalidCredentialsError();
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(forbidden(authenticationSpy.output));
+    });
+
+    it("should return 200 if valid data is provided", async () => {
+        const { sut, authenticationSpy } = makeSut();
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toEqual(ok(authenticationSpy.output));
     });
 });
