@@ -2,6 +2,7 @@ import faker from "@faker-js/faker";
 import jwt from "jsonwebtoken";
 
 import { JwtAdapter } from "@/infra/cryptography";
+import { throwError } from "@/tests/domain/mocks";
 
 const secret = faker.random.alphaNumeric(50);
 const plaintext = faker.datatype.uuid();
@@ -29,6 +30,13 @@ describe("JwtAdapter", () => {
             expect(signSpy).toHaveBeenCalledWith({ data: plaintext }, secret, {
                 expiresIn: "1d",
             });
+        });
+
+        it("should throw if sign throws", async () => {
+            const sut = makeSut();
+            jest.spyOn(jwt, "sign").mockImplementationOnce(throwError);
+            const promise = sut.encrypt(plaintext);
+            await expect(promise).rejects.toThrow();
         });
     });
 });
