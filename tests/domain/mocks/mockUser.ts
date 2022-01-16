@@ -31,3 +31,14 @@ export const mockAuthenticationInput = (): Authentication.Input => ({
     username: faker.internet.userName(),
     password: faker.internet.password(),
 });
+
+export class AuthenticationSpy implements Authentication {
+    input: Authentication.Input;
+    output: Authentication.Output = { token: faker.datatype.uuid() };
+    callsCount = 0;
+    async auth(input: Authentication.Input): Promise<Authentication.Output> {
+        this.input = input;
+        this.callsCount++;
+        return this.output;
+    }
+}
