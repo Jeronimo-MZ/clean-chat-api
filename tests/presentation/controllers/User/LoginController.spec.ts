@@ -59,4 +59,11 @@ describe("LoginController", () => {
         });
         expect(authenticationSpy.callsCount).toBe(1);
     });
+
+    it("should not call Authentication if Validation fails", async () => {
+        const { sut, validationSpy, authenticationSpy } = makeSut();
+        validationSpy.error = new Error(faker.random.word());
+        await sut.handle(mockRequest());
+        expect(authenticationSpy.callsCount).toBe(0);
+    });
 });
