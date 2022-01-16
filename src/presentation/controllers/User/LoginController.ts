@@ -1,6 +1,6 @@
 import { InvalidCredentialsError } from "@/domain/errors";
 import { Authentication } from "@/domain/usecases";
-import { badRequest, forbidden, serverError } from "@/presentation/helpers";
+import { badRequest, forbidden, ok, serverError } from "@/presentation/helpers";
 import { Controller, HttpResponse } from "@/presentation/protocols";
 import { Validation } from "@/validation/protocols";
 
@@ -24,7 +24,7 @@ export class LoginController
             });
             if (result instanceof InvalidCredentialsError)
                 return forbidden(result);
-            return undefined as any;
+            return ok(result);
         } catch (error) {
             return serverError(error as Error);
         }
