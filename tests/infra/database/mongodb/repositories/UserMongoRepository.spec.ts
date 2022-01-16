@@ -1,6 +1,7 @@
 import faker from "@faker-js/faker";
 import { Collection } from "mongodb";
 
+import { User } from "@/domain/models";
 import {
     CollectionNames,
     MongoHelper,
@@ -73,6 +74,23 @@ describe("UserMongoRepository", () => {
             expect(user?.name).toBe(addUserInput.name);
             expect(user?.username).toBe(addUserInput.username.toLowerCase());
             expect(user?.password).toBe(addUserInput.password);
+        });
+    });
+
+    describe("updateAccessToken()", () => {
+        it("should update the user accessToken on success", async () => {
+            const sut = makeSut();
+            const { insertedId } = await usersCollection.insertOne(
+                mockAddUserInput(),
+            );
+
+            const accessToken = faker.datatype.uuid();
+            await sut.updateAccessToken(insertedId.toHexString(), accessToken);
+            const user = (await usersCollection.findOne({
+                _id: insertedId,
+            })) as unknown as User;
+            expect(user).toBeTruthy();
+            expect(user.accessToken).toBe(accessToken);
         });
     });
 });
