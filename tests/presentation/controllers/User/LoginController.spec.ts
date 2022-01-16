@@ -1,8 +1,9 @@
 import faker from "@faker-js/faker";
 
+import { InvalidCredentialsError } from "@/domain/errors";
 import { LoginController } from "@/presentation/controllers";
 import { ServerError } from "@/presentation/errors";
-import { badRequest, serverError } from "@/presentation/helpers";
+import { badRequest, forbidden, serverError } from "@/presentation/helpers";
 import { AuthenticationSpy, throwError } from "@/tests/domain/mocks";
 import { ValidationSpy } from "@/tests/validation/mocks";
 
@@ -74,5 +75,12 @@ describe("LoginController", () => {
         );
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
+    });
+
+    it("should return 403 if Authentication returns an Error", async () => {
+        const { sut, authenticationSpy } = makeSut();
+        authenticationSpy.output = new InvalidCredentialsError();
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toEqual(forbidden(authenticationSpy.output));
     });
 });
