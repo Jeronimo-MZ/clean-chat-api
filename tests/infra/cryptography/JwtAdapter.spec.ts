@@ -38,5 +38,11 @@ describe("JwtAdapter", () => {
             const promise = sut.encrypt(plaintext);
             await expect(promise).rejects.toThrow();
         });
+
+        it("should return a token on sign success", async () => {
+            const sut = makeSut();
+            const accessToken = await sut.encrypt(plaintext);
+            expect(accessToken).toBe(token);
+        });
     });
 });
