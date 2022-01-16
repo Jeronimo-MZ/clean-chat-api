@@ -1,5 +1,6 @@
+import { InvalidCredentialsError } from "@/domain/errors";
 import { Authentication } from "@/domain/usecases";
-import { badRequest, serverError } from "@/presentation/helpers";
+import { badRequest, forbidden, serverError } from "@/presentation/helpers";
 import { Controller, HttpResponse } from "@/presentation/protocols";
 import { Validation } from "@/validation/protocols";
 
@@ -17,7 +18,12 @@ export class LoginController
             const error = this.validation.validate(request);
             if (error) return badRequest(error);
             const { username, password } = request;
-            await this.authentication.auth({ username, password });
+            const result = await this.authentication.auth({
+                username,
+                password,
+            });
+            if (result instanceof InvalidCredentialsError)
+                return forbidden(result);
             return undefined as any;
         } catch (error) {
             return serverError(error as Error);
