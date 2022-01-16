@@ -1,6 +1,7 @@
 import faker from "@faker-js/faker";
 
 import { LoginController } from "@/presentation/controllers";
+import { badRequest } from "@/presentation/helpers";
 import { ValidationSpy } from "@/tests/validation/mocks";
 
 type SutTypes = {
@@ -26,5 +27,12 @@ describe("LoginController", () => {
         const request = mockRequest();
         await sut.handle(request);
         expect(validationSpy.input).toEqual(request);
+    });
+
+    it("should return 400 if validation fails", async () => {
+        const { sut, validationSpy } = makeSut();
+        validationSpy.error = new Error(faker.random.word());
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toEqual(badRequest(validationSpy.error));
     });
 });
