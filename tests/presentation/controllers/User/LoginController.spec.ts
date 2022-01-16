@@ -1,7 +1,9 @@
 import faker from "@faker-js/faker";
 
 import { LoginController } from "@/presentation/controllers";
-import { badRequest } from "@/presentation/helpers";
+import { ServerError } from "@/presentation/errors";
+import { badRequest, serverError } from "@/presentation/helpers";
+import { throwError } from "@/tests/domain/mocks";
 import { ValidationSpy } from "@/tests/validation/mocks";
 
 type SutTypes = {
@@ -34,5 +36,14 @@ describe("LoginController", () => {
         validationSpy.error = new Error(faker.random.word());
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(badRequest(validationSpy.error));
+    });
+
+    it("should return 500 if validation throws", async () => {
+        const { sut, validationSpy } = makeSut();
+        jest.spyOn(validationSpy, "validate").mockImplementationOnce(
+            throwError,
+        );
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
     });
 });
