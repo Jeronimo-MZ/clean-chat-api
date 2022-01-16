@@ -1,4 +1,4 @@
-import { badRequest } from "@/presentation/helpers";
+import { badRequest, serverError } from "@/presentation/helpers";
 import { Controller, HttpResponse } from "@/presentation/protocols";
 import { Validation } from "@/validation/protocols";
 
@@ -9,9 +9,13 @@ export class LoginController
     async handle(
         request: LoginController.Request,
     ): Promise<HttpResponse<LoginController.Response>> {
-        const error = this.validation.validate(request);
-        if (error) return badRequest(error);
-        return undefined as any;
+        try {
+            const error = this.validation.validate(request);
+            if (error) return badRequest(error);
+            return undefined as any;
+        } catch (error) {
+            return serverError(error as Error);
+        }
     }
 }
 
