@@ -2,6 +2,7 @@ import faker from "@faker-js/faker";
 
 import { DbLoadUserByToken } from "@/data/usecases";
 import { DecrypterSpy } from "@/tests/data/mocks";
+import { throwError } from "@/tests/domain/mocks";
 
 type SutTypes = {
     sut: DbLoadUserByToken;
@@ -26,5 +27,12 @@ describe("DbLoadUserByToken", () => {
         await sut.load({ accessToken: token });
         expect(decrypterSpy.ciphertext).toBe(token);
         expect(decrypterSpy.callsCount).toBe(1);
+    });
+
+    it("should throw if Decrypter throws", async () => {
+        const { sut, decrypterSpy } = makeSut();
+        jest.spyOn(decrypterSpy, "decrypt").mockImplementationOnce(throwError);
+        const promise = sut.load({ accessToken: token });
+        await expect(promise).rejects.toThrow();
     });
 });
