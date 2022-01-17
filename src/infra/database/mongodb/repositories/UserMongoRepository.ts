@@ -45,7 +45,11 @@ export class UserMongoRepository
         );
     }
 
-    async loadByToken(_token: string): Promise<User | null> {
-        return null;
+    async loadByToken(token: string): Promise<User | null> {
+        const usersCollection = await MongoHelper.getCollection(
+            CollectionNames.USER,
+        );
+        const user = await usersCollection.findOne({ accessToken: token });
+        return user ? MongoHelper.map(user) : null;
     }
 }
