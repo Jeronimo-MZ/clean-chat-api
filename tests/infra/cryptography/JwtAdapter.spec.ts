@@ -60,5 +60,11 @@ describe("JwtAdapter", () => {
             const data = await sut.decrypt(token);
             expect(data).toBeNull();
         });
+
+        it("should return correct value on verify success", async () => {
+            const sut = makeSut();
+            const data = await sut.decrypt(token);
+            expect(data).toBe(plaintext);
+        });
     });
 });
