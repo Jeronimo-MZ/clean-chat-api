@@ -1,6 +1,7 @@
 import faker from "@faker-js/faker";
 
 import { DbLoadUserByToken } from "@/data/usecases";
+import { InvalidTokenError } from "@/domain/errors";
 import { DecrypterSpy } from "@/tests/data/mocks";
 import { throwError } from "@/tests/domain/mocks";
 
@@ -34,5 +35,12 @@ describe("DbLoadUserByToken", () => {
         jest.spyOn(decrypterSpy, "decrypt").mockImplementationOnce(throwError);
         const promise = sut.load({ accessToken: token });
         await expect(promise).rejects.toThrow();
+    });
+
+    it("should return InvalidTokenError if Decrypter returns null", async () => {
+        const { sut, decrypterSpy } = makeSut();
+        decrypterSpy.plaintext = null;
+        const user = await sut.load({ accessToken: token });
+        expect(user).toEqual(new InvalidTokenError());
     });
 });
