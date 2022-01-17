@@ -1,5 +1,6 @@
 import faker from "@faker-js/faker";
 
+import { InvalidTokenError } from "@/domain/errors";
 import { unauthorized } from "@/presentation/helpers";
 import { AuthMiddleware } from "@/presentation/middlewares";
 import { LoadUserByTokenSpy } from "@/tests/domain/mocks";
@@ -38,5 +39,12 @@ describe("Auth Middleware", () => {
         const { sut, loadUserByTokenSpy } = makeSut();
         await sut.handle({});
         expect(loadUserByTokenSpy.callsCount).toBe(0);
+    });
+
+    it("should return 401 if LoadUserByToken returns InvalidTokenError", async () => {
+        const { sut, loadUserByTokenSpy } = makeSut();
+        loadUserByTokenSpy.result = new InvalidTokenError();
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toEqual(unauthorized());
     });
 });
