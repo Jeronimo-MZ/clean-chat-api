@@ -2,6 +2,7 @@ import { ObjectId } from "mongodb";
 
 import {
     AddUserRepository,
+    LoadUserByTokenRepository,
     LoadUserByUsernameRepository,
     UpdateAccessTokenRepository,
 } from "@/data/protocols/database";
@@ -12,7 +13,8 @@ export class UserMongoRepository
     implements
         AddUserRepository,
         LoadUserByUsernameRepository,
-        UpdateAccessTokenRepository
+        UpdateAccessTokenRepository,
+        LoadUserByTokenRepository
 {
     async add(input: AddUserRepository.Input): Promise<User> {
         const usersCollection = await MongoHelper.getCollection(
@@ -41,5 +43,9 @@ export class UserMongoRepository
             { _id: new ObjectId(id) },
             { $set: { accessToken: token } },
         );
+    }
+
+    async loadByToken(_token: string): Promise<User | null> {
+        return null;
     }
 }
