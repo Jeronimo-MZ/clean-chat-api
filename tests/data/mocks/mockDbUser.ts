@@ -1,5 +1,6 @@
 import {
     AddUserRepository,
+    LoadUserByTokenRepository,
     UpdateAccessTokenRepository,
 } from "@/data/protocols/database";
 import { LoadUserByUsernameRepository } from "@/data/protocols/database/LoadUserByUsernameRepository";
@@ -39,5 +40,17 @@ export class UpdateAccessTokenRepositorySpy
     async updateAccessToken(id: string, token: string): Promise<void> {
         this.id = id;
         this.token = token;
+    }
+}
+
+export class LoadUserByTokenRepositorySpy implements LoadUserByTokenRepository {
+    token: string;
+    result: User | null = mockUserModel();
+    callsCount = 0;
+
+    async loadByToken(token: string): Promise<User | null> {
+        this.token = token;
+        this.callsCount++;
+        return this.result;
     }
 }
