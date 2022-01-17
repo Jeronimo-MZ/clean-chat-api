@@ -74,4 +74,10 @@ describe("DbLoadUserByToken", () => {
         expect(decrypterSpy.callsCount).toBe(1);
         expect(loadUserByTokenRepositorySpy.callsCount).toBe(0);
     });
+
+    it("should return a user on success", async () => {
+        const { sut, loadUserByTokenRepositorySpy } = makeSut();
+        const user = await sut.load({ accessToken });
+        expect(user).toEqual(loadUserByTokenRepositorySpy.result);
+    });
 });
