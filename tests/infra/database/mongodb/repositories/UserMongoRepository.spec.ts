@@ -100,5 +100,24 @@ describe("UserMongoRepository", () => {
             const user = await sut.loadByToken(faker.datatype.uuid());
             expect(user).toBeNull();
         });
+
+        it("should return a user on success", async () => {
+            const sut = makeSut();
+            const addUserInput = mockAddUserInput();
+            const token = faker.datatype.uuid();
+            const { insertedId } = await usersCollection.insertOne({
+                ...addUserInput,
+                accessToken: token,
+            });
+            const user = await sut.loadByToken(token);
+
+            expect(user).toBeTruthy();
+            expect(user?.id).toBe(insertedId.toHexString());
+            expect(user?.name).toBe(addUserInput.name);
+            expect(user?.username).toBe(addUserInput.username);
+            expect(user?.password).toBe(addUserInput.password);
+            expect(user?.accessToken).toBe(token);
+            expect(user?.avatar).toBeFalsy();
+        });
     });
 });
