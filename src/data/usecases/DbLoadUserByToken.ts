@@ -1,4 +1,5 @@
 import { Decrypter } from "@/data/protocols/cryptography";
+import { InvalidTokenError } from "@/domain/errors";
 import { LoadUserByToken } from "@/domain/usecases";
 
 export class DbLoadUserByToken implements LoadUserByToken {
@@ -7,6 +8,6 @@ export class DbLoadUserByToken implements LoadUserByToken {
         accessToken,
     }: LoadUserByToken.Input): Promise<LoadUserByToken.Output> {
         await this.decrypter.decrypt(accessToken);
-        return undefined as any;
+        return new InvalidTokenError();
     }
 }
