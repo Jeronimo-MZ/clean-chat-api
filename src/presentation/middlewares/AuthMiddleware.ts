@@ -1,7 +1,8 @@
+import { InvalidTokenError } from "@/domain/errors";
 import { LoadUserByToken } from "@/domain/usecases";
 import { HttpResponse, Middleware } from "@/presentation/protocols";
 
-import { serverError, unauthorized } from "../helpers";
+import { ok, serverError, unauthorized } from "../helpers";
 
 export class AuthMiddleware
     implements Middleware<AuthMiddleware.Request, AuthMiddleware.Response>
@@ -11,7 +12,13 @@ export class AuthMiddleware
         accessToken,
     }: AuthMiddleware.Request): Promise<HttpResponse<AuthMiddleware.Response>> {
         try {
-            if (accessToken) await this.loadUserByToken.load({ accessToken });
+            if (accessToken) {
+                const userOrError = await this.loadUserByToken.load({
+                    accessToken,
+                });
+                if (!(userOrError instanceof InvalidTokenError))
+                    return ok({ userId: userOrError.id });
+            }
             return unauthorized();
         } catch (error) {
             return serverError(error as Error);
