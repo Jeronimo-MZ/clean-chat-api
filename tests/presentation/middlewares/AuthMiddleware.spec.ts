@@ -1,7 +1,8 @@
 import faker from "@faker-js/faker";
 
 import { InvalidTokenError } from "@/domain/errors";
-import { serverError, unauthorized } from "@/presentation/helpers";
+import { User } from "@/domain/models";
+import { ok, serverError, unauthorized } from "@/presentation/helpers";
 import { AuthMiddleware } from "@/presentation/middlewares";
 import { LoadUserByTokenSpy, throwError } from "@/tests/domain/mocks";
 
@@ -55,5 +56,15 @@ describe("Auth Middleware", () => {
         );
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new Error()));
+    });
+
+    it("should return 200 if LoadUserByToken returns a user", async () => {
+        const { sut, loadUserByTokenSpy } = makeSut();
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toEqual(
+            ok({
+                userId: (loadUserByTokenSpy.result as User).id,
+            }),
+        );
     });
 });
