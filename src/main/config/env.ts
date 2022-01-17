@@ -5,6 +5,7 @@ const env = {
         enabled: Boolean(process.env.LOGGER_ENABLED) || true,
         level: process.env.LOGGER_LEVEL || "info",
     },
+    secret: process.env.secret || "dev-secret",
 };
 
 Object.freeze(env);
