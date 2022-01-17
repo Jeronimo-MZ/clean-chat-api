@@ -10,9 +10,8 @@ export class AuthMiddleware
     async handle({
         accessToken,
     }: AuthMiddleware.Request): Promise<HttpResponse<AuthMiddleware.Response>> {
-        if (!accessToken) return unauthorized();
-        this.loadUserByToken.load({ accessToken });
-        return undefined as any;
+        if (accessToken) await this.loadUserByToken.load({ accessToken });
+        return unauthorized();
     }
 }
 
