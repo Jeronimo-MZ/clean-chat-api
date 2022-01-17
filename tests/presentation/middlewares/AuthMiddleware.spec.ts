@@ -1,9 +1,9 @@
 import faker from "@faker-js/faker";
 
 import { InvalidTokenError } from "@/domain/errors";
-import { unauthorized } from "@/presentation/helpers";
+import { serverError, unauthorized } from "@/presentation/helpers";
 import { AuthMiddleware } from "@/presentation/middlewares";
-import { LoadUserByTokenSpy } from "@/tests/domain/mocks";
+import { LoadUserByTokenSpy, throwError } from "@/tests/domain/mocks";
 
 type SutTypes = {
     sut: AuthMiddleware;
@@ -46,5 +46,14 @@ describe("Auth Middleware", () => {
         loadUserByTokenSpy.result = new InvalidTokenError();
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(unauthorized());
+    });
+
+    it("should return 500 if LoadUserByToken throws", async () => {
+        const { sut, loadUserByTokenSpy } = makeSut();
+        jest.spyOn(loadUserByTokenSpy, "load").mockImplementationOnce(
+            throwError,
+        );
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toEqual(serverError(new Error()));
     });
 });
