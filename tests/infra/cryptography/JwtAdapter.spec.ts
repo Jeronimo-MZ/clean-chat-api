@@ -45,4 +45,13 @@ describe("JwtAdapter", () => {
             expect(accessToken).toBe(token);
         });
     });
+
+    describe("decrypt()", () => {
+        it("should call verify with correct values", async () => {
+            const sut = makeSut();
+            const verifySpy = jest.spyOn(jwt, "verify");
+            await sut.decrypt(token);
+            expect(verifySpy).toHaveBeenCalledWith(token, secret);
+        });
+    });
 });
