@@ -1,11 +1,12 @@
-import { PrivateRoom, User } from "@/domain/models";
+import { PrivateRoom } from "@/domain/models";
 
-export interface addPrivateRoom {
-    add(data: addPrivateRoom.Input): Promise<addPrivateRoom.Output>;
+export interface AddPrivateRoom {
+    add(data: AddPrivateRoom.Input): Promise<AddPrivateRoom.Output>;
 }
-export namespace addPrivateRoom {
+export namespace AddPrivateRoom {
     export type Input = {
-        participants: [User, User];
+        currentUserId: string;
+        otherUserId: string;
     };
 
     export type Output = PrivateRoom;
