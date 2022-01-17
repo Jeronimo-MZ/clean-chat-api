@@ -1,6 +1,6 @@
 import { DbAddPrivateRoom } from "@/data/usecases";
 import { LoadUserByIdRepositorySpy } from "@/tests/data/mocks";
-import { mockAddPrivateRoomInput } from "@/tests/domain/mocks";
+import { mockAddPrivateRoomInput, throwError } from "@/tests/domain/mocks";
 
 type SutTypes = {
     sut: DbAddPrivateRoom;
@@ -23,5 +23,16 @@ describe("DbAddPrivateRoom", () => {
             addPrivateRoomInput.otherUserId,
         );
         expect(loadUserByIdRepositorySpy.callsCount).toBe(1);
+    });
+
+    it("should throw if LoadUserByIdRepository throws", async () => {
+        const { sut, loadUserByIdRepositorySpy } = makeSut();
+        jest.spyOn(
+            loadUserByIdRepositorySpy,
+            "loadById",
+        ).mockImplementationOnce(throwError);
+        const addPrivateRoomInput = mockAddPrivateRoomInput();
+        const promise = sut.add(addPrivateRoomInput);
+        expect(promise).rejects.toThrow();
     });
 });
