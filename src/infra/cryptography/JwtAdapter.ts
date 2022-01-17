@@ -9,7 +9,11 @@ export class JwtAdapter implements Encrypter, Decrypter {
     }
 
     async decrypt(token: string): Promise<string | null> {
-        await verify(token, this.secret);
-        return null;
+        try {
+            await verify(token, this.secret);
+            return null;
+        } catch {
+            return null;
+        }
     }
 }
