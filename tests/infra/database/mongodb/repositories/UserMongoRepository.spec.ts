@@ -93,4 +93,12 @@ describe("UserMongoRepository", () => {
             expect(user.accessToken).toBe(accessToken);
         });
     });
+
+    describe("loadByToken()", () => {
+        it("should return null on failure", async () => {
+            const sut = makeSut();
+            const user = await sut.loadByToken(faker.datatype.uuid());
+            expect(user).toBeNull();
+        });
+    });
 });
