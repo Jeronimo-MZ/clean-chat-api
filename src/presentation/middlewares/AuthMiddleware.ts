@@ -1,7 +1,7 @@
 import { LoadUserByToken } from "@/domain/usecases";
 import { HttpResponse, Middleware } from "@/presentation/protocols";
 
-import { unauthorized } from "../helpers";
+import { serverError, unauthorized } from "../helpers";
 
 export class AuthMiddleware
     implements Middleware<AuthMiddleware.Request, AuthMiddleware.Response>
@@ -10,8 +10,12 @@ export class AuthMiddleware
     async handle({
         accessToken,
     }: AuthMiddleware.Request): Promise<HttpResponse<AuthMiddleware.Response>> {
-        if (accessToken) await this.loadUserByToken.load({ accessToken });
-        return unauthorized();
+        try {
+            if (accessToken) await this.loadUserByToken.load({ accessToken });
+            return unauthorized();
+        } catch (error) {
+            return serverError(error as Error);
+        }
     }
 }
 
