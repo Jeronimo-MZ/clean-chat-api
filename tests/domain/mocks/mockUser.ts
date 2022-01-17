@@ -1,7 +1,7 @@
 import faker from "@faker-js/faker";
 
 import { User } from "@/domain/models";
-import { AddUser, Authentication } from "@/domain/usecases";
+import { AddUser, Authentication, LoadUserByToken } from "@/domain/usecases";
 
 export const mockAddUserInput = (): AddUser.Input => ({
     name: faker.name.findName(),
@@ -40,5 +40,18 @@ export class AuthenticationSpy implements Authentication {
         this.input = input;
         this.callsCount++;
         return this.output;
+    }
+}
+
+export class LoadUserByTokenSpy implements LoadUserByToken {
+    accessToken: string;
+    result: LoadUserByToken.Output = mockUserModel();
+    callsCount = 0;
+    async load({
+        accessToken,
+    }: LoadUserByToken.Input): Promise<LoadUserByToken.Output> {
+        this.accessToken = accessToken;
+        this.callsCount++;
+        return this.result;
     }
 }
