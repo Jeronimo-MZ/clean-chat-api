@@ -33,4 +33,10 @@ describe("Auth Middleware", () => {
         expect(loadUserByTokenSpy.accessToken).toBe(httpRequest.accessToken);
         expect(loadUserByTokenSpy.callsCount).toBe(1);
     });
+
+    it("should not call LoadUserByToken if no accessToken is provided", async () => {
+        const { sut, loadUserByTokenSpy } = makeSut();
+        await sut.handle({});
+        expect(loadUserByTokenSpy.callsCount).toBe(0);
+    });
 });
