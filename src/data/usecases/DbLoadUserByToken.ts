@@ -13,8 +13,12 @@ export class DbLoadUserByToken implements LoadUserByToken {
         accessToken,
     }: LoadUserByToken.Input): Promise<LoadUserByToken.Output> {
         const isValid = !!(await this.decrypter.decrypt(accessToken));
-        if (isValid)
-            await this.loadUserByTokenRepository.loadByToken(accessToken);
+        if (isValid) {
+            const user = await this.loadUserByTokenRepository.loadByToken(
+                accessToken,
+            );
+            if (user) return user;
+        }
         return new InvalidTokenError();
     }
 }
