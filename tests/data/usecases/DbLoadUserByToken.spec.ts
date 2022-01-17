@@ -66,4 +66,12 @@ describe("DbLoadUserByToken", () => {
         const promise = sut.load({ accessToken });
         await expect(promise).rejects.toThrow();
     });
+
+    it("should not call LoadUserByTokenRepository if Decrypter returns null", async () => {
+        const { sut, decrypterSpy, loadUserByTokenRepositorySpy } = makeSut();
+        decrypterSpy.plaintext = null;
+        await sut.load({ accessToken });
+        expect(decrypterSpy.callsCount).toBe(1);
+        expect(loadUserByTokenRepositorySpy.callsCount).toBe(0);
+    });
 });
