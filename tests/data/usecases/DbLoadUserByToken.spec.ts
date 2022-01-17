@@ -56,4 +56,14 @@ describe("DbLoadUserByToken", () => {
         expect(loadUserByTokenRepositorySpy.token).toBe(accessToken);
         expect(loadUserByTokenRepositorySpy.callsCount).toBe(1);
     });
+
+    it("should throw if LoadUserByTokenRepository throws", async () => {
+        const { sut, loadUserByTokenRepositorySpy } = makeSut();
+        jest.spyOn(
+            loadUserByTokenRepositorySpy,
+            "loadByToken",
+        ).mockImplementationOnce(throwError);
+        const promise = sut.load({ accessToken });
+        await expect(promise).rejects.toThrow();
+    });
 });
