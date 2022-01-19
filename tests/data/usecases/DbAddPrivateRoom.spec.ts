@@ -1,5 +1,6 @@
 import { DbAddPrivateRoom } from "@/data/usecases";
 import { UserNotFoundError } from "@/domain/errors";
+import { PrivateRoom } from "@/domain/models";
 import { LoadUserByIdRepositorySpy } from "@/tests/data/mocks";
 import { mockAddPrivateRoomInput, throwError } from "@/tests/domain/mocks";
 
@@ -76,5 +77,13 @@ describe("DbAddPrivateRoom", () => {
         );
         const promise = sut.add(mockAddPrivateRoomInput());
         expect(promise).rejects.toThrow();
+    });
+
+    it("should return a PrivateRoom on success", async () => {
+        const { sut, addPrivateRoomRepositorySpy } = makeSut();
+        const room = await sut.add(mockAddPrivateRoomInput());
+        expect(room).toStrictEqual<PrivateRoom>(
+            addPrivateRoomRepositorySpy.result,
+        );
     });
 });
