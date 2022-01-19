@@ -55,7 +55,11 @@ export class UserMongoRepository
         return user ? MongoHelper.map(user) : null;
     }
 
-    async loadById(_id: string): Promise<User | null> {
-        return null;
+    async loadById(id: string): Promise<User | null> {
+        const usersCollection = await MongoHelper.getCollection(
+            CollectionNames.USER,
+        );
+        const user = await usersCollection.findOne({ _id: new ObjectId(id) });
+        return user ? MongoHelper.map(user) : null;
     }
 }
