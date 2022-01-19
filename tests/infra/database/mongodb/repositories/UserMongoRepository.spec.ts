@@ -120,4 +120,12 @@ describe("UserMongoRepository", () => {
             expect(user?.avatar).toBeFalsy();
         });
     });
+
+    describe("loadById()", () => {
+        it("should return null if loadById fails", async () => {
+            const sut = makeSut();
+            const user = await sut.loadById(faker.datatype.string(12));
+            expect(user).toBeNull();
+        });
+    });
 });
