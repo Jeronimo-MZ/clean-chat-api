@@ -39,8 +39,7 @@ describe("DbAddPrivateRoom", () => {
             loadUserByIdRepositorySpy,
             "loadById",
         ).mockImplementationOnce(throwError);
-        const addPrivateRoomInput = mockAddPrivateRoomInput();
-        const promise = sut.add(addPrivateRoomInput);
+        const promise = sut.add(mockAddPrivateRoomInput());
         expect(promise).rejects.toThrow();
     });
 
@@ -68,5 +67,14 @@ describe("DbAddPrivateRoom", () => {
         loadUserByIdRepositorySpy.result = null;
         await sut.add(mockAddPrivateRoomInput());
         expect(addPrivateRoomRepositorySpy.callsCount).toBe(0);
+    });
+
+    it("should throw if AddPrivateRoomRepository throws", async () => {
+        const { sut, addPrivateRoomRepositorySpy } = makeSut();
+        jest.spyOn(addPrivateRoomRepositorySpy, "add").mockImplementationOnce(
+            throwError,
+        );
+        const promise = sut.add(mockAddPrivateRoomInput());
+        expect(promise).rejects.toThrow();
     });
 });
