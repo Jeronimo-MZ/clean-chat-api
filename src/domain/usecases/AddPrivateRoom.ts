@@ -1,3 +1,4 @@
+import { UserNotFoundError } from "@/domain/errors";
 import { PrivateRoom } from "@/domain/models";
 
 export interface AddPrivateRoom {
@@ -9,5 +10,5 @@ export namespace AddPrivateRoom {
         otherUserId: string;
     };
 
-    export type Output = PrivateRoom;
+    export type Output = PrivateRoom | UserNotFoundError;
 }
