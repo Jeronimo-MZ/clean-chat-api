@@ -127,5 +127,19 @@ describe("UserMongoRepository", () => {
             const user = await sut.loadById(faker.datatype.string(12));
             expect(user).toBeNull();
         });
+
+        it("should return a user on success", async () => {
+            const sut = makeSut();
+            const addUserInput = mockAddUserInput();
+            const { insertedId } = await usersCollection.insertOne(
+                addUserInput,
+            );
+            const user = await sut.loadById(insertedId.toHexString());
+            expect(user).toBeTruthy();
+            expect(user?.id).toBe(insertedId.toHexString());
+            expect(user?.name).toBe(addUserInput.name);
+            expect(user?.username).toBe(addUserInput.username);
+            expect(user?.password).toBe(addUserInput.password);
+        });
     });
 });
