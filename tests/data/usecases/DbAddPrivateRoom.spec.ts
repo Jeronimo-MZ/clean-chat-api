@@ -61,4 +61,12 @@ describe("DbAddPrivateRoom", () => {
         ]);
         expect(addPrivateRoomRepositorySpy.callsCount).toBe(1);
     });
+
+    it("should not call AddPrivateRoomRepository if LoadUserByIdRepository returns null", async () => {
+        const { sut, loadUserByIdRepositorySpy, addPrivateRoomRepositorySpy } =
+            makeSut();
+        loadUserByIdRepositorySpy.result = null;
+        await sut.add(mockAddPrivateRoomInput());
+        expect(addPrivateRoomRepositorySpy.callsCount).toBe(0);
+    });
 });
