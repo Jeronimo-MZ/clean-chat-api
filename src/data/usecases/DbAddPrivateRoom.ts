@@ -15,8 +15,15 @@ export class DbAddPrivateRoom implements AddPrivateRoom {
         otherUserId,
         currentUserId,
     }: AddPrivateRoom.Input): Promise<PrivateRoom | UserNotFoundError> {
-        await this.loadUserByIdRepository.loadById(otherUserId);
-        await this.addPrivateRoomRepository.add([currentUserId, otherUserId]);
+        const otherUser = await this.loadUserByIdRepository.loadById(
+            otherUserId,
+        );
+        if (otherUser) {
+            await this.addPrivateRoomRepository.add([
+                currentUserId,
+                otherUserId,
+            ]);
+        }
         return new UserNotFoundError();
     }
 }
