@@ -2,6 +2,7 @@ import { ObjectId } from "mongodb";
 
 import {
     AddUserRepository,
+    LoadUserByIdRepository,
     LoadUserByTokenRepository,
     LoadUserByUsernameRepository,
     UpdateAccessTokenRepository,
@@ -13,6 +14,7 @@ export class UserMongoRepository
     implements
         AddUserRepository,
         LoadUserByUsernameRepository,
+        LoadUserByIdRepository,
         UpdateAccessTokenRepository,
         LoadUserByTokenRepository
 {
@@ -51,5 +53,9 @@ export class UserMongoRepository
         );
         const user = await usersCollection.findOne({ accessToken: token });
         return user ? MongoHelper.map(user) : null;
+    }
+
+    async loadById(_id: string): Promise<User | null> {
+        return null;
     }
 }
