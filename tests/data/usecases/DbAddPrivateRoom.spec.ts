@@ -3,16 +3,23 @@ import { UserNotFoundError } from "@/domain/errors";
 import { LoadUserByIdRepositorySpy } from "@/tests/data/mocks";
 import { mockAddPrivateRoomInput, throwError } from "@/tests/domain/mocks";
 
+import { AddPrivateRoomRepositorySpy } from "../mocks/mockDbPrivateRoom";
+
 type SutTypes = {
     sut: DbAddPrivateRoom;
     loadUserByIdRepositorySpy: LoadUserByIdRepositorySpy;
+    addPrivateRoomRepositorySpy: AddPrivateRoomRepositorySpy;
 };
 
 const makeSut = (): SutTypes => {
     const loadUserByIdRepositorySpy = new LoadUserByIdRepositorySpy();
-    const sut = new DbAddPrivateRoom(loadUserByIdRepositorySpy);
+    const addPrivateRoomRepositorySpy = new AddPrivateRoomRepositorySpy();
+    const sut = new DbAddPrivateRoom(
+        loadUserByIdRepositorySpy,
+        addPrivateRoomRepositorySpy,
+    );
 
-    return { sut, loadUserByIdRepositorySpy };
+    return { sut, loadUserByIdRepositorySpy, addPrivateRoomRepositorySpy };
 };
 
 describe("DbAddPrivateRoom", () => {
@@ -42,5 +49,16 @@ describe("DbAddPrivateRoom", () => {
         loadUserByIdRepositorySpy.result = null;
         const serviceProvided = await sut.add(mockAddPrivateRoomInput());
         expect(serviceProvided).toEqual(new UserNotFoundError());
+    });
+
+    it("should call AddPrivateRoomRepository with correct values", async () => {
+        const { sut, addPrivateRoomRepositorySpy } = makeSut();
+        const addPrivateRoomInput = mockAddPrivateRoomInput();
+        await sut.add(addPrivateRoomInput);
+        expect(addPrivateRoomRepositorySpy.participantsId).toEqual([
+            addPrivateRoomInput.currentUserId,
+            addPrivateRoomInput.otherUserId,
+        ]);
+        expect(addPrivateRoomRepositorySpy.callsCount).toBe(1);
     });
 });
