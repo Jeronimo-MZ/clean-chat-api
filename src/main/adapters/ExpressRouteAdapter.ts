@@ -6,6 +6,7 @@ export const adaptRoute = (controller: Controller) => {
     return async (request: Request, response: Response): Promise<Response> => {
         const req = {
             ...(request.body || {}),
+            ...(request.params || {}),
         };
         const { statusCode, body } = await controller.handle(req);
         if (statusCode >= 400) {
