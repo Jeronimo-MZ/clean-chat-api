@@ -57,5 +57,13 @@ describe("AddPrivateRoomController", () => {
             currentUserId: request.userId,
             otherUserId: request.otherUserId,
         });
+        expect(addPrivateRoomSpy.callsCount).toBe(1);
+    });
+
+    it("should not call AddPrivateRoom if Validation fails", async () => {
+        const { sut, validationSpy, addPrivateRoomSpy } = makeSut();
+        validationSpy.error = new Error(faker.random.word());
+        await sut.handle(mockRequest());
+        expect(addPrivateRoomSpy.callsCount).toBe(0);
     });
 });
