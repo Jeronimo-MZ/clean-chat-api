@@ -21,3 +21,14 @@ export const mockPrivateRoomModel = (): PrivateRoom => ({
     ],
     participants: [mockUserModel(), mockUserModel()],
 });
+
+export class AddPrivateRoomSpy implements AddPrivateRoom {
+    input: AddPrivateRoom.Input;
+    output: AddPrivateRoom.Output = mockPrivateRoomModel();
+    callsCount = 0;
+    async add(input: AddPrivateRoom.Input): Promise<AddPrivateRoom.Output> {
+        this.input = input;
+        this.callsCount++;
+        return this.output;
+    }
+}

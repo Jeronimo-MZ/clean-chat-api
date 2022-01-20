@@ -3,19 +3,21 @@ import faker from "@faker-js/faker";
 import { AddPrivateRoomController } from "@/presentation/controllers";
 import { ServerError } from "@/presentation/errors";
 import { badRequest, serverError } from "@/presentation/helpers";
-import { throwError } from "@/tests/domain/mocks";
+import { AddPrivateRoomSpy, throwError } from "@/tests/domain/mocks";
 import { ValidationSpy } from "@/tests/validation/mocks";
 
 type SutTypes = {
     sut: AddPrivateRoomController;
     validationSpy: ValidationSpy;
+    addPrivateRoomSpy: AddPrivateRoomSpy;
 };
 
 const makeSut = (): SutTypes => {
     const validationSpy = new ValidationSpy();
-    const sut = new AddPrivateRoomController(validationSpy);
+    const addPrivateRoomSpy = new AddPrivateRoomSpy();
+    const sut = new AddPrivateRoomController(validationSpy, addPrivateRoomSpy);
 
-    return { sut, validationSpy };
+    return { sut, validationSpy, addPrivateRoomSpy };
 };
 
 const mockRequest = (): AddPrivateRoomController.Request => ({
@@ -45,5 +47,15 @@ describe("AddPrivateRoomController", () => {
         );
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
+    });
+
+    it("should call AddPrivateRoom with correct values", async () => {
+        const { sut, addPrivateRoomSpy } = makeSut();
+        const request = mockRequest();
+        await sut.handle(request);
+        expect(addPrivateRoomSpy.input).toStrictEqual({
+            currentUserId: request.userId,
+            otherUserId: request.otherUserId,
+        });
     });
 });
