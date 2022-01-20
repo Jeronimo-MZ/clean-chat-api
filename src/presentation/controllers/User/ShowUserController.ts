@@ -1,5 +1,5 @@
 import { LoadUserByToken } from "@/domain/usecases";
-import { badRequest, serverError } from "@/presentation/helpers";
+import { badRequest, serverError, unauthorized } from "@/presentation/helpers";
 import { Controller, HttpResponse } from "@/presentation/protocols";
 import { Validation } from "@/validation/protocols";
 
@@ -19,7 +19,7 @@ export class ShowUserController
                 return badRequest(error);
             }
             await this.loadUserByToken.load(request);
-            return undefined as any;
+            return unauthorized();
         } catch (error) {
             return serverError(error as Error);
         }
