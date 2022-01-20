@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 
 import { AddPrivateRoomRepository } from "@/data/protocols/database";
-import { PrivateRoom } from "@/domain/models";
+import { PrivateRoom, User } from "@/domain/models";
 import { CollectionNames, MongoHelper } from "@/infra/database/mongodb";
 
 export class PrivateRoomMongoRepository implements AddPrivateRoomRepository {
@@ -22,6 +22,37 @@ export class PrivateRoomMongoRepository implements AddPrivateRoomRepository {
                 messages: [],
             });
         }
-        return undefined as any;
+
+        const aggregation = PrivateRoomCollection.aggregate([
+            { $limit: 1 },
+            {
+                $match: {
+                    participants: {
+                        $all: participantsObjectIds,
+                    },
+                },
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "participants",
+                    foreignField: "_id",
+                    as: "participants",
+                },
+            },
+            {
+                $project: {
+                    "participants.__v": 0,
+                    "participants.password": 0,
+                    "participants.created_at": 0,
+                },
+            },
+        ]);
+        const newRoom = (await aggregation.toArray())[0] as PrivateRoom;
+        newRoom.participants = newRoom.participants.map(MongoHelper.map) as [
+            User,
+            User,
+        ];
+        return MongoHelper.map(newRoom);
     }
 }
