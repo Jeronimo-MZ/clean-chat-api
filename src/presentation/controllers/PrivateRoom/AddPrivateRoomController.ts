@@ -1,3 +1,4 @@
+import { UserNotFoundError } from "@/domain/errors";
 import { PrivateRoom } from "@/domain/models";
 import { AddPrivateRoom } from "@/domain/usecases";
 import { badRequest, serverError } from "@/presentation/helpers";
@@ -21,10 +22,13 @@ export class AddPrivateRoomController
         try {
             const error = this.validation.validate(request);
             if (error) return badRequest(error);
-            await this.addPrivateRoom.add({
+            const privateRoomOrError = await this.addPrivateRoom.add({
                 currentUserId: request.userId,
                 otherUserId: request.otherUserId,
             });
+
+            if (privateRoomOrError instanceof UserNotFoundError)
+                return badRequest(privateRoomOrError);
             return undefined as any;
         } catch (error) {
             return serverError(error as Error);
