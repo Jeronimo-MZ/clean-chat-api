@@ -1,8 +1,9 @@
 import faker from "@faker-js/faker";
 
+import { InvalidTokenError } from "@/domain/errors";
 import { ShowUserController } from "@/presentation/controllers";
 import { ServerError } from "@/presentation/errors";
-import { badRequest, serverError } from "@/presentation/helpers";
+import { badRequest, serverError, unauthorized } from "@/presentation/helpers";
 import { LoadUserByTokenSpy, throwError } from "@/tests/domain/mocks";
 import { ValidationSpy } from "@/tests/validation/mocks";
 
@@ -61,5 +62,12 @@ describe("ShowUser Controller", () => {
         validationSpy.error = new Error(faker.random.word());
         await sut.handle(mockRequest());
         expect(loadUserByTokenSpy.callsCount).toBe(0);
+    });
+
+    it("should return 401 if an invalid accessToken is provided", async () => {
+        const { sut, loadUserByTokenSpy } = makeSut();
+        loadUserByTokenSpy.result = new InvalidTokenError();
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toEqual(unauthorized());
     });
 });
