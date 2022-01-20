@@ -53,5 +53,13 @@ describe("ShowUser Controller", () => {
         const request = mockRequest();
         await sut.handle(request);
         expect(loadUserByTokenSpy.accessToken).toBe(request.accessToken);
+        expect(loadUserByTokenSpy.callsCount).toBe(1);
+    });
+
+    it("should not call LoadUserByToken if Validation fails", async () => {
+        const { sut, validationSpy, loadUserByTokenSpy } = makeSut();
+        validationSpy.error = new Error(faker.random.word());
+        await sut.handle(mockRequest());
+        expect(loadUserByTokenSpy.callsCount).toBe(0);
     });
 });
