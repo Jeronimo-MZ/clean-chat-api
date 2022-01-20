@@ -3,7 +3,7 @@ import faker from "@faker-js/faker";
 import { UserNotFoundError } from "@/domain/errors";
 import { AddPrivateRoomController } from "@/presentation/controllers";
 import { ServerError } from "@/presentation/errors";
-import { badRequest, serverError } from "@/presentation/helpers";
+import { badRequest, ok, serverError } from "@/presentation/helpers";
 import { AddPrivateRoomSpy, throwError } from "@/tests/domain/mocks";
 import { ValidationSpy } from "@/tests/validation/mocks";
 
@@ -80,5 +80,11 @@ describe("AddPrivateRoomController", () => {
         addPrivateRoomSpy.output = new UserNotFoundError();
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(badRequest(addPrivateRoomSpy.output));
+    });
+
+    it("should return 200 if valid data is provided", async () => {
+        const { sut, addPrivateRoomSpy } = makeSut();
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toEqual(ok(addPrivateRoomSpy.output));
     });
 });
