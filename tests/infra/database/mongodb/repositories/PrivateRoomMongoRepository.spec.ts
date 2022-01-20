@@ -23,6 +23,17 @@ const makeUser = async (): Promise<PrivateRoomUser> => {
     return MongoHelper.map(userData);
 };
 
+export type SutTypes = {
+    sut: PrivateRoomMongoRepository;
+    users: PrivateRoomUser[];
+};
+
+const makeSut = async (): Promise<SutTypes> => {
+    const users = [await makeUser(), await makeUser()];
+    const sut = new PrivateRoomMongoRepository();
+    return { sut, users };
+};
+
 const makePrivateRoom = async (
     participants: [PrivateRoomUser, PrivateRoomUser],
 ): Promise<PrivateRoom> => {
@@ -52,8 +63,7 @@ describe("PrivateRoomMongoRepository", () => {
     });
 
     it("should add a new PrivateRoom if it doesn't exist", async () => {
-        const users = [await makeUser(), await makeUser()];
-        const sut = new PrivateRoomMongoRepository();
+        const { sut, users } = await makeSut();
         expect(await privateRoomCollection.countDocuments()).toBe(0);
         await sut.add([users[1].id, users[0].id]);
         expect(await privateRoomCollection.countDocuments()).toBe(1);
@@ -65,17 +75,15 @@ describe("PrivateRoomMongoRepository", () => {
     });
 
     it("should not add a PrivateRoom if it already exists", async () => {
-        const users = [await makeUser(), await makeUser()];
+        const { sut, users } = await makeSut();
         await makePrivateRoom(users as [PrivateRoomUser, PrivateRoomUser]);
-        const sut = new PrivateRoomMongoRepository();
         expect(await privateRoomCollection.countDocuments()).toBe(1);
         await sut.add([users[1].id, users[0].id]);
         expect(await privateRoomCollection.countDocuments()).toBe(1);
     });
 
     it("should return a PrivateRoom on success", async () => {
-        const users = [await makeUser(), await makeUser()];
-        const sut = new PrivateRoomMongoRepository();
+        const { sut, users } = await makeSut();
         const room = await sut.add([users[1].id, users[0].id]);
         expect(room).toBeTruthy();
         expect(room.id).toBeTruthy();
