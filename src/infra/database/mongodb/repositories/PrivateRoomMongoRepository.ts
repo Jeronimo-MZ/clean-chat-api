@@ -45,6 +45,7 @@ export class PrivateRoomMongoRepository implements AddPrivateRoomRepository {
                     "participants.__v": 0,
                     "participants.password": 0,
                     "participants.created_at": 0,
+                    "participants.accessToken": 0,
                 },
             },
         ]);

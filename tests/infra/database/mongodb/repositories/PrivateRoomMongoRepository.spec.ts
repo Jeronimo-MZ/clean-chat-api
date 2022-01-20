@@ -1,7 +1,7 @@
 import faker from "@faker-js/faker";
 import { Collection, ObjectId } from "mongodb";
 
-import { PrivateRoom, User } from "@/domain/models";
+import { PrivateRoom, PrivateRoomUser } from "@/domain/models";
 import {
     CollectionNames,
     MongoHelper,
@@ -11,7 +11,7 @@ import {
 let userCollection: Collection;
 let privateRoomCollection: Collection;
 
-const makeUser = async (): Promise<User> => {
+const makeUser = async (): Promise<PrivateRoomUser> => {
     const userData = {
         name: faker.name.findName(),
         password: faker.internet.password(),
@@ -24,7 +24,7 @@ const makeUser = async (): Promise<User> => {
 };
 
 const makePrivateRoom = async (
-    participants: [User, User],
+    participants: [PrivateRoomUser, PrivateRoomUser],
 ): Promise<PrivateRoom> => {
     const roomData = {
         messages: [],
@@ -66,7 +66,7 @@ describe("PrivateRoomMongoRepository", () => {
 
     it("should not add a PrivateRoom if it already exists", async () => {
         const users = [await makeUser(), await makeUser()];
-        await makePrivateRoom(users as [User, User]);
+        await makePrivateRoom(users as [PrivateRoomUser, PrivateRoomUser]);
         const sut = new PrivateRoomMongoRepository();
         expect(await privateRoomCollection.countDocuments()).toBe(1);
         await sut.add([users[1].id, users[0].id]);

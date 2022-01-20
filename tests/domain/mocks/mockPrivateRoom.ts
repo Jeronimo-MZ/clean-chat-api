@@ -3,8 +3,6 @@ import faker from "@faker-js/faker";
 import { PrivateRoom } from "@/domain/models";
 import { AddPrivateRoom } from "@/domain/usecases";
 
-import { mockUserModel } from ".";
-
 export const mockAddPrivateRoomInput = (): AddPrivateRoom.Input => ({
     currentUserId: faker.datatype.uuid(),
     otherUserId: faker.datatype.uuid(),
@@ -19,7 +17,18 @@ export const mockPrivateRoomModel = (): PrivateRoom => ({
             sentAt: new Date(),
         },
     ],
-    participants: [mockUserModel(), mockUserModel()],
+    participants: [
+        {
+            name: faker.name.findName(),
+            username: faker.internet.userName(),
+            id: faker.datatype.uuid(),
+        },
+        {
+            name: faker.name.findName(),
+            username: faker.internet.userName(),
+            id: faker.datatype.uuid(),
+        },
+    ],
 });
 
 export class AddPrivateRoomSpy implements AddPrivateRoom {
