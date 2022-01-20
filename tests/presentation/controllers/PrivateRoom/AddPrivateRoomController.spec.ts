@@ -66,4 +66,11 @@ describe("AddPrivateRoomController", () => {
         await sut.handle(mockRequest());
         expect(addPrivateRoomSpy.callsCount).toBe(0);
     });
+
+    it("should return 500 if AddPrivateRoom throws", async () => {
+        const { sut, addPrivateRoomSpy } = makeSut();
+        jest.spyOn(addPrivateRoomSpy, "add").mockImplementationOnce(throwError);
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
+    });
 });
