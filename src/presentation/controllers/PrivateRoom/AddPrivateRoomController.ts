@@ -1,7 +1,7 @@
 import { UserNotFoundError } from "@/domain/errors";
 import { PrivateRoom } from "@/domain/models";
 import { AddPrivateRoom } from "@/domain/usecases";
-import { badRequest, serverError } from "@/presentation/helpers";
+import { badRequest, ok, serverError } from "@/presentation/helpers";
 import { Controller, HttpResponse } from "@/presentation/protocols";
 import { Validation } from "@/validation/protocols";
 
@@ -29,7 +29,7 @@ export class AddPrivateRoomController
 
             if (privateRoomOrError instanceof UserNotFoundError)
                 return badRequest(privateRoomOrError);
-            return undefined as any;
+            return ok(privateRoomOrError);
         } catch (error) {
             return serverError(error as Error);
         }
