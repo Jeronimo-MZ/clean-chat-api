@@ -1,5 +1,11 @@
+import { InvalidTokenError } from "@/domain/errors";
 import { LoadUserByToken } from "@/domain/usecases";
-import { badRequest, serverError, unauthorized } from "@/presentation/helpers";
+import {
+    badRequest,
+    ok,
+    serverError,
+    unauthorized,
+} from "@/presentation/helpers";
 import { Controller, HttpResponse } from "@/presentation/protocols";
 import { Validation } from "@/validation/protocols";
 
@@ -18,8 +24,15 @@ export class ShowUserController
             if (error) {
                 return badRequest(error);
             }
-            await this.loadUserByToken.load(request);
-            return unauthorized();
+            const userOrError = await this.loadUserByToken.load(request);
+            if (userOrError instanceof InvalidTokenError) return unauthorized();
+            return ok({
+                user: {
+                    ...userOrError,
+                    password: undefined,
+                    accessToken: undefined,
+                },
+            });
         } catch (error) {
             return serverError(error as Error);
         }
