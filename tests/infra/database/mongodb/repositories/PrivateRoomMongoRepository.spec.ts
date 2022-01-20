@@ -72,4 +72,20 @@ describe("PrivateRoomMongoRepository", () => {
         await sut.add([users[1].id, users[0].id]);
         expect(await privateRoomCollection.countDocuments()).toBe(1);
     });
+
+    it("should return a PrivateRoom on success", async () => {
+        const users = [await makeUser(), await makeUser()];
+        const sut = new PrivateRoomMongoRepository();
+        const room = await sut.add([users[1].id, users[0].id]);
+        expect(room).toBeTruthy();
+        expect(room.id).toBeTruthy();
+        expect(room.messages).toEqual([]);
+        expect(room.participants).toEqual(
+            users.map(({ id, name, username }) => ({
+                id,
+                name,
+                username,
+            })),
+        );
+    });
 });
