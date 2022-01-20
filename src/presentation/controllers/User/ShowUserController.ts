@@ -1,3 +1,4 @@
+import { LoadUserByToken } from "@/domain/usecases";
 import { badRequest, serverError } from "@/presentation/helpers";
 import { Controller, HttpResponse } from "@/presentation/protocols";
 import { Validation } from "@/validation/protocols";
@@ -5,7 +6,10 @@ import { Validation } from "@/validation/protocols";
 export class ShowUserController
     implements Controller<ShowUserController.Request>
 {
-    constructor(private readonly validation: Validation) {}
+    constructor(
+        private readonly validation: Validation,
+        private readonly loadUserByToken: LoadUserByToken,
+    ) {}
     async handle(
         request: ShowUserController.Request,
     ): Promise<HttpResponse<ShowUserController.Response>> {
@@ -14,6 +18,7 @@ export class ShowUserController
             if (error) {
                 return badRequest(error);
             }
+            await this.loadUserByToken.load(request);
             return undefined as any;
         } catch (error) {
             return serverError(error as Error);
