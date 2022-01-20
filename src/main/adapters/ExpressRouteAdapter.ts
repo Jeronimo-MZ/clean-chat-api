@@ -7,6 +7,7 @@ export const adaptRoute = (controller: Controller) => {
         const req = {
             ...(request.body || {}),
             ...(request.params || {}),
+            accessToken: request.headers["x-access-token"],
         };
         const { statusCode, body } = await controller.handle(req);
         if (statusCode >= 400) {
