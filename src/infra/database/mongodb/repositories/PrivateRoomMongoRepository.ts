@@ -14,7 +14,7 @@ export class PrivateRoomMongoRepository implements AddPrivateRoomRepository {
         );
 
         const room = await PrivateRoomCollection.findOne({
-            participants: participantsObjectIds,
+            participants: { $all: participantsObjectIds },
         });
         if (!room) {
             await PrivateRoomCollection.insertOne({
