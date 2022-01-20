@@ -1,13 +1,42 @@
 import faker from "@faker-js/faker";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import { Collection } from "mongodb";
 import request from "supertest";
 
 import { CollectionNames, MongoHelper } from "@/infra/database/mongodb";
-import { app } from "@/main/config/app";
-import { setupRoutes } from "@/main/config/routes";
+import { app, env, setupRoutes } from "@/main/config";
 
 let usersCollection: Collection;
+
+const makeUserTokenAndId = async () => {
+    const userData = {
+        username: faker.internet.userName().toLowerCase(),
+        name: faker.name.findName(),
+        password: faker.internet.password(),
+    };
+
+    const { insertedId } = await usersCollection.insertOne({
+        ...userData,
+        password: await bcrypt.hash(userData.password, 12),
+    });
+
+    const token = jwt.sign({ data: insertedId.toHexString() }, env.secret, {
+        expiresIn: 100,
+    });
+    await usersCollection.updateOne(
+        { _id: insertedId },
+        {
+            $set: {
+                accessToken: token,
+            },
+        },
+    );
+    return {
+        token,
+        id: insertedId.toHexString(),
+    };
+};
 
 describe("User routes", () => {
     beforeAll(async () => {
@@ -56,6 +85,18 @@ describe("User routes", () => {
                     username: userData.username,
                     password: userData.password,
                 })
+                .expect(200);
+        });
+    });
+
+    describe("GET /users/me", () => {
+        it("should return 200 on success", async () => {
+            const { token } = await makeUserTokenAndId();
+
+            await request(app)
+                .get("/api/users/me")
+                .set("x-access-token", token)
+                .send()
                 .expect(200);
         });
     });
