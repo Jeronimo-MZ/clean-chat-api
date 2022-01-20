@@ -1,5 +1,6 @@
 import faker from "@faker-js/faker";
 
+import { UserNotFoundError } from "@/domain/errors";
 import { AddPrivateRoomController } from "@/presentation/controllers";
 import { ServerError } from "@/presentation/errors";
 import { badRequest, serverError } from "@/presentation/helpers";
@@ -72,5 +73,12 @@ describe("AddPrivateRoomController", () => {
         jest.spyOn(addPrivateRoomSpy, "add").mockImplementationOnce(throwError);
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
+    });
+
+    it("should return 400 if AddPrivateRoom returns an Error", async () => {
+        const { sut, addPrivateRoomSpy } = makeSut();
+        addPrivateRoomSpy.output = new UserNotFoundError();
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toEqual(badRequest(addPrivateRoomSpy.output));
     });
 });
