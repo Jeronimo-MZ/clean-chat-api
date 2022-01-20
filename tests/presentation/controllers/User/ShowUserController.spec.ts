@@ -3,7 +3,12 @@ import faker from "@faker-js/faker";
 import { InvalidTokenError } from "@/domain/errors";
 import { ShowUserController } from "@/presentation/controllers";
 import { ServerError } from "@/presentation/errors";
-import { badRequest, serverError, unauthorized } from "@/presentation/helpers";
+import {
+    badRequest,
+    ok,
+    serverError,
+    unauthorized,
+} from "@/presentation/helpers";
 import { LoadUserByTokenSpy, throwError } from "@/tests/domain/mocks";
 import { ValidationSpy } from "@/tests/validation/mocks";
 
@@ -78,5 +83,19 @@ describe("ShowUser Controller", () => {
         );
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new Error()));
+    });
+
+    it("should return 200 if a valid accessToken is provided", async () => {
+        const { sut, loadUserByTokenSpy } = makeSut();
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toStrictEqual(
+            ok({
+                user: {
+                    ...loadUserByTokenSpy.result,
+                    password: undefined,
+                    accessToken: undefined,
+                },
+            }),
+        );
     });
 });
