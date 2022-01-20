@@ -23,7 +23,9 @@ const makeUser = async (): Promise<User> => {
     return MongoHelper.map(userData);
 };
 
-async (participants: [User, User]): Promise<PrivateRoom> => {
+const makePrivateRoom = async (
+    participants: [User, User],
+): Promise<PrivateRoom> => {
     const roomData = {
         messages: [],
         participants: participants.map(p => new ObjectId(p.id)),
@@ -48,6 +50,7 @@ describe("PrivateRoomMongoRepository", () => {
         await userCollection.deleteMany({});
         await privateRoomCollection.deleteMany({});
     });
+
     it("should add a new PrivateRoom if it doesn't exist", async () => {
         const users = [await makeUser(), await makeUser()];
         const sut = new PrivateRoomMongoRepository();
@@ -59,5 +62,14 @@ describe("PrivateRoomMongoRepository", () => {
                 participants: { $all: users.map(u => new ObjectId(u.id)) },
             }),
         ).toBeTruthy();
+    });
+
+    it("should not add a PrivateRoom if it already exists", async () => {
+        const users = [await makeUser(), await makeUser()];
+        await makePrivateRoom(users as [User, User]);
+        const sut = new PrivateRoomMongoRepository();
+        expect(await privateRoomCollection.countDocuments()).toBe(1);
+        await sut.add([users[1].id, users[0].id]);
+        expect(await privateRoomCollection.countDocuments()).toBe(1);
     });
 });
