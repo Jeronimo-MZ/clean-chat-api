@@ -159,7 +159,7 @@ describe("UserMongoRepository", () => {
             const stringToMatch = faker.random.alphaNumeric(20).toLowerCase();
             const users = await Promise.all([
                 makeUser(`${stringToMatch}first_user`),
-                makeUser(`second_%${stringToMatch}_user`),
+                makeUser(`second_${stringToMatch}_user`),
                 makeUser(`third_user${stringToMatch}`),
                 makeUser(`${stringToMatch}`),
                 makeUser("fifth_user"),
