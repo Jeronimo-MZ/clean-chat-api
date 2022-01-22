@@ -1,6 +1,7 @@
 import faker from "@faker-js/faker";
 import { Collection } from "mongodb";
 
+import { SearchUsersByUsernameRepository } from "@/data/protocols/database";
 import { User } from "@/domain/models";
 import {
     CollectionNames,
@@ -10,10 +11,20 @@ import {
 import { mockAddUserInput } from "@/tests/domain/mocks";
 
 const makeSut = (): UserMongoRepository => new UserMongoRepository();
+let usersCollection: Collection;
+
+const makeUser = async (username = faker.internet.userName()) => {
+    const userData = {
+        username: username.toLowerCase(),
+        name: faker.name.findName(),
+        password: faker.internet.password(),
+    };
+
+    await usersCollection.insertOne(userData);
+    return MongoHelper.map(userData) as User;
+};
 
 describe("UserMongoRepository", () => {
-    let usersCollection: Collection;
-
     beforeAll(async () => {
         await MongoHelper.connect(process.env.MONGO_URL as string);
     });
@@ -140,6 +151,101 @@ describe("UserMongoRepository", () => {
             expect(user?.name).toBe(addUserInput.name);
             expect(user?.username).toBe(addUserInput.username);
             expect(user?.password).toBe(addUserInput.password);
+        });
+    });
+
+    describe("searchByUsername()", () => {
+        async function createUsers() {
+            const stringToMatch = faker.random.alphaNumeric(20).toLowerCase();
+            const users = await Promise.all([
+                makeUser(`${stringToMatch}first_user`),
+                makeUser(`second_%${stringToMatch}_user`),
+                makeUser(`third_user${stringToMatch}`),
+                makeUser(`${stringToMatch}`),
+                makeUser("fifth_user"),
+                makeUser("sixth_user"),
+            ]);
+            return { stringToMatch, users };
+        }
+        it("should return first page values", async () => {
+            const sut = makeSut();
+            const { stringToMatch, users } = await createUsers();
+            const result = await sut.searchByUsername({
+                page: 1,
+                pageSize: 2,
+                username: stringToMatch.toUpperCase(),
+            });
+
+            expect(result).toBeTruthy();
+            expect(
+                result,
+            ).toStrictEqual<SearchUsersByUsernameRepository.Output>({
+                page: 1,
+                pageSize: 2,
+                totalPages: 2,
+                users: [
+                    {
+                        id: users[0].id,
+                        name: users[0].name,
+                        username: users[0].username,
+                    },
+                    {
+                        id: users[1].id,
+                        name: users[1].name,
+                        username: users[1].username,
+                    },
+                ],
+            });
+        });
+
+        it("should return second page values", async () => {
+            const sut = makeSut();
+            const { stringToMatch, users } = await createUsers();
+            const result = await sut.searchByUsername({
+                page: 2,
+                pageSize: 2,
+                username: stringToMatch.toUpperCase(),
+            });
+
+            expect(result).toBeTruthy();
+            expect(
+                result,
+            ).toStrictEqual<SearchUsersByUsernameRepository.Output>({
+                page: 2,
+                pageSize: 2,
+                totalPages: 2,
+                users: [
+                    {
+                        id: users[2].id,
+                        name: users[2].name,
+                        username: users[2].username,
+                    },
+                    {
+                        id: users[3].id,
+                        name: users[3].name,
+                        username: users[3].username,
+                    },
+                ],
+            });
+        });
+
+        it("should return empty values", async () => {
+            const sut = makeSut();
+            const result = await sut.searchByUsername({
+                page: 1,
+                pageSize: 2,
+                username: faker.random.alphaNumeric(20),
+            });
+
+            expect(result).toBeTruthy();
+            expect(
+                result,
+            ).toStrictEqual<SearchUsersByUsernameRepository.Output>({
+                page: 1,
+                pageSize: 2,
+                totalPages: 0,
+                users: [],
+            });
         });
     });
 });
