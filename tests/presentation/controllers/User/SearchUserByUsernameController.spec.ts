@@ -82,4 +82,16 @@ describe("ShowUser Controller", () => {
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(ok(searchUsersByUsernameSpy.output));
     });
+
+    it("should fill page and pageSize if they are missing", async () => {
+        const { sut, searchUsersByUsernameSpy } = makeSut();
+        const username = faker.internet.userName();
+        await sut.handle({ username });
+        expect(searchUsersByUsernameSpy.input).toEqual({
+            username,
+            page: 1,
+            pageSize: 5,
+        });
+        expect(searchUsersByUsernameSpy.callsCount).toBe(1);
+    });
 });
