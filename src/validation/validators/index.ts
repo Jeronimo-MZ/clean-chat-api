@@ -1,4 +1,5 @@
 export * from "./CompareFieldsValidation";
+export * from "./IntegerValidation";
 export * from "./MinLengthValidation";
 export * from "./RequiredFieldValidation";
 export * from "./UsernameValidation";
