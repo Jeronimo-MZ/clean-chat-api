@@ -18,14 +18,16 @@ export class SearchUserByUsernameController
         request: SearchUserByUsernameController.Request,
     ): Promise<HttpResponse<SearchUserByUsernameController.Response>> {
         try {
+            request.page = request.page ? Number(request.page) : 1;
+            request.pageSize = request.pageSize ? Number(request.pageSize) : 5;
             const error = this.validation.validate(request);
             if (error) {
                 return badRequest(error);
             }
             const { username, page, pageSize } = request;
             const result = await this.searchUsersByUsername.search({
-                page: page || 1,
-                pageSize: pageSize || 5,
+                page: page,
+                pageSize: pageSize,
                 username,
             });
             return ok(result);
