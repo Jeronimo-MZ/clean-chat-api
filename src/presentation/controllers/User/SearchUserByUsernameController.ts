@@ -1,5 +1,5 @@
 import { SearchUsersByUsername } from "@/domain/usecases";
-import { badRequest, serverError } from "@/presentation/helpers";
+import { badRequest, ok, serverError } from "@/presentation/helpers";
 import { Controller, HttpResponse } from "@/presentation/protocols";
 import { Validation } from "@/validation/protocols";
 
@@ -22,8 +22,8 @@ export class SearchUserByUsernameController
             if (error) {
                 return badRequest(error);
             }
-            await this.searchUsersByUsername.search(request);
-            return undefined as any;
+            const result = await this.searchUsersByUsername.search(request);
+            return ok(result);
         } catch (error) {
             return serverError(error as Error);
         }
