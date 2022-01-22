@@ -41,4 +41,10 @@ describe("Min Length Validation", () => {
         });
         expect(error).toEqual(new MinLengthError(field, minLength));
     });
+
+    it("should return null if no value is given", () => {
+        const { sut } = makeSut();
+        const error = sut.validate({});
+        expect(error).toBeNull();
+    });
 });
