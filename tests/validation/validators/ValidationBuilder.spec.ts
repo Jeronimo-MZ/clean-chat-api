@@ -3,6 +3,7 @@ import faker from "@faker-js/faker";
 import {
     CompareFieldsValidation,
     MinLengthValidation,
+    MinValueValidation,
     RequiredFieldValidation,
     UsernameValidation,
     ValidationBuilder as sut,
@@ -18,8 +19,20 @@ describe("ValidationBuilder", () => {
     it("should return MinLengthValidation", () => {
         const length = faker.datatype.number();
         const field = faker.database.column();
-        const validations = sut.field(field).min(length).build();
+        let validations = sut.field(field).min(length).build();
         expect(validations).toEqual([new MinLengthValidation(field, length)]);
+        validations = sut.field(field).min(length, { isNumber: false }).build();
+        expect(validations).toEqual([new MinLengthValidation(field, length)]);
+    });
+
+    it("should return MinValueValidation", () => {
+        const length = faker.datatype.number();
+        const field = faker.database.column();
+        const validations = sut
+            .field(field)
+            .min(length, { isNumber: true })
+            .build();
+        expect(validations).toEqual([new MinValueValidation(field, length)]);
     });
 
     it("should return UsernameValidation", () => {
