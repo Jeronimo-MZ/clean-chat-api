@@ -1,5 +1,6 @@
 import { SearchUsersByUsernameRepository } from "@/data/protocols/database";
 import { DbSearchUsersByUsername } from "@/data/usecases";
+import { SearchUsersByUsername } from "@/domain/usecases";
 import { SearchUsersByUsernameRepositorySpy } from "@/tests/data/mocks";
 import {
     mockSearchUsersByUsernameInput,
@@ -43,5 +44,15 @@ describe("DbSearchUsersByUsername", () => {
         ).mockImplementationOnce(throwError);
         const promise = sut.search(mockSearchUsersByUsernameInput());
         await expect(promise).rejects.toThrowError(new Error());
+    });
+
+    it("should return correct values on success", async () => {
+        const { sut, searchUsersByUsernameRepositorySpy } = makeSut();
+        const input = mockSearchUsersByUsernameInput();
+        const output = await sut.search(input);
+        expect(output).toStrictEqual<SearchUsersByUsername.Output>(
+            searchUsersByUsernameRepositorySpy.output,
+        );
+        expect(searchUsersByUsernameRepositorySpy.callsCount).toBe(1);
     });
 });
