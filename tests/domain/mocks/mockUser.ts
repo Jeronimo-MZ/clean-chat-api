@@ -63,7 +63,6 @@ export class LoadUserByTokenSpy implements LoadUserByToken {
 
 export const mockSearchUsersByUsernameInput =
     (): SearchUsersByUsername.Input => ({
-        currentUserId: faker.datatype.uuid(),
         page: faker.datatype.number(),
         pageSize: faker.datatype.number(),
         username: faker.internet.userName(),

@@ -6,7 +6,6 @@ export interface SearchUsersByUsername {
 
 export namespace SearchUsersByUsername {
     export type Input = {
-        currentUserId: string;
         username: string;
         page: number;
         pageSize: number;
