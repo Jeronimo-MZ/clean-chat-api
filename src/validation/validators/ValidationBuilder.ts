@@ -24,7 +24,7 @@ export class ValidationBuilder {
         return this;
     }
 
-    min(value: number, options?: { isNumber?: boolean }): ValidationBuilder {
+    min(value: number, options?: { isNumber: boolean }): ValidationBuilder {
         if (options?.isNumber) {
             this.validations.push(
                 new MinValueValidation(this.fieldName, value),

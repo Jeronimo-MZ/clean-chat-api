@@ -2,6 +2,7 @@ import faker from "@faker-js/faker";
 
 import {
     CompareFieldsValidation,
+    IntegerValidation,
     MinLengthValidation,
     MinValueValidation,
     RequiredFieldValidation,
@@ -50,6 +51,12 @@ describe("ValidationBuilder", () => {
         ]);
     });
 
+    it("should return IntegerValidation", () => {
+        const field = faker.database.column();
+        const validations = sut.field(field).integer().build();
+        expect(validations).toEqual([new IntegerValidation(field)]);
+    });
+
     it("should return a list of validations", () => {
         const field = faker.database.column();
         const length = faker.datatype.number();
@@ -58,11 +65,13 @@ describe("ValidationBuilder", () => {
             .required()
             .min(length)
             .username()
+            .integer()
             .build();
         expect(validations).toEqual([
             new RequiredFieldValidation(field),
             new MinLengthValidation(field, length),
             new UsernameValidation(field),
+            new IntegerValidation(field),
         ]);
     });
 });
