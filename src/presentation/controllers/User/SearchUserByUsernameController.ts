@@ -22,7 +22,12 @@ export class SearchUserByUsernameController
             if (error) {
                 return badRequest(error);
             }
-            const result = await this.searchUsersByUsername.search(request);
+            const { username, page, pageSize } = request;
+            const result = await this.searchUsersByUsername.search({
+                page: page || 1,
+                pageSize: pageSize || 5,
+                username,
+            });
             return ok(result);
         } catch (error) {
             return serverError(error as Error);
@@ -32,8 +37,8 @@ export class SearchUserByUsernameController
 export namespace SearchUserByUsernameController {
     export type Request = {
         username: string;
-        page: number;
-        pageSize: number;
+        page?: number;
+        pageSize?: number;
     };
 
     export type Response = {
