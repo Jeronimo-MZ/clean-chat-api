@@ -24,4 +24,12 @@ describe("MinValueValidation", () => {
         });
         expect(error).toBeNull();
     });
+
+    it("should return null if value is greater than min value", () => {
+        const { sut } = makeSut();
+        const error = sut.validate({
+            [field]: minValue + 1,
+        });
+        expect(error).toBeNull();
+    });
 });
