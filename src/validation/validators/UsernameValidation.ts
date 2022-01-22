@@ -6,7 +6,7 @@ export class UsernameValidation implements Validation {
     validate(input: Validation.Input): InvalidUsernameError | null {
         const regex = /^_*\w[\w\d_.]+[\w\d_]$/;
 
-        return regex.test(input[this.fieldName])
+        return regex.test(input[this.fieldName] as string)
             ? null
             : new InvalidUsernameError(this.fieldName);
     }

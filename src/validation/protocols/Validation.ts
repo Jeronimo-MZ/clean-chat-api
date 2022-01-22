@@ -4,6 +4,6 @@ export interface Validation {
 
 export namespace Validation {
     export type Input = {
-        [key: string]: string;
+        [key: string]: string | number;
     };
 }
