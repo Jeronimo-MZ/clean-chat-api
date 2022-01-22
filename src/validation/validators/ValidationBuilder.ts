@@ -5,6 +5,7 @@ import {
 } from "@/validation/validators";
 
 import { CompareFieldsValidation } from "./CompareFieldsValidation";
+import { IntegerValidation } from "./IntegerValidation";
 import { MinValueValidation } from "./MinValueValidation";
 import { UsernameValidation } from "./UsernameValidation";
 
@@ -38,6 +39,11 @@ export class ValidationBuilder {
 
     username(): ValidationBuilder {
         this.validations.push(new UsernameValidation(this.fieldName));
+        return this;
+    }
+
+    integer(): ValidationBuilder {
+        this.validations.push(new IntegerValidation(this.fieldName));
         return this;
     }
 
