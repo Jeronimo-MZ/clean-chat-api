@@ -1,5 +1,6 @@
 import faker from "@faker-js/faker";
 
+import { MinValueError } from "@/validation/errors";
 import { MinValueValidation } from "@/validation/validators/MinValueValidation";
 
 const field = faker.random.word();
@@ -37,5 +38,13 @@ describe("MinValueValidation", () => {
         const { sut } = makeSut();
         const error = sut.validate({});
         expect(error).toBeNull();
+    });
+
+    it("should return an MinValueError if value is lesser than min value", () => {
+        const { sut } = makeSut();
+        const error = sut.validate({
+            [field]: minValue - 1,
+        });
+        expect(error).toEqual(new MinValueError(field, minValue));
     });
 });
