@@ -67,3 +67,33 @@ export const mockSearchUsersByUsernameInput =
         pageSize: faker.datatype.number(),
         username: faker.internet.userName(),
     });
+
+export class SearchUsersByUsernameSpy implements SearchUsersByUsername {
+    input: SearchUsersByUsername.Input;
+    output: SearchUsersByUsername.Output = {
+        page: 1,
+        pageSize: 2,
+        totalPages: 1,
+        users: [
+            {
+                id: faker.datatype.uuid(),
+                name: faker.name.findName(),
+                username: faker.internet.userName(),
+            },
+            {
+                id: faker.datatype.uuid(),
+                name: faker.name.findName(),
+                username: faker.internet.userName(),
+                avatar: faker.internet.avatar(),
+            },
+        ],
+    };
+    callsCount = 0;
+    async search(
+        input: SearchUsersByUsername.Input,
+    ): Promise<SearchUsersByUsername.Output> {
+        this.input = input;
+        this.callsCount++;
+        return this.output;
+    }
+}

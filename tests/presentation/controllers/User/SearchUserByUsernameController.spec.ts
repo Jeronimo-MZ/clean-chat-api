@@ -3,18 +3,23 @@ import faker from "@faker-js/faker";
 import { SearchUserByUsernameController } from "@/presentation/controllers";
 import { ServerError } from "@/presentation/errors";
 import { badRequest, serverError } from "@/presentation/helpers";
-import { throwError } from "@/tests/domain/mocks";
+import { SearchUsersByUsernameSpy, throwError } from "@/tests/domain/mocks";
 import { ValidationSpy } from "@/tests/validation/mocks";
 
 type SutTypes = {
     sut: SearchUserByUsernameController;
     validationSpy: ValidationSpy;
+    searchUsersByUsernameSpy: SearchUsersByUsernameSpy;
 };
 
 const makeSut = (): SutTypes => {
+    const searchUsersByUsernameSpy = new SearchUsersByUsernameSpy();
     const validationSpy = new ValidationSpy();
-    const sut = new SearchUserByUsernameController(validationSpy);
-    return { sut, validationSpy };
+    const sut = new SearchUserByUsernameController(
+        validationSpy,
+        searchUsersByUsernameSpy,
+    );
+    return { sut, validationSpy, searchUsersByUsernameSpy };
 };
 const mockRequest = (): SearchUserByUsernameController.Request => {
     return {
@@ -46,5 +51,13 @@ describe("ShowUser Controller", () => {
         );
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
+    });
+
+    it("should call SearchUserByUsername with correct values", async () => {
+        const { sut, searchUsersByUsernameSpy } = makeSut();
+        const request = mockRequest();
+        await sut.handle(request);
+        expect(searchUsersByUsernameSpy.input).toEqual(request);
+        expect(searchUsersByUsernameSpy.callsCount).toBe(1);
     });
 });
