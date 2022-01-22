@@ -8,11 +8,10 @@ export class DbSearchUsersByUsername implements SearchUsersByUsername {
     async search(
         input: SearchUsersByUsername.Input,
     ): Promise<SearchUsersByUsername.Output> {
-        await this.searchUsersByUsernameRepository.searchByUsername({
+        return await this.searchUsersByUsernameRepository.searchByUsername({
             page: input.page,
             pageSize: input.pageSize,
             username: input.username,
         });
-        return undefined as any;
     }
 }
