@@ -2,7 +2,7 @@ import faker from "@faker-js/faker";
 
 import { SearchUserByUsernameController } from "@/presentation/controllers";
 import { ServerError } from "@/presentation/errors";
-import { badRequest, serverError } from "@/presentation/helpers";
+import { badRequest, ok, serverError } from "@/presentation/helpers";
 import { SearchUsersByUsernameSpy, throwError } from "@/tests/domain/mocks";
 import { ValidationSpy } from "@/tests/validation/mocks";
 
@@ -75,5 +75,11 @@ describe("ShowUser Controller", () => {
         );
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
+    });
+
+    it("should return 200 on success", async () => {
+        const { sut, searchUsersByUsernameSpy } = makeSut();
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toEqual(ok(searchUsersByUsernameSpy.output));
     });
 });
