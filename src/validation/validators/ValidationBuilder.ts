@@ -5,6 +5,7 @@ import {
 } from "@/validation/validators";
 
 import { CompareFieldsValidation } from "./CompareFieldsValidation";
+import { MinValueValidation } from "./MinValueValidation";
 import { UsernameValidation } from "./UsernameValidation";
 
 export class ValidationBuilder {
@@ -22,8 +23,16 @@ export class ValidationBuilder {
         return this;
     }
 
-    min(length: number): ValidationBuilder {
-        this.validations.push(new MinLengthValidation(this.fieldName, length));
+    min(value: number, options?: { isNumber?: boolean }): ValidationBuilder {
+        if (options?.isNumber) {
+            this.validations.push(
+                new MinValueValidation(this.fieldName, value),
+            );
+        } else {
+            this.validations.push(
+                new MinLengthValidation(this.fieldName, value),
+            );
+        }
         return this;
     }
 
