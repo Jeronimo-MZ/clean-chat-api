@@ -67,4 +67,13 @@ describe("ShowUser Controller", () => {
         await sut.handle(mockRequest());
         expect(searchUsersByUsernameSpy.callsCount).toBe(0);
     });
+
+    it("should return 500 if SearchUserByUsername throws", async () => {
+        const { sut, searchUsersByUsernameSpy } = makeSut();
+        jest.spyOn(searchUsersByUsernameSpy, "search").mockImplementationOnce(
+            throwError,
+        );
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
+    });
 });
