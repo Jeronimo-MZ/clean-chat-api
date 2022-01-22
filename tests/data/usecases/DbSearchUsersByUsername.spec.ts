@@ -1,7 +1,10 @@
 import { SearchUsersByUsernameRepository } from "@/data/protocols/database";
 import { DbSearchUsersByUsername } from "@/data/usecases";
 import { SearchUsersByUsernameRepositorySpy } from "@/tests/data/mocks";
-import { mockSearchUsersByUsernameInput } from "@/tests/domain/mocks";
+import {
+    mockSearchUsersByUsernameInput,
+    throwError,
+} from "@/tests/domain/mocks";
 
 type SutTypes = {
     sut: DbSearchUsersByUsername;
@@ -30,5 +33,15 @@ describe("DbSearchUsersByUsername", () => {
             username: input.username,
         });
         expect(searchUsersByUsernameRepositorySpy.callsCount).toBe(1);
+    });
+
+    it("should throw if SearchUsersByUsernameRepository throws", async () => {
+        const { sut, searchUsersByUsernameRepositorySpy } = makeSut();
+        jest.spyOn(
+            searchUsersByUsernameRepositorySpy,
+            "searchByUsername",
+        ).mockImplementationOnce(throwError);
+        const promise = sut.search(mockSearchUsersByUsernameInput());
+        await expect(promise).rejects.toThrowError(new Error());
     });
 });
