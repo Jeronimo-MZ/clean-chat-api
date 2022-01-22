@@ -5,6 +5,7 @@ import {
     LoadUserByIdRepository,
     LoadUserByTokenRepository,
     LoadUserByUsernameRepository,
+    SearchUsersByUsernameRepository,
     UpdateAccessTokenRepository,
 } from "@/data/protocols/database";
 import { User } from "@/domain/models";
@@ -16,7 +17,8 @@ export class UserMongoRepository
         LoadUserByUsernameRepository,
         LoadUserByIdRepository,
         UpdateAccessTokenRepository,
-        LoadUserByTokenRepository
+        LoadUserByTokenRepository,
+        SearchUsersByUsernameRepository
 {
     async add(input: AddUserRepository.Input): Promise<User> {
         const usersCollection = await MongoHelper.getCollection(
@@ -61,5 +63,31 @@ export class UserMongoRepository
         );
         const user = await usersCollection.findOne({ _id: new ObjectId(id) });
         return user ? MongoHelper.map(user) : null;
+    }
+
+    async searchByUsername({
+        username,
+        pageSize,
+        page,
+    }: SearchUsersByUsernameRepository.Input): Promise<SearchUsersByUsernameRepository.Output> {
+        const usersCollection = await MongoHelper.getCollection(
+            CollectionNames.USER,
+        );
+
+        const data = usersCollection.find({
+            username: { $regex: new RegExp(`${username}`, "i") },
+        });
+        const numberOfUsers = await data.count();
+        const users = await data
+            .skip(page * pageSize - pageSize)
+            .limit(pageSize)
+            .project({ password: 0, accessToken: 0 })
+            .toArray();
+        return {
+            page,
+            pageSize,
+            totalPages: Math.ceil(numberOfUsers / pageSize),
+            users: users.map(MongoHelper.map),
+        };
     }
 }
