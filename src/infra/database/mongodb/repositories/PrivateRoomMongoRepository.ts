@@ -24,7 +24,6 @@ export class PrivateRoomMongoRepository implements AddPrivateRoomRepository {
         }
 
         const aggregation = PrivateRoomCollection.aggregate([
-            { $limit: 1 },
             {
                 $match: {
                     participants: {
@@ -32,6 +31,7 @@ export class PrivateRoomMongoRepository implements AddPrivateRoomRepository {
                     },
                 },
             },
+            { $limit: 1 },
             {
                 $lookup: {
                     from: "users",
