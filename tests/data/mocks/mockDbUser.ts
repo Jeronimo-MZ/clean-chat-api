@@ -1,7 +1,10 @@
+import faker from "@faker-js/faker";
+
 import {
     AddUserRepository,
     LoadUserByIdRepository,
     LoadUserByTokenRepository,
+    SearchUsersByUsernameRepository,
     UpdateAccessTokenRepository,
 } from "@/data/protocols/database";
 import { LoadUserByUsernameRepository } from "@/data/protocols/database/LoadUserByUsernameRepository";
@@ -64,5 +67,37 @@ export class LoadUserByIdRepositorySpy implements LoadUserByIdRepository {
         this.id = id;
         this.callsCount++;
         return this.result;
+    }
+}
+
+export class SearchUsersByUsernameRepositorySpy
+    implements SearchUsersByUsernameRepository
+{
+    input: SearchUsersByUsernameRepository.Input;
+    output: SearchUsersByUsernameRepository.Output = {
+        page: 1,
+        pageSize: 2,
+        totalPages: 1,
+        users: [
+            {
+                id: faker.datatype.uuid(),
+                name: faker.name.findName(),
+                username: faker.internet.userName(),
+            },
+            {
+                id: faker.datatype.uuid(),
+                name: faker.name.findName(),
+                username: faker.internet.userName(),
+                avatar: faker.internet.avatar(),
+            },
+        ],
+    };
+    callsCount = 0;
+    async searchByUsername(
+        input: SearchUsersByUsernameRepository.Input,
+    ): Promise<SearchUsersByUsernameRepository.Output> {
+        this.input = input;
+        this.callsCount++;
+        return this.output;
     }
 }

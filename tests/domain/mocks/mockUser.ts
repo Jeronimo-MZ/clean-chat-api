@@ -1,7 +1,12 @@
 import faker from "@faker-js/faker";
 
 import { User } from "@/domain/models";
-import { AddUser, Authentication, LoadUserByToken } from "@/domain/usecases";
+import {
+    AddUser,
+    Authentication,
+    LoadUserByToken,
+    SearchUsersByUsername,
+} from "@/domain/usecases";
 
 export const mockAddUserInput = (): AddUser.Input => ({
     name: faker.name.findName(),
@@ -55,3 +60,11 @@ export class LoadUserByTokenSpy implements LoadUserByToken {
         return this.result;
     }
 }
+
+export const mockSearchUsersByUsernameInput =
+    (): SearchUsersByUsername.Input => ({
+        currentUserId: faker.datatype.uuid(),
+        page: faker.datatype.number(),
+        pageSize: faker.datatype.number(),
+        username: faker.internet.userName(),
+    });
