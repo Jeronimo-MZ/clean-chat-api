@@ -60,4 +60,11 @@ describe("ShowUser Controller", () => {
         expect(searchUsersByUsernameSpy.input).toEqual(request);
         expect(searchUsersByUsernameSpy.callsCount).toBe(1);
     });
+
+    it("should not call SearchUserByUsername if validation fails", async () => {
+        const { sut, validationSpy, searchUsersByUsernameSpy } = makeSut();
+        validationSpy.error = new Error(faker.random.word());
+        await sut.handle(mockRequest());
+        expect(searchUsersByUsernameSpy.callsCount).toBe(0);
+    });
 });
