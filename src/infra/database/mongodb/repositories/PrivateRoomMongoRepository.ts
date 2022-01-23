@@ -1,10 +1,15 @@
 import { ObjectId } from "mongodb";
 
-import { AddPrivateRoomRepository } from "@/data/protocols/database";
+import {
+    AddPrivateRoomRepository,
+    LoadPrivateRoomByIdRepository,
+} from "@/data/protocols/database";
 import { PrivateRoom, User } from "@/domain/models";
 import { CollectionNames, MongoHelper } from "@/infra/database/mongodb";
 
-export class PrivateRoomMongoRepository implements AddPrivateRoomRepository {
+export class PrivateRoomMongoRepository
+    implements AddPrivateRoomRepository, LoadPrivateRoomByIdRepository
+{
     async add(participantsIds: [string, string]): Promise<PrivateRoom> {
         const PrivateRoomCollection = await MongoHelper.getCollection(
             CollectionNames.PRIVATE_ROOM,
@@ -55,5 +60,9 @@ export class PrivateRoomMongoRepository implements AddPrivateRoomRepository {
             User,
         ];
         return MongoHelper.map(newRoom);
+    }
+
+    async loadById(_id: string): Promise<LoadPrivateRoomByIdRepository.Output> {
+        return null;
     }
 }
