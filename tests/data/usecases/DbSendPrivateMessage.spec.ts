@@ -1,3 +1,4 @@
+import { AddPrivateMessageRepository } from "@/data/protocols/database";
 import { DbSendPrivateMessage } from "@/data/usecases";
 import { RoomNotFoundError, UserNotInRoomError } from "@/domain/errors";
 import {
@@ -5,17 +6,28 @@ import {
     mockSendPrivateMessageInput,
 } from "@/tests/domain/mocks";
 
+import { AddPrivateMessageRepositorySpy } from "../mocks/mockDbPrivateRoom";
+
 type SutTypes = {
     sut: DbSendPrivateMessage;
     loadPrivateRoomByIdRepositorySpy: LoadPrivateRoomByIdRepositorySpy;
+    addPrivateMessageRepositorySpy: AddPrivateMessageRepositorySpy;
 };
 
 const makeSut = (): SutTypes => {
     const loadPrivateRoomByIdRepositorySpy =
         new LoadPrivateRoomByIdRepositorySpy();
-    const sut = new DbSendPrivateMessage(loadPrivateRoomByIdRepositorySpy);
+    const addPrivateMessageRepositorySpy = new AddPrivateMessageRepositorySpy();
+    const sut = new DbSendPrivateMessage(
+        loadPrivateRoomByIdRepositorySpy,
+        addPrivateMessageRepositorySpy,
+    );
 
-    return { sut, loadPrivateRoomByIdRepositorySpy };
+    return {
+        sut,
+        loadPrivateRoomByIdRepositorySpy,
+        addPrivateMessageRepositorySpy,
+    };
 };
 
 describe("DbSendPrivateMessage", () => {
@@ -38,5 +50,17 @@ describe("DbSendPrivateMessage", () => {
         const { sut } = makeSut();
         const output = await sut.send(mockSendPrivateMessageInput());
         expect(output).toEqual(new UserNotInRoomError());
+    });
+
+    it("should call AddPrivateMessageRepository with correct values", async () => {
+        const { sut, addPrivateMessageRepositorySpy } = makeSut();
+        const input = mockSendPrivateMessageInput();
+        await sut.send(input);
+        expect(
+            addPrivateMessageRepositorySpy.input,
+        ).toEqual<AddPrivateMessageRepository.Input>({
+            roomId: input.roomId,
+            message: { content: input.content, senderId: input.senderId },
+        });
     });
 });
