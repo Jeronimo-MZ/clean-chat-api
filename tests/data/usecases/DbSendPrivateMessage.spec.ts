@@ -121,4 +121,13 @@ describe("DbSendPrivateMessage", () => {
         });
         expect(sendMessageMock.callsCount).toBe(1);
     });
+
+    it("should return message and roomId on success", async () => {
+        const { sut, input, addPrivateMessageRepositorySpy } = makeSut();
+        const message = await sut.send(input);
+        expect(message).toEqual({
+            roomId: input.roomId,
+            message: addPrivateMessageRepositorySpy.output.message,
+        });
+    });
 });
