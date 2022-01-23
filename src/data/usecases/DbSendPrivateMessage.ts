@@ -20,6 +20,8 @@ export class DbSendPrivateMessage implements SendPrivateMessage {
     }: SendPrivateMessage.Input): Promise<SendPrivateMessage.Output> {
         const room = await this.loadPrivateRoomByIdRepository.loadById(roomId);
         if (!room) return new RoomNotFoundError();
+        if (!room.participants.includes(senderId))
+            return new UserNotInRoomError();
         const { message } = await this.addPrivateMessageRepository.addMessage({
             message: { content, senderId },
             roomId,
@@ -28,6 +30,6 @@ export class DbSendPrivateMessage implements SendPrivateMessage {
             message,
             roomId,
         });
-        return new UserNotInRoomError();
+        return undefined as any;
     }
 }
