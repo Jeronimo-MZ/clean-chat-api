@@ -1,33 +1,41 @@
 import { AddPrivateMessageRepository } from "@/data/protocols/database";
+import { SendMessage } from "@/data/protocols/event";
 import { DbSendPrivateMessage } from "@/data/usecases";
 import { RoomNotFoundError, UserNotInRoomError } from "@/domain/errors";
+import {
+    AddPrivateMessageRepositorySpy,
+    SendMessageMock,
+} from "@/tests/data/mocks/mockDbPrivateRoom";
 import {
     LoadPrivateRoomByIdRepositorySpy,
     mockSendPrivateMessageInput,
     throwError,
 } from "@/tests/domain/mocks";
 
-import { AddPrivateMessageRepositorySpy } from "../mocks/mockDbPrivateRoom";
-
 type SutTypes = {
     sut: DbSendPrivateMessage;
     loadPrivateRoomByIdRepositorySpy: LoadPrivateRoomByIdRepositorySpy;
     addPrivateMessageRepositorySpy: AddPrivateMessageRepositorySpy;
+    sendMessageMock: SendMessageMock;
 };
 
 const makeSut = (): SutTypes => {
     const loadPrivateRoomByIdRepositorySpy =
         new LoadPrivateRoomByIdRepositorySpy();
     const addPrivateMessageRepositorySpy = new AddPrivateMessageRepositorySpy();
+    const sendMessageMock = new SendMessageMock();
+
     const sut = new DbSendPrivateMessage(
         loadPrivateRoomByIdRepositorySpy,
         addPrivateMessageRepositorySpy,
+        sendMessageMock,
     );
 
     return {
         sut,
         loadPrivateRoomByIdRepositorySpy,
         addPrivateMessageRepositorySpy,
+        sendMessageMock,
     };
 };
 
@@ -83,5 +91,17 @@ describe("DbSendPrivateMessage", () => {
         ).mockImplementationOnce(throwError);
         const promise = sut.send(mockSendPrivateMessageInput());
         expect(promise).rejects.toThrow();
+    });
+
+    it("should call SendMessage with correct values", async () => {
+        const { sut, sendMessageMock, addPrivateMessageRepositorySpy } =
+            makeSut();
+        const input = mockSendPrivateMessageInput();
+        await sut.send(input);
+        expect(sendMessageMock.input).toEqual<SendMessage.Input>({
+            message: addPrivateMessageRepositorySpy.output.message,
+            roomId: input.roomId,
+        });
+        expect(sendMessageMock.callsCount).toBe(1);
     });
 });

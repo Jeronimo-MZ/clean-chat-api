@@ -4,6 +4,7 @@ import {
     AddPrivateMessageRepository,
     AddPrivateRoomRepository,
 } from "@/data/protocols/database";
+import { SendMessage } from "@/data/protocols/event";
 import { PrivateRoom } from "@/domain/models";
 import { mockPrivateRoomModel } from "@/tests/domain/mocks";
 
@@ -36,5 +37,14 @@ export class AddPrivateMessageRepositorySpy
         this.input = input;
         this.callsCount++;
         return this.output;
+    }
+}
+
+export class SendMessageMock implements SendMessage {
+    input: AddPrivateMessageRepository.Input;
+    callsCount = 0;
+    sendMessage(input: SendMessage.Input): void {
+        this.input = input;
+        this.callsCount++;
     }
 }
