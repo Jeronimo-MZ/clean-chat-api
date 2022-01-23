@@ -1,4 +1,5 @@
 import { LoadPrivateRoomByIdRepository } from "@/data/protocols/database";
+import { RoomNotFoundError } from "@/domain/errors";
 import { SendPrivateMessage } from "@/domain/usecases";
 
 export class DbSendPrivateMessage implements SendPrivateMessage {
@@ -9,7 +10,8 @@ export class DbSendPrivateMessage implements SendPrivateMessage {
     async send({
         roomId,
     }: SendPrivateMessage.Input): Promise<SendPrivateMessage.Output> {
-        await this.loadPrivateRoomByIdRepository.loadById(roomId);
+        const room = await this.loadPrivateRoomByIdRepository.loadById(roomId);
+        if (!room) return new RoomNotFoundError();
         return undefined as any;
     }
 }
