@@ -30,6 +30,6 @@ export class DbSendPrivateMessage implements SendPrivateMessage {
             message,
             roomId,
         });
-        return undefined as any;
+        return { message, roomId };
     }
 }
