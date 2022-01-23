@@ -25,14 +25,15 @@ const makeUser = async (): Promise<PrivateRoomUser> => {
 
 export type SutTypes = {
     sut: PrivateRoomMongoRepository;
-    users: PrivateRoomUser[];
 };
 
-const makeSut = async (): Promise<SutTypes> => {
-    const users = [await makeUser(), await makeUser()];
+const makeSut = (): SutTypes => {
     const sut = new PrivateRoomMongoRepository();
-    return { sut, users };
+    return { sut };
 };
+
+const makeUsers = (): Promise<[PrivateRoomUser, PrivateRoomUser]> =>
+    Promise.all([makeUser(), makeUser()]);
 
 const makePrivateRoom = async (
     participants: [PrivateRoomUser, PrivateRoomUser],
@@ -62,38 +63,51 @@ describe("PrivateRoomMongoRepository", () => {
         await privateRoomCollection.deleteMany({});
     });
 
-    it("should add a new PrivateRoom if it doesn't exist", async () => {
-        const { sut, users } = await makeSut();
-        expect(await privateRoomCollection.countDocuments()).toBe(0);
-        await sut.add([users[1].id, users[0].id]);
-        expect(await privateRoomCollection.countDocuments()).toBe(1);
-        expect(
-            await privateRoomCollection.findOne({
-                participants: { $all: users.map(u => new ObjectId(u.id)) },
-            }),
-        ).toBeTruthy();
+    describe("add()", () => {
+        it("should add a new PrivateRoom if it doesn't exist", async () => {
+            const { sut } = makeSut();
+            const users = await makeUsers();
+            expect(await privateRoomCollection.countDocuments()).toBe(0);
+            await sut.add([users[1].id, users[0].id]);
+            expect(await privateRoomCollection.countDocuments()).toBe(1);
+            expect(
+                await privateRoomCollection.findOne({
+                    participants: { $all: users.map(u => new ObjectId(u.id)) },
+                }),
+            ).toBeTruthy();
+        });
+
+        it("should not add a PrivateRoom if it already exists", async () => {
+            const { sut } = makeSut();
+            const users = await makeUsers();
+            await makePrivateRoom(users);
+            expect(await privateRoomCollection.countDocuments()).toBe(1);
+            await sut.add([users[1].id, users[0].id]);
+            expect(await privateRoomCollection.countDocuments()).toBe(1);
+        });
+
+        it("should return a PrivateRoom on success", async () => {
+            const { sut } = makeSut();
+            const users = await makeUsers();
+            const room = await sut.add([users[1].id, users[0].id]);
+            expect(room).toBeTruthy();
+            expect(room.id).toBeTruthy();
+            expect(room.messages).toEqual([]);
+            expect(room.participants).toEqual(
+                users.map(({ id, name, username }) => ({
+                    id,
+                    name,
+                    username,
+                })),
+            );
+        });
     });
 
-    it("should not add a PrivateRoom if it already exists", async () => {
-        const { sut, users } = await makeSut();
-        await makePrivateRoom(users as [PrivateRoomUser, PrivateRoomUser]);
-        expect(await privateRoomCollection.countDocuments()).toBe(1);
-        await sut.add([users[1].id, users[0].id]);
-        expect(await privateRoomCollection.countDocuments()).toBe(1);
-    });
-
-    it("should return a PrivateRoom on success", async () => {
-        const { sut, users } = await makeSut();
-        const room = await sut.add([users[1].id, users[0].id]);
-        expect(room).toBeTruthy();
-        expect(room.id).toBeTruthy();
-        expect(room.messages).toEqual([]);
-        expect(room.participants).toEqual(
-            users.map(({ id, name, username }) => ({
-                id,
-                name,
-                username,
-            })),
-        );
+    describe("loadById()", () => {
+        it("should return null if loadById() fails", async () => {
+            const { sut } = makeSut();
+            const room = await sut.loadById(faker.random.alphaNumeric(24));
+            expect(room).toBeNull();
+        });
     });
 });
