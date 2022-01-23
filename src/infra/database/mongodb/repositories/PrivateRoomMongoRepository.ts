@@ -62,7 +62,22 @@ export class PrivateRoomMongoRepository
         return MongoHelper.map(newRoom);
     }
 
-    async loadById(_id: string): Promise<LoadPrivateRoomByIdRepository.Output> {
-        return null;
+    async loadById(id: string): Promise<LoadPrivateRoomByIdRepository.Output> {
+        const privateRoomCollection = await MongoHelper.getCollection(
+            CollectionNames.PRIVATE_ROOM,
+        );
+
+        const privateRoom = await privateRoomCollection.findOne({
+            _id: new ObjectId(id),
+        });
+
+        return privateRoom
+            ? MongoHelper.map({
+                  _id: privateRoom._id,
+                  participants: privateRoom.participants.map((p: any) =>
+                      p.toHexString(),
+                  ),
+              })
+            : null;
     }
 }
