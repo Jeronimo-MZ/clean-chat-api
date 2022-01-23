@@ -4,6 +4,7 @@ import { RoomNotFoundError, UserNotInRoomError } from "@/domain/errors";
 import {
     LoadPrivateRoomByIdRepositorySpy,
     mockSendPrivateMessageInput,
+    throwError,
 } from "@/tests/domain/mocks";
 
 import { AddPrivateMessageRepositorySpy } from "../mocks/mockDbPrivateRoom";
@@ -50,6 +51,16 @@ describe("DbSendPrivateMessage", () => {
         const { sut } = makeSut();
         const output = await sut.send(mockSendPrivateMessageInput());
         expect(output).toEqual(new UserNotInRoomError());
+    });
+
+    it("should throw if LoadPrivateRoomByIdRepository throws", async () => {
+        const { sut, loadPrivateRoomByIdRepositorySpy } = makeSut();
+        jest.spyOn(
+            loadPrivateRoomByIdRepositorySpy,
+            "loadById",
+        ).mockImplementationOnce(throwError);
+        const promise = sut.send(mockSendPrivateMessageInput());
+        expect(promise).rejects.toThrow();
     });
 
     it("should call AddPrivateMessageRepository with correct values", async () => {
