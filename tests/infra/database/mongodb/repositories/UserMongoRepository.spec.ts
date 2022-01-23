@@ -157,14 +157,14 @@ describe("UserMongoRepository", () => {
     describe("searchByUsername()", () => {
         async function createUsers() {
             const stringToMatch = faker.random.alphaNumeric(20).toLowerCase();
-            const users = await Promise.all([
-                makeUser(`${stringToMatch}first_user`),
-                makeUser(`second_${stringToMatch}_user`),
-                makeUser(`third_user${stringToMatch}`),
-                makeUser(`${stringToMatch}`),
-                makeUser("fifth_user"),
-                makeUser("sixth_user"),
-            ]);
+            const users: User[] = [];
+            users.push(await makeUser(`${stringToMatch}first_user`));
+            users.push(await makeUser(`second_${stringToMatch}_user`));
+            users.push(await makeUser(`third_user${stringToMatch}`));
+            users.push(await makeUser(`${stringToMatch}`));
+            users.push(await makeUser("fifth_user"));
+            users.push(await makeUser("sixth_user"));
+
             return { stringToMatch, users };
         }
         it("should return first page values", async () => {
