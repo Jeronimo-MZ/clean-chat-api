@@ -1,4 +1,5 @@
 import { DbSendPrivateMessage } from "@/data/usecases";
+import { RoomNotFoundError } from "@/domain/errors";
 import {
     LoadPrivateRoomByIdRepositorySpy,
     mockSendPrivateMessageInput,
@@ -24,5 +25,12 @@ describe("DbSendPrivateMessage", () => {
         await sut.send(input);
         expect(loadPrivateRoomByIdRepositorySpy.id).toBe(input.roomId);
         expect(loadPrivateRoomByIdRepositorySpy.callsCount).toBe(1);
+    });
+
+    it("should return RoomNotFoundError if LoadPrivateRoomByIdRepository returns null", async () => {
+        const { sut, loadPrivateRoomByIdRepositorySpy } = makeSut();
+        loadPrivateRoomByIdRepositorySpy.output = null;
+        const output = await sut.send(mockSendPrivateMessageInput());
+        expect(output).toEqual(new RoomNotFoundError());
     });
 });
