@@ -1,3 +1,4 @@
+export * from "./AddPrivateMessageRepository";
 export * from "./AddPrivateRoomRepository";
 export * from "./AddUserRepository";
 export * from "./LoadPrivateRoomByIdRepository";
