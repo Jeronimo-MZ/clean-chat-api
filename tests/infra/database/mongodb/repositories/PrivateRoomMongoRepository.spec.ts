@@ -106,8 +106,18 @@ describe("PrivateRoomMongoRepository", () => {
     describe("loadById()", () => {
         it("should return null if loadById() fails", async () => {
             const { sut } = makeSut();
-            const room = await sut.loadById(faker.random.alphaNumeric(24));
+            const room = await sut.loadById(faker.random.alphaNumeric(12));
             expect(room).toBeNull();
+        });
+
+        it("should return a room on success", async () => {
+            const { sut } = makeSut();
+            const users = await makeUsers();
+            const { id } = await makePrivateRoom(users);
+            const room = await sut.loadById(id);
+            expect(room).toBeTruthy();
+            expect(room?.id).toBe(id);
+            expect(room?.participants).toEqual(users.map(user => user.id));
         });
     });
 });
