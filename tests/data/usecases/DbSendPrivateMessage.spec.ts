@@ -74,4 +74,14 @@ describe("DbSendPrivateMessage", () => {
             message: { content: input.content, senderId: input.senderId },
         });
     });
+
+    it("should throw if AddPrivateMessageRepository throws", async () => {
+        const { sut, addPrivateMessageRepositorySpy } = makeSut();
+        jest.spyOn(
+            addPrivateMessageRepositorySpy,
+            "addMessage",
+        ).mockImplementationOnce(throwError);
+        const promise = sut.send(mockSendPrivateMessageInput());
+        expect(promise).rejects.toThrow();
+    });
 });
