@@ -1,3 +1,4 @@
+import { RoomNotFoundError } from "@/domain/errors";
 import { SendPrivateMessage } from "@/domain/usecases";
 import { badRequest, serverError } from "@/presentation/helpers";
 import { Controller, HttpResponse } from "@/presentation/protocols";
@@ -20,11 +21,14 @@ export class SendPrivateMessageController
         try {
             const error = this.validation.validate(request);
             if (error) return badRequest(error);
-            await this.sendPrivateMessage.send({
+            const messageOrError = await this.sendPrivateMessage.send({
                 content: request.content,
                 roomId: request.roomId,
                 senderId: request.userId,
             });
+
+            if (messageOrError instanceof RoomNotFoundError)
+                return badRequest(messageOrError);
             return undefined as any;
         } catch (error) {
             return serverError(error as Error);
