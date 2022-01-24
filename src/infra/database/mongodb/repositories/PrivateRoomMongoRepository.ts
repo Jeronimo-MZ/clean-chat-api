@@ -1,15 +1,24 @@
 import { ObjectId } from "mongodb";
 
 import {
+    AddPrivateMessageRepository,
     AddPrivateRoomRepository,
     LoadPrivateRoomByIdRepository,
 } from "@/data/protocols/database";
 import { PrivateRoom, User } from "@/domain/models";
 import { CollectionNames, MongoHelper } from "@/infra/database/mongodb";
+import { AddPrivateMessageRepositorySpy } from "@/tests/data/mocks/mockDbPrivateRoom";
 
 export class PrivateRoomMongoRepository
-    implements AddPrivateRoomRepository, LoadPrivateRoomByIdRepository
+    implements
+        AddPrivateRoomRepository,
+        LoadPrivateRoomByIdRepository,
+        AddPrivateMessageRepositorySpy
 {
+    input: AddPrivateMessageRepository.Input;
+    output: AddPrivateMessageRepository.Output;
+    callsCount: number;
+
     async add(participantsIds: [string, string]): Promise<PrivateRoom> {
         const PrivateRoomCollection = await MongoHelper.getCollection(
             CollectionNames.PRIVATE_ROOM,
@@ -79,5 +88,25 @@ export class PrivateRoomMongoRepository
                   ),
               })
             : null;
+    }
+
+    async addMessage(
+        input: AddPrivateMessageRepository.Input,
+    ): Promise<AddPrivateMessageRepository.Output> {
+        const privateRoomCollection = await MongoHelper.getCollection(
+            CollectionNames.PRIVATE_ROOM,
+        );
+        const message = {
+            ...input.message,
+            sentAt: new Date(),
+        };
+        await privateRoomCollection.updateOne(
+            {
+                _id: new ObjectId(input.roomId),
+            },
+            { $push: { messages: message } },
+        );
+
+        return { message };
     }
 }
