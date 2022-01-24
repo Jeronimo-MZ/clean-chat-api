@@ -3,7 +3,6 @@ import "@/main/config/nodeExceptionHandlers";
 
 import { MongoHelper } from "@/infra/database/mongodb";
 import {
-    app,
     env,
     exitSignals,
     ExitStatus,
@@ -12,11 +11,12 @@ import {
 } from "@/main/config";
 
 import { pinoLogger } from "./adapters";
+import { expressApp, httpApp } from "./config/socket";
 
 const PORT = env.port;
 
-setupLogger(app);
-setupRoutes(app);
+setupLogger(expressApp);
+setupRoutes(expressApp);
 
 const exitWithError = (error: any) => {
     pinoLogger.error(`App exited with error: ${error}`);
@@ -27,7 +27,7 @@ const exitWithError = (error: any) => {
         await MongoHelper.connect(env.mongoUrl);
         pinoLogger.info("Connected to MongoDb");
 
-        const currentApp = app.listen(PORT, () =>
+        const currentApp = httpApp.listen(PORT, () =>
             pinoLogger.info(`server started on port: ${PORT}`),
         );
 
