@@ -1,4 +1,4 @@
-import { Validation } from "@/validation/protocols";
+import { ObjectIdValidator, Validation } from "@/validation/protocols";
 import {
     MinLengthValidation,
     RequiredFieldValidation,
@@ -7,6 +7,7 @@ import {
 import { CompareFieldsValidation } from "./CompareFieldsValidation";
 import { IntegerValidation } from "./IntegerValidation";
 import { MinValueValidation } from "./MinValueValidation";
+import { ObjectIdValidation } from "./ObjectIdValidation";
 import { UsernameValidation } from "./UsernameValidation";
 
 export class ValidationBuilder {
@@ -44,6 +45,13 @@ export class ValidationBuilder {
 
     integer(): ValidationBuilder {
         this.validations.push(new IntegerValidation(this.fieldName));
+        return this;
+    }
+
+    objectId(objectIdValidator: ObjectIdValidator): ValidationBuilder {
+        this.validations.push(
+            new ObjectIdValidation(this.fieldName, objectIdValidator),
+        );
         return this;
     }
 
