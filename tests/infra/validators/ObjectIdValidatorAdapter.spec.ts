@@ -25,4 +25,11 @@ describe("ObjectIdValidatorAdapter", () => {
         const isValid = sut.isValid(faker.random.word());
         expect(isValid).toBe(false);
     });
+
+    it("should return true if ObjectId.isValid returns true", () => {
+        const sut = makeSut();
+        jest.spyOn(ObjectId, "isValid").mockReturnValueOnce(true);
+        const isValid = sut.isValid(faker.random.word());
+        expect(isValid).toBe(true);
+    });
 });
