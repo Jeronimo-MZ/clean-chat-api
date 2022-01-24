@@ -52,4 +52,10 @@ describe("SocketIoAdapter", () => {
         emit.mockImplementationOnce(throwError);
         expect(() => sut.sendMessage(makeInput())).toThrowError();
     });
+
+    it("should throw if to() throws", () => {
+        const { sut, to } = makeSut();
+        to.mockImplementationOnce(throwError);
+        expect(() => sut.sendMessage(makeInput())).toThrowError();
+    });
 });
