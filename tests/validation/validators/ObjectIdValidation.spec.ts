@@ -2,6 +2,7 @@ import faker from "@faker-js/faker";
 
 import { throwError } from "@/tests/domain/mocks";
 import { ObjectIdValidatorSpy } from "@/tests/validation/mocks";
+import { InvalidObjectIdError } from "@/validation/errors";
 import { ObjectIdValidation } from "@/validation/validators/ObjectIdValidation";
 
 const field = faker.random.word();
@@ -32,7 +33,7 @@ describe("ObjectId Validation", () => {
         expect(error).toBeNull();
     });
 
-    it("should throw if ObjectIdValidation throws", () => {
+    it("should throw if ObjectIdValidator throws", () => {
         const { sut, objectIdValidatorSpy } = makeSut();
         jest.spyOn(objectIdValidatorSpy, "isValid").mockImplementationOnce(
             throwError,
@@ -44,5 +45,12 @@ describe("ObjectId Validation", () => {
         const { sut } = makeSut();
         const error = sut.validate({});
         expect(error).toBeNull();
+    });
+
+    it("should return InvaliObjectIdError if ObjectIdValidator returns false", () => {
+        const { sut, objectIdValidatorSpy } = makeSut();
+        objectIdValidatorSpy.result = false;
+        const error = sut.validate({ [field]: value });
+        expect(error).toEqual(new InvalidObjectIdError(field));
     });
 });
