@@ -4,7 +4,12 @@ import { RoomNotFoundError, UserNotInRoomError } from "@/domain/errors";
 import { SendPrivateMessage } from "@/domain/usecases";
 import { SendPrivateMessageController } from "@/presentation/controllers";
 import { ServerError } from "@/presentation/errors";
-import { badRequest, serverError, unauthorized } from "@/presentation/helpers";
+import {
+    badRequest,
+    ok,
+    serverError,
+    unauthorized,
+} from "@/presentation/helpers";
 import { SendPrivateMessageSpy, throwError } from "@/tests/domain/mocks";
 import { ValidationSpy } from "@/tests/validation/mocks";
 
@@ -94,5 +99,11 @@ describe("SendPrivateMessageController", () => {
         sendPrivateMessageSpy.output = new UserNotInRoomError();
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(unauthorized());
+    });
+
+    it("should return 200 if valid data is provided", async () => {
+        const { sut, sendPrivateMessageSpy } = makeSut();
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toEqual(ok(sendPrivateMessageSpy.output));
     });
 });
