@@ -1,7 +1,6 @@
 import { Router } from "express";
 
 import { adaptMiddleware, adaptRoute } from "@/main/adapters";
-import { io } from "@/main/config/socket";
 import {
     makeAddPrivateRoomController,
     makeAuthMiddleware,
@@ -17,6 +16,6 @@ export default (router: Router): void => {
     router.post(
         "/private_room/:roomId/messages",
         adaptMiddleware(makeAuthMiddleware()),
-        adaptRoute(makeSendPrivateMessageController(io)),
+        adaptRoute(makeSendPrivateMessageController()),
     );
 };
