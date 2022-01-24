@@ -5,10 +5,13 @@ import {
     IntegerValidation,
     MinLengthValidation,
     MinValueValidation,
+    ObjectIdValidation,
     RequiredFieldValidation,
     UsernameValidation,
     ValidationBuilder as sut,
 } from "@/validation/validators";
+
+import { ObjectIdValidatorSpy } from "../mocks";
 
 describe("ValidationBuilder", () => {
     it("should return RequiredFieldValidation", () => {
@@ -55,6 +58,18 @@ describe("ValidationBuilder", () => {
         const field = faker.database.column();
         const validations = sut.field(field).integer().build();
         expect(validations).toEqual([new IntegerValidation(field)]);
+    });
+
+    it("should return ObjectIdValidation", () => {
+        const field = faker.database.column();
+        const objectIdValidator = new ObjectIdValidatorSpy();
+        const validations = sut
+            .field(field)
+            .objectId(objectIdValidator)
+            .build();
+        expect(validations).toEqual([
+            new ObjectIdValidation(field, objectIdValidator),
+        ]);
     });
 
     it("should return a list of validations", () => {
