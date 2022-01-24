@@ -18,4 +18,11 @@ describe("ObjectIdValidatorAdapter", () => {
         sut.isValid(input);
         expect(isValidSpy).toHaveBeenNthCalledWith(1, input);
     });
+
+    it("should return false if ObjectId.isValid returns false", () => {
+        const sut = makeSut();
+        jest.spyOn(ObjectId, "isValid").mockReturnValueOnce(false);
+        const isValid = sut.isValid(faker.random.word());
+        expect(isValid).toBe(false);
+    });
 });
