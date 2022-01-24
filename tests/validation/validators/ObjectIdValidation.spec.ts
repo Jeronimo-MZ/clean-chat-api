@@ -1,5 +1,6 @@
 import faker from "@faker-js/faker";
 
+import { throwError } from "@/tests/domain/mocks";
 import { ObjectIdValidatorSpy } from "@/tests/validation/mocks";
 import { ObjectIdValidation } from "@/validation/validators/ObjectIdValidation";
 
@@ -29,5 +30,13 @@ describe("ObjectId Validation", () => {
         const { sut } = makeSut();
         const error = sut.validate({ [field]: value });
         expect(error).toBeNull();
+    });
+
+    it("should throw if ObjectIdValidation throws", () => {
+        const { sut, objectIdValidatorSpy } = makeSut();
+        jest.spyOn(objectIdValidatorSpy, "isValid").mockImplementationOnce(
+            throwError,
+        );
+        expect(() => sut.validate({ [field]: value })).toThrowError();
     });
 });
