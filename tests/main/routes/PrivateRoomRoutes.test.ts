@@ -1,11 +1,13 @@
 import faker from "@faker-js/faker";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { Collection } from "mongodb";
+import { Collection, ObjectId } from "mongodb";
 import request from "supertest";
 
+import { PrivateRoom } from "@/domain/models";
 import { CollectionNames, MongoHelper } from "@/infra/database/mongodb";
 import { app, env, setupRoutes } from "@/main/config";
+import { httpApp } from "@/main/config/socket";
 
 let usersCollection: Collection;
 let privateRoomCollection: Collection;
@@ -39,6 +41,17 @@ const makeUserTokenAndId = async () => {
     };
 };
 
+const makePrivateRoom = async (
+    participants: [string, string],
+): Promise<PrivateRoom> => {
+    const roomData = {
+        messages: [],
+        participants: participants.map(p => new ObjectId(p)),
+    };
+    await privateRoomCollection.insertOne(roomData);
+    return MongoHelper.map(roomData);
+};
+
 describe("PrivateRoom routes", () => {
     beforeAll(async () => {
         await MongoHelper.connect(process.env.MONGO_URL as string);
@@ -65,6 +78,21 @@ describe("PrivateRoom routes", () => {
                 .post(`/api/private_room/${user2.id}`)
                 .set("x-access-token", user1.token)
                 .send()
+                .expect(200);
+        });
+    });
+
+    describe("POST /api/private_room/:roomId/messages", () => {
+        it("should return 200 on success", async () => {
+            const user1 = await makeUserTokenAndId();
+            const user2 = await makeUserTokenAndId();
+            const privateRoom = await makePrivateRoom([user1.id, user2.id]);
+            await request(httpApp)
+                .post(`/api/private_room/${privateRoom.id}/messages`)
+                .set("x-access-token", user1.token)
+                .send({
+                    content: faker.lorem.paragraph(),
+                })
                 .expect(200);
         });
     });
