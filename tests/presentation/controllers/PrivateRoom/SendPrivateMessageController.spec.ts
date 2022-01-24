@@ -1,10 +1,10 @@
 import faker from "@faker-js/faker";
 
-import { RoomNotFoundError } from "@/domain/errors";
+import { RoomNotFoundError, UserNotInRoomError } from "@/domain/errors";
 import { SendPrivateMessage } from "@/domain/usecases";
 import { SendPrivateMessageController } from "@/presentation/controllers";
 import { ServerError } from "@/presentation/errors";
-import { badRequest, serverError } from "@/presentation/helpers";
+import { badRequest, serverError, unauthorized } from "@/presentation/helpers";
 import { SendPrivateMessageSpy, throwError } from "@/tests/domain/mocks";
 import { ValidationSpy } from "@/tests/validation/mocks";
 
@@ -87,5 +87,12 @@ describe("SendPrivateMessageController", () => {
         sendPrivateMessageSpy.output = new RoomNotFoundError();
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(badRequest(sendPrivateMessageSpy.output));
+    });
+
+    it("should return 401 if SendPrivateMessage returns UserNotInRoomError", async () => {
+        const { sut, sendPrivateMessageSpy } = makeSut();
+        sendPrivateMessageSpy.output = new UserNotInRoomError();
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toEqual(unauthorized());
     });
 });
