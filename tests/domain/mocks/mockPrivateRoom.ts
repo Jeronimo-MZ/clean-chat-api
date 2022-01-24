@@ -64,3 +64,23 @@ export const mockSendPrivateMessageInput = (): SendPrivateMessage.Input => ({
     content: faker.lorem.paragraph(),
     roomId: faker.datatype.uuid(),
 });
+
+export class SendPrivateMessageSpy implements SendPrivateMessage {
+    input: SendPrivateMessage.Input;
+    output: SendPrivateMessage.Output = {
+        roomId: faker.datatype.uuid(),
+        message: {
+            content: faker.lorem.paragraph(),
+            senderId: faker.datatype.uuid(),
+            sentAt: new Date(),
+        },
+    };
+    callsCount = 0;
+    async send(
+        input: SendPrivateMessage.Input,
+    ): Promise<SendPrivateMessage.Output> {
+        this.input = input;
+        this.callsCount++;
+        return this.output;
+    }
+}

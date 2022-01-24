@@ -1,21 +1,27 @@
 import faker from "@faker-js/faker";
 
+import { SendPrivateMessage } from "@/domain/usecases";
 import { SendPrivateMessageController } from "@/presentation/controllers";
 import { ServerError } from "@/presentation/errors";
 import { badRequest, serverError } from "@/presentation/helpers";
-import { throwError } from "@/tests/domain/mocks";
+import { SendPrivateMessageSpy, throwError } from "@/tests/domain/mocks";
 import { ValidationSpy } from "@/tests/validation/mocks";
 
 type SutTypes = {
     sut: SendPrivateMessageController;
     validationSpy: ValidationSpy;
+    sendPrivateMessageSpy: SendPrivateMessageSpy;
 };
 
 const makeSut = (): SutTypes => {
     const validationSpy = new ValidationSpy();
-    const sut = new SendPrivateMessageController(validationSpy);
+    const sendPrivateMessageSpy = new SendPrivateMessageSpy();
+    const sut = new SendPrivateMessageController(
+        validationSpy,
+        sendPrivateMessageSpy,
+    );
 
-    return { sut, validationSpy };
+    return { sut, validationSpy, sendPrivateMessageSpy };
 };
 
 const mockRequest = (): SendPrivateMessageController.Request => ({
@@ -46,5 +52,16 @@ describe("SendPrivateMessageController", () => {
         );
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
+    });
+
+    it("should call SendPrivateMessage with correct value", async () => {
+        const { sut, sendPrivateMessageSpy } = makeSut();
+        const request = mockRequest();
+        await sut.handle(request);
+        expect(sendPrivateMessageSpy.input).toEqual<SendPrivateMessage.Input>({
+            content: request.content,
+            roomId: request.roomId,
+            senderId: request.userId,
+        });
     });
 });
