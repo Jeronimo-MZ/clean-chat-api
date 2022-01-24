@@ -2,7 +2,7 @@ import { ObjectIdValidator } from "@/validation/protocols";
 
 export class ObjectIdValidatorSpy implements ObjectIdValidator {
     input: any;
-    result = false;
+    result = true;
     callsCount = 0;
 
     isValid(input: any): boolean {
