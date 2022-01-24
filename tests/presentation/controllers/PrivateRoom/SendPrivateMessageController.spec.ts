@@ -64,4 +64,11 @@ describe("SendPrivateMessageController", () => {
             senderId: request.userId,
         });
     });
+
+    it("should not call SendPrivateMessage if validation fails", async () => {
+        const { sut, validationSpy, sendPrivateMessageSpy } = makeSut();
+        validationSpy.error = new Error(faker.random.word());
+        await sut.handle(mockRequest());
+        expect(sendPrivateMessageSpy.callsCount).toBe(0);
+    });
 });
