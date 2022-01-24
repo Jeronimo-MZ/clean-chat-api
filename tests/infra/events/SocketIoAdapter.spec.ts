@@ -40,11 +40,7 @@ describe("SocketIoAdapter", () => {
         const { sut, emit } = makeSut();
         const input = makeInput();
         sut.sendMessage(input);
-        expect(emit).toHaveBeenNthCalledWith(
-            1,
-            EventTypes.NEW_MESSAGE,
-            input.message,
-        );
+        expect(emit).toHaveBeenNthCalledWith(1, EventTypes.NEW_MESSAGE, input);
     });
 
     it("should throw if emit() throws", () => {
