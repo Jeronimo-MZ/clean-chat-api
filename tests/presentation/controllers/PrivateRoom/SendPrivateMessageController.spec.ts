@@ -1,5 +1,6 @@
 import faker from "@faker-js/faker";
 
+import { RoomNotFoundError } from "@/domain/errors";
 import { SendPrivateMessage } from "@/domain/usecases";
 import { SendPrivateMessageController } from "@/presentation/controllers";
 import { ServerError } from "@/presentation/errors";
@@ -79,5 +80,12 @@ describe("SendPrivateMessageController", () => {
         );
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
+    });
+
+    it("should return 400 if SendPrivateMessage returns RoomNotFoundError", async () => {
+        const { sut, sendPrivateMessageSpy } = makeSut();
+        sendPrivateMessageSpy.output = new RoomNotFoundError();
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toEqual(badRequest(sendPrivateMessageSpy.output));
     });
 });
