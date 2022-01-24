@@ -1,4 +1,5 @@
 import faker from "@faker-js/faker";
+import mockdate from "mockdate";
 import { Collection, ObjectId } from "mongodb";
 
 import { PrivateRoom, PrivateRoomUser } from "@/domain/models";
@@ -118,6 +119,32 @@ describe("PrivateRoomMongoRepository", () => {
             expect(room).toBeTruthy();
             expect(room?.id).toBe(id);
             expect(room?.participants).toEqual(users.map(user => user.id));
+        });
+    });
+
+    describe("addMessage()", () => {
+        beforeAll(() => mockdate.set(new Date()));
+        afterAll(() => mockdate.reset());
+        it("should return a message on success", async () => {
+            const { sut } = makeSut();
+            const users = await makeUsers();
+            const room = await makePrivateRoom(users);
+            const input = {
+                roomId: room.id,
+                message: {
+                    content: faker.lorem.paragraph(),
+                    senderId: users[0].id,
+                },
+            };
+            const { message } = await sut.addMessage(input);
+            const updatedRoom = await privateRoomCollection.findOne({
+                _id: new ObjectId(room.id),
+            });
+            expect(message).toBeTruthy();
+            expect(message.content).toBe(input.message.content);
+            expect(message.senderId).toBe(input.message.senderId);
+            expect(message.sentAt).toEqual(new Date());
+            expect(updatedRoom?.messages).toEqual([message]);
         });
     });
 });
