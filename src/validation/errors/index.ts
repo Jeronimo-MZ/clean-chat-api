@@ -1,4 +1,5 @@
 export * from "./InvalidIntegerError";
+export * from "./InvalidObjectIdError";
 export * from "./InvalidUsernameError";
 export * from "./MinLengthError";
 export * from "./MinValueError";
