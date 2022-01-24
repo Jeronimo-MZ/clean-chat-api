@@ -30,6 +30,7 @@
         "husky": "^7.0.4",
         "jest": "^27.4.7",
         "lint-staged": "^12.1.7",
+        "mockdate": "^3.0.5",
         "pino-pretty": "^7.3.0",
         "prettier": "^2.5.1",
         "supertest": "^6.2.1",
@@ -58,6 +59,7 @@
         "express-pino-logger": "^7.0.0",
         "jsonwebtoken": "^8.5.1",
         "mongodb": "^4.3.0",
-        "pino": "^7.6.3"
+        "pino": "^7.6.3",
+        "socket.io": "^4.4.1"
     }
 }
