@@ -2,6 +2,7 @@ import faker from "@faker-js/faker";
 import { ObjectId } from "mongodb";
 
 import { ObjectIdValidatorAdapter } from "@/infra/validators/ObjectIdValidatorAdapter";
+import { throwError } from "@/tests/domain/mocks";
 
 jest.mock("mongodb");
 
@@ -31,5 +32,11 @@ describe("ObjectIdValidatorAdapter", () => {
         jest.spyOn(ObjectId, "isValid").mockReturnValueOnce(true);
         const isValid = sut.isValid(faker.random.word());
         expect(isValid).toBe(true);
+    });
+
+    it("should throw if ObjectId.isValid throws", () => {
+        const sut = makeSut();
+        jest.spyOn(ObjectId, "isValid").mockImplementationOnce(throwError);
+        expect(() => sut.isValid(faker.random.word())).toThrowError();
     });
 });
