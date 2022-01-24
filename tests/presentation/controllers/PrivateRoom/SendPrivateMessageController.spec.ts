@@ -71,4 +71,13 @@ describe("SendPrivateMessageController", () => {
         await sut.handle(mockRequest());
         expect(sendPrivateMessageSpy.callsCount).toBe(0);
     });
+
+    it("should return 500 if SendPrivateMessage throws", async () => {
+        const { sut, sendPrivateMessageSpy } = makeSut();
+        jest.spyOn(sendPrivateMessageSpy, "send").mockImplementationOnce(
+            throwError,
+        );
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
+    });
 });
