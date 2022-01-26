@@ -103,4 +103,15 @@ describe("DbLoadPrivateRoomMessages", () => {
         await sut.loadMessages(mockLoadPrivateRoomMessagesInput());
         expect(loadMessagesByPrivateRoomIdRepositorySpy.callsCount).toBe(0);
     });
+
+    it("should throw if LoadMessagesByPrivateRoomIdRepository throws", async () => {
+        const { sut, loadMessagesByPrivateRoomIdRepositorySpy, input } =
+            makeSut();
+        jest.spyOn(
+            loadMessagesByPrivateRoomIdRepositorySpy,
+            "loadMessages",
+        ).mockImplementationOnce(throwError);
+        const promise = sut.loadMessages(input);
+        expect(promise).rejects.toThrow();
+    });
 });
