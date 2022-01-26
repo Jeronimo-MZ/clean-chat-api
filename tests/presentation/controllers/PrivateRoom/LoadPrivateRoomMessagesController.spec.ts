@@ -1,21 +1,27 @@
 import faker from "@faker-js/faker";
 
+import { LoadPrivateRoomMessages } from "@/domain/usecases";
 import { LoadPrivateRoomMessagesController } from "@/presentation/controllers";
 import { ServerError } from "@/presentation/errors";
 import { badRequest, serverError } from "@/presentation/helpers";
-import { throwError } from "@/tests/domain/mocks";
+import { LoadPrivateRoomMessagesSpy, throwError } from "@/tests/domain/mocks";
 import { ValidationSpy } from "@/tests/validation/mocks";
 
 type SutTypes = {
     sut: LoadPrivateRoomMessagesController;
     validationSpy: ValidationSpy;
+    loadPrivateRoomMessagesSpy: LoadPrivateRoomMessagesSpy;
 };
 
 const makeSut = (): SutTypes => {
     const validationSpy = new ValidationSpy();
-    const sut = new LoadPrivateRoomMessagesController(validationSpy);
+    const loadPrivateRoomMessagesSpy = new LoadPrivateRoomMessagesSpy();
+    const sut = new LoadPrivateRoomMessagesController(
+        validationSpy,
+        loadPrivateRoomMessagesSpy,
+    );
 
-    return { sut, validationSpy };
+    return { sut, validationSpy, loadPrivateRoomMessagesSpy };
 };
 
 const mockRequest = (): LoadPrivateRoomMessagesController.Request => ({
@@ -47,5 +53,15 @@ describe("LoadPrivateRoomMessagesController", () => {
         );
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
+    });
+
+    it("should call SendPrivateMessage with correct value", async () => {
+        const { sut, loadPrivateRoomMessagesSpy } = makeSut();
+        const request = mockRequest();
+        await sut.handle(request);
+        expect(
+            loadPrivateRoomMessagesSpy.input,
+        ).toEqual<LoadPrivateRoomMessages.Input>(request);
+        expect(loadPrivateRoomMessagesSpy.callsCount).toBe(1);
     });
 });

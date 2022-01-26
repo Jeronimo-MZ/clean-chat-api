@@ -96,3 +96,29 @@ export const mockLoadPrivateRoomMessagesInput =
         roomId: faker.datatype.uuid(),
         userId: faker.datatype.uuid(),
     });
+
+export class LoadPrivateRoomMessagesSpy implements LoadPrivateRoomMessages {
+    input: LoadPrivateRoomMessages.Input;
+    output: LoadPrivateRoomMessages.Output = {
+        roomId: faker.datatype.uuid(),
+        messages: [
+            {
+                content: faker.lorem.paragraph(),
+                senderId: faker.datatype.uuid(),
+                sentAt: new Date(),
+            },
+        ],
+        page: faker.datatype.number(),
+        pageSize: faker.datatype.number(),
+        totalPages: faker.datatype.number(),
+    };
+    callsCount = 0;
+
+    async loadMessages(
+        input: LoadPrivateRoomMessages.Input,
+    ): Promise<LoadPrivateRoomMessages.Output> {
+        this.input = input;
+        this.callsCount++;
+        return this.output;
+    }
+}
