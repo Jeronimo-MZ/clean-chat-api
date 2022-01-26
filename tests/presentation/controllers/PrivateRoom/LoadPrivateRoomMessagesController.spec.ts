@@ -1,5 +1,6 @@
 import faker from "@faker-js/faker";
 
+import { RoomNotFoundError } from "@/domain/errors";
 import { LoadPrivateRoomMessages } from "@/domain/usecases";
 import { LoadPrivateRoomMessagesController } from "@/presentation/controllers";
 import { ServerError } from "@/presentation/errors";
@@ -80,5 +81,14 @@ describe("LoadPrivateRoomMessagesController", () => {
         ).mockImplementationOnce(throwError);
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
+    });
+
+    it("should return 400 if LoadPrivateRoomMessages returns RoomNotFoundError", async () => {
+        const { sut, loadPrivateRoomMessagesSpy } = makeSut();
+        loadPrivateRoomMessagesSpy.output = new RoomNotFoundError();
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toEqual(
+            badRequest(loadPrivateRoomMessagesSpy.output),
+        );
     });
 });
