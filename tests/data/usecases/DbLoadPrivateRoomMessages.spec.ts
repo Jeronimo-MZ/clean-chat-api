@@ -85,4 +85,16 @@ describe("DbLoadPrivateRoomMessages", () => {
         });
         expect(loadMessagesByPrivateRoomIdRepositorySpy.callsCount).toBe(1);
     });
+
+    it("should not call LoadMessagesByPrivateRoomIdRepository if LoadPrivateRoomByIdRepository returns null", async () => {
+        const {
+            sut,
+            loadPrivateRoomByIdRepositorySpy,
+            loadMessagesByPrivateRoomIdRepositorySpy,
+            input,
+        } = makeSut();
+        loadPrivateRoomByIdRepositorySpy.output = null;
+        await sut.loadMessages(input);
+        expect(loadMessagesByPrivateRoomIdRepositorySpy.callsCount).toBe(0);
+    });
 });
