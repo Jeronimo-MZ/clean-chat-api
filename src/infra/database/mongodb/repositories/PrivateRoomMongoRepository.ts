@@ -3,22 +3,19 @@ import { ObjectId } from "mongodb";
 import {
     AddPrivateMessageRepository,
     AddPrivateRoomRepository,
+    LoadMessagesByPrivateRoomIdRepository,
     LoadPrivateRoomByIdRepository,
 } from "@/data/protocols/database";
 import { PrivateRoom, User } from "@/domain/models";
 import { CollectionNames, MongoHelper } from "@/infra/database/mongodb";
-import { AddPrivateMessageRepositorySpy } from "@/tests/data/mocks/mockDbPrivateRoom";
 
 export class PrivateRoomMongoRepository
     implements
         AddPrivateRoomRepository,
         LoadPrivateRoomByIdRepository,
-        AddPrivateMessageRepositorySpy
+        AddPrivateMessageRepository,
+        LoadMessagesByPrivateRoomIdRepository
 {
-    input: AddPrivateMessageRepository.Input;
-    output: AddPrivateMessageRepository.Output;
-    callsCount: number;
-
     async add(participantsIds: [string, string]): Promise<PrivateRoom> {
         const PrivateRoomCollection = await MongoHelper.getCollection(
             CollectionNames.PRIVATE_ROOM,
@@ -108,5 +105,55 @@ export class PrivateRoomMongoRepository
         );
 
         return { message };
+    }
+
+    async loadMessages({
+        roomId,
+        page,
+        pageSize,
+    }: LoadMessagesByPrivateRoomIdRepository.Input): Promise<LoadMessagesByPrivateRoomIdRepository.Output> {
+        const privateRoomCollection = await MongoHelper.getCollection(
+            CollectionNames.PRIVATE_ROOM,
+        );
+        const skip = page * pageSize - pageSize;
+        const aggregation = privateRoomCollection.aggregate([
+            { $match: { _id: new ObjectId(roomId) } },
+            { $limit: 1 },
+            {
+                $project: {
+                    messages: 1,
+                    _id: 1,
+                    count: { $size: "$messages" },
+                },
+            },
+            { $unwind: "$messages" },
+            { $sort: { "messages.sentAt": -1 } },
+            { $skip: skip },
+            { $limit: pageSize },
+            {
+                $group: {
+                    _id: "$_id",
+                    messages: { $push: "$messages" },
+                    count: { $sum: "$count" },
+                },
+            },
+            {
+                $project: {
+                    messages: 1,
+                    _id: 0,
+                    count: 1,
+                },
+            },
+        ]);
+        const result = await aggregation.toArray();
+        if (result.length <= 0)
+            return { page, pageSize, messages: [], totalPages: 0 };
+        const { messages, count } = result[0];
+        return {
+            page,
+            pageSize,
+            messages,
+            totalPages: count / messages.length / pageSize,
+        };
     }
 }
