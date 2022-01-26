@@ -1,7 +1,6 @@
 import faker from "@faker-js/faker";
 
 import { RoomNotFoundError, UserNotInRoomError } from "@/domain/errors";
-import { LoadPrivateRoomMessages } from "@/domain/usecases";
 import { LoadPrivateRoomMessagesController } from "@/presentation/controllers";
 import { ServerError } from "@/presentation/errors";
 import { badRequest, serverError, unauthorized } from "@/presentation/helpers";
@@ -60,9 +59,7 @@ describe("LoadPrivateRoomMessagesController", () => {
         const { sut, loadPrivateRoomMessagesSpy } = makeSut();
         const request = mockRequest();
         await sut.handle(request);
-        expect(
-            loadPrivateRoomMessagesSpy.input,
-        ).toEqual<LoadPrivateRoomMessages.Input>(request);
+        expect(loadPrivateRoomMessagesSpy.input).toEqual(request);
         expect(loadPrivateRoomMessagesSpy.callsCount).toBe(1);
     });
 
@@ -97,5 +94,18 @@ describe("LoadPrivateRoomMessagesController", () => {
         loadPrivateRoomMessagesSpy.output = new UserNotInRoomError();
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(unauthorized());
+    });
+
+    it("should fill page and pageSize if they are missing", async () => {
+        const { sut, loadPrivateRoomMessagesSpy } = makeSut();
+        const [roomId, userId] = [0, 0].map(() => faker.datatype.uuid());
+        await sut.handle({ roomId, userId });
+        expect(loadPrivateRoomMessagesSpy.input).toEqual({
+            roomId,
+            userId,
+            page: 1,
+            pageSize: 10,
+        });
+        expect(loadPrivateRoomMessagesSpy.callsCount).toBe(1);
     });
 });
