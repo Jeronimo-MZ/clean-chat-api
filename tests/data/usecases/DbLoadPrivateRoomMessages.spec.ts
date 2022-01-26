@@ -1,3 +1,4 @@
+import { LoadMessagesByPrivateRoomIdRepository } from "@/data/protocols/database";
 import { DbLoadPrivateRoomMessages } from "@/data/usecases";
 import { RoomNotFoundError, UserNotInRoomError } from "@/domain/errors";
 import { LoadPrivateRoomMessages } from "@/domain/usecases";
@@ -7,20 +8,35 @@ import {
     throwError,
 } from "@/tests/domain/mocks";
 
+import { LoadMessagesByPrivateRoomIdRepositorySpy } from "../mocks/mockDbPrivateRoom";
+
 type SutTypes = {
     sut: DbLoadPrivateRoomMessages;
     loadPrivateRoomByIdRepositorySpy: LoadPrivateRoomByIdRepositorySpy;
     input: LoadPrivateRoomMessages.Input;
+    loadMessagesByPrivateRoomIdRepositorySpy: LoadMessagesByPrivateRoomIdRepositorySpy;
 };
 
 const makeSut = (): SutTypes => {
     const loadPrivateRoomByIdRepositorySpy =
         new LoadPrivateRoomByIdRepositorySpy();
+    const loadMessagesByPrivateRoomIdRepositorySpy =
+        new LoadMessagesByPrivateRoomIdRepositorySpy();
     const input = mockLoadPrivateRoomMessagesInput();
+    input.userId = loadPrivateRoomByIdRepositorySpy.output
+        ?.participants[0] as string;
 
-    const sut = new DbLoadPrivateRoomMessages(loadPrivateRoomByIdRepositorySpy);
+    const sut = new DbLoadPrivateRoomMessages(
+        loadPrivateRoomByIdRepositorySpy,
+        loadMessagesByPrivateRoomIdRepositorySpy,
+    );
 
-    return { sut, loadPrivateRoomByIdRepositorySpy, input };
+    return {
+        sut,
+        loadPrivateRoomByIdRepositorySpy,
+        input,
+        loadMessagesByPrivateRoomIdRepositorySpy,
+    };
 };
 
 describe("DbLoadPrivateRoomMessages", () => {
@@ -54,5 +70,19 @@ describe("DbLoadPrivateRoomMessages", () => {
         ).mockImplementationOnce(throwError);
         const promise = sut.loadMessages(input);
         expect(promise).rejects.toThrow();
+    });
+
+    it("should call LoadMessagesByPrivateRoomIdRepository with correct values", async () => {
+        const { sut, loadMessagesByPrivateRoomIdRepositorySpy, input } =
+            makeSut();
+        await sut.loadMessages(input);
+        expect(
+            loadMessagesByPrivateRoomIdRepositorySpy.input,
+        ).toEqual<LoadMessagesByPrivateRoomIdRepository.Input>({
+            page: input.page,
+            pageSize: input.pageSize,
+            roomId: input.roomId,
+        });
+        expect(loadMessagesByPrivateRoomIdRepositorySpy.callsCount).toBe(1);
     });
 });

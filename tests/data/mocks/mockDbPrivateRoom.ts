@@ -4,6 +4,7 @@ import {
     AddPrivateMessageRepository,
     AddPrivateRoomRepository,
 } from "@/data/protocols/database";
+import { LoadMessagesByPrivateRoomIdRepository } from "@/data/protocols/database/LoadMessagesByPrivateRoomIdRepository";
 import { SendMessage } from "@/data/protocols/event";
 import { PrivateRoom } from "@/domain/models";
 import { mockPrivateRoomModel } from "@/tests/domain/mocks";
@@ -46,5 +47,36 @@ export class SendMessageMock implements SendMessage {
     sendMessage(input: SendMessage.Input): void {
         this.input = input;
         this.callsCount++;
+    }
+}
+
+export class LoadMessagesByPrivateRoomIdRepositorySpy
+    implements LoadMessagesByPrivateRoomIdRepository
+{
+    input: LoadMessagesByPrivateRoomIdRepository.Input;
+    output: LoadMessagesByPrivateRoomIdRepository.Output = {
+        page: 1,
+        pageSize: 2,
+        totalPages: 1,
+        messages: [
+            {
+                senderId: faker.datatype.uuid(),
+                content: faker.lorem.paragraph(),
+                sentAt: faker.datatype.datetime(),
+            },
+            {
+                senderId: faker.datatype.uuid(),
+                content: faker.lorem.paragraph(),
+                sentAt: faker.datatype.datetime(),
+            },
+        ],
+    };
+    callsCount = 0;
+    async loadMessages(
+        input: LoadMessagesByPrivateRoomIdRepository.Input,
+    ): Promise<LoadMessagesByPrivateRoomIdRepository.Output> {
+        this.input = input;
+        this.callsCount++;
+        return this.output;
     }
 }
