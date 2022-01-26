@@ -55,7 +55,7 @@ describe("LoadPrivateRoomMessagesController", () => {
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
     });
 
-    it("should call SendPrivateMessage with correct value", async () => {
+    it("should call LoadPrivateRoomMessages with correct value", async () => {
         const { sut, loadPrivateRoomMessagesSpy } = makeSut();
         const request = mockRequest();
         await sut.handle(request);
@@ -63,5 +63,12 @@ describe("LoadPrivateRoomMessagesController", () => {
             loadPrivateRoomMessagesSpy.input,
         ).toEqual<LoadPrivateRoomMessages.Input>(request);
         expect(loadPrivateRoomMessagesSpy.callsCount).toBe(1);
+    });
+
+    it("should not call LoadPrivateRoomMessages if validation fails", async () => {
+        const { sut, validationSpy, loadPrivateRoomMessagesSpy } = makeSut();
+        validationSpy.error = new Error(faker.random.word());
+        await sut.handle(mockRequest());
+        expect(loadPrivateRoomMessagesSpy.callsCount).toBe(0);
     });
 });
