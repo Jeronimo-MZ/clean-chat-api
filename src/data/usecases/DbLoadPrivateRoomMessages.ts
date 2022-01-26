@@ -1,4 +1,5 @@
 import { LoadPrivateRoomByIdRepository } from "@/data/protocols/database";
+import { RoomNotFoundError } from "@/domain/errors";
 import { LoadPrivateRoomMessages } from "@/domain/usecases";
 
 export class DbLoadPrivateRoomMessages implements LoadPrivateRoomMessages {
@@ -10,6 +11,6 @@ export class DbLoadPrivateRoomMessages implements LoadPrivateRoomMessages {
         roomId,
     }: LoadPrivateRoomMessages.Input): Promise<LoadPrivateRoomMessages.Output> {
         this.loadPrivateRoomByIdRepository.loadById(roomId);
-        return undefined as any;
+        return new RoomNotFoundError();
     }
 }
