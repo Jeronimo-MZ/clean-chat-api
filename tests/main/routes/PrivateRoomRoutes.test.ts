@@ -96,4 +96,50 @@ describe("PrivateRoom routes", () => {
                 .expect(200);
         });
     });
+
+    describe("GET /api/private_room/:roomId/messages", () => {
+        const makeMessages = (users: [string, string]) => [
+            {
+                content: faker.lorem.paragraph(),
+                sentAt: faker.datatype.datetime(),
+                senderId: new ObjectId(users[0]),
+            },
+            {
+                content: faker.lorem.paragraph(),
+                sentAt: faker.datatype.datetime(),
+                senderId: new ObjectId(users[1]),
+            },
+            {
+                content: faker.lorem.paragraph(),
+                sentAt: faker.datatype.datetime(),
+                senderId: new ObjectId(users[1]),
+            },
+            {
+                content: faker.lorem.paragraph(),
+                sentAt: faker.datatype.datetime(),
+                senderId: new ObjectId(users[0]),
+            },
+        ];
+        it("should return 200 on success", async () => {
+            const user1 = await makeUserTokenAndId();
+            const user2 = await makeUserTokenAndId();
+            const privateRoom = await makePrivateRoom([user1.id, user2.id]);
+            await privateRoomCollection.updateOne(
+                { _id: new ObjectId(privateRoom.id) },
+                {
+                    $push: {
+                        messages: { $each: makeMessages([user1.id, user2.id]) },
+                    },
+                },
+            );
+            await request(httpApp)
+                .get(`/api/private_room/${privateRoom.id}/messages`)
+                .set("x-access-token", user1.token)
+                .send({
+                    page: 1,
+                    pageSize: 2,
+                })
+                .expect(200);
+        });
+    });
 });
