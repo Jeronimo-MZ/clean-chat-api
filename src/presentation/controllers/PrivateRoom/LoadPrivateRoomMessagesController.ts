@@ -1,6 +1,11 @@
 import { RoomNotFoundError, UserNotInRoomError } from "@/domain/errors";
 import { LoadPrivateRoomMessages } from "@/domain/usecases";
-import { badRequest, serverError, unauthorized } from "@/presentation/helpers";
+import {
+    badRequest,
+    ok,
+    serverError,
+    unauthorized,
+} from "@/presentation/helpers";
 import { Controller, HttpResponse } from "@/presentation/protocols";
 import { Validation } from "@/validation/protocols";
 
@@ -38,8 +43,7 @@ export class LoadPrivateRoomMessagesController
             if (resultOrError instanceof UserNotInRoomError) {
                 return unauthorized();
             }
-
-            return undefined as any;
+            return ok(resultOrError);
         } catch (error) {
             return serverError(error as Error);
         }
