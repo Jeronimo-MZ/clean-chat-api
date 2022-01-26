@@ -4,6 +4,7 @@ import { LoadPrivateRoomMessages } from "@/domain/usecases";
 import {
     LoadPrivateRoomByIdRepositorySpy,
     mockLoadPrivateRoomMessagesInput,
+    throwError,
 } from "@/tests/domain/mocks";
 
 type SutTypes = {
@@ -43,5 +44,15 @@ describe("DbLoadPrivateRoomMessages", () => {
             mockLoadPrivateRoomMessagesInput(),
         );
         expect(output).toEqual(new UserNotInRoomError());
+    });
+
+    it("should throw if LoadPrivateRoomByIdRepository throws", async () => {
+        const { sut, loadPrivateRoomByIdRepositorySpy, input } = makeSut();
+        jest.spyOn(
+            loadPrivateRoomByIdRepositorySpy,
+            "loadById",
+        ).mockImplementationOnce(throwError);
+        const promise = sut.loadMessages(input);
+        expect(promise).rejects.toThrow();
     });
 });
