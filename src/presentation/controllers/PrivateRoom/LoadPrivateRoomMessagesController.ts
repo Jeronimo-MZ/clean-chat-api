@@ -19,10 +19,19 @@ export class LoadPrivateRoomMessagesController
         request: LoadPrivateRoomMessagesController.Request,
     ): Promise<HttpResponse<LoadPrivateRoomMessagesController.Response>> {
         try {
+            request.page = request.page ? Number(request.page) : 1;
+            request.pageSize = request.pageSize ? Number(request.pageSize) : 10;
             const error = this.validation.validate(request);
             if (error) return badRequest(error);
+
+            const { roomId, userId, page, pageSize } = request;
             const resultOrError =
-                await this.loadPrivateRoomMessages.loadMessages(request);
+                await this.loadPrivateRoomMessages.loadMessages({
+                    page,
+                    pageSize,
+                    roomId,
+                    userId,
+                });
             if (resultOrError instanceof RoomNotFoundError) {
                 return badRequest(resultOrError);
             }
@@ -41,8 +50,8 @@ export namespace LoadPrivateRoomMessagesController {
     export type Request = {
         userId: string;
         roomId: string;
-        page: number;
-        pageSize: number;
+        page?: number;
+        pageSize?: number;
     };
 
     export type Response = {
