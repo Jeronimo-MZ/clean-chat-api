@@ -3,7 +3,12 @@ import faker from "@faker-js/faker";
 import { RoomNotFoundError, UserNotInRoomError } from "@/domain/errors";
 import { LoadPrivateRoomMessagesController } from "@/presentation/controllers";
 import { ServerError } from "@/presentation/errors";
-import { badRequest, serverError, unauthorized } from "@/presentation/helpers";
+import {
+    badRequest,
+    ok,
+    serverError,
+    unauthorized,
+} from "@/presentation/helpers";
 import { LoadPrivateRoomMessagesSpy, throwError } from "@/tests/domain/mocks";
 import { ValidationSpy } from "@/tests/validation/mocks";
 
@@ -107,5 +112,11 @@ describe("LoadPrivateRoomMessagesController", () => {
             pageSize: 10,
         });
         expect(loadPrivateRoomMessagesSpy.callsCount).toBe(1);
+    });
+
+    it("should return 200 if valid data is provided", async () => {
+        const { sut, loadPrivateRoomMessagesSpy } = makeSut();
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toEqual(ok(loadPrivateRoomMessagesSpy.output));
     });
 });
