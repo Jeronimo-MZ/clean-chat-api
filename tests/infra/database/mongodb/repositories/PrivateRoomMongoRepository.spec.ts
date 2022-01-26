@@ -2,7 +2,12 @@ import faker from "@faker-js/faker";
 import mockdate from "mockdate";
 import { Collection, ObjectId } from "mongodb";
 
-import { PrivateRoom, PrivateRoomUser } from "@/domain/models";
+import { LoadMessagesByPrivateRoomIdRepository } from "@/data/protocols/database";
+import {
+    PrivateRoom,
+    PrivateRoomMessage,
+    PrivateRoomUser,
+} from "@/domain/models";
 import {
     CollectionNames,
     MongoHelper,
@@ -145,6 +150,133 @@ describe("PrivateRoomMongoRepository", () => {
             expect(message.senderId).toBe(input.message.senderId);
             expect(message.sentAt).toEqual(new Date());
             expect(updatedRoom?.messages).toEqual([message]);
+        });
+    });
+
+    describe("loadMessages()", () => {
+        const makeMessages = (
+            users: [PrivateRoomUser, PrivateRoomUser],
+        ): PrivateRoomMessage[] => [
+            {
+                content: faker.lorem.paragraph(),
+                sentAt: new Date(1002),
+                senderId: users[0].id,
+            },
+            {
+                content: faker.lorem.paragraph(),
+                sentAt: new Date(1004),
+                senderId: users[1].id,
+            },
+            {
+                content: faker.lorem.paragraph(),
+                sentAt: new Date(1001),
+                senderId: users[1].id,
+            },
+            {
+                content: faker.lorem.paragraph(),
+                sentAt: new Date(1003),
+                senderId: users[0].id,
+            },
+        ];
+        it("should return first page values", async () => {
+            const { sut } = makeSut();
+            const users = [await makeUser(), await makeUser()] as [
+                PrivateRoomUser,
+                PrivateRoomUser,
+            ];
+            const room = await makePrivateRoom(users);
+            const messages = makeMessages(users);
+            await privateRoomCollection.updateOne(
+                { _id: new ObjectId(room.id) },
+                { $push: { messages: { $each: messages } } },
+            );
+            const result = await sut.loadMessages({
+                page: 1,
+                pageSize: 2,
+                roomId: room.id,
+            });
+
+            expect(result).toBeTruthy();
+            expect(
+                result,
+            ).toStrictEqual<LoadMessagesByPrivateRoomIdRepository.Output>({
+                page: 1,
+                pageSize: 2,
+                totalPages: 2,
+                messages: [messages[1], messages[3]],
+            });
+        });
+
+        it("should return second page values", async () => {
+            const { sut } = makeSut();
+            const users = [await makeUser(), await makeUser()] as [
+                PrivateRoomUser,
+                PrivateRoomUser,
+            ];
+            const room = await makePrivateRoom(users);
+            const messages = makeMessages(users);
+            await privateRoomCollection.updateOne(
+                { _id: new ObjectId(room.id) },
+                { $push: { messages: { $each: messages } } },
+            );
+            const result = await sut.loadMessages({
+                page: 2,
+                pageSize: 2,
+                roomId: room.id,
+            });
+
+            expect(result).toBeTruthy();
+            expect(
+                result,
+            ).toStrictEqual<LoadMessagesByPrivateRoomIdRepository.Output>({
+                page: 2,
+                pageSize: 2,
+                totalPages: 2,
+                messages: [messages[0], messages[2]],
+            });
+        });
+
+        it("should return empty values if room does not exist", async () => {
+            const { sut } = makeSut();
+            const result = await sut.loadMessages({
+                page: 1,
+                pageSize: 2,
+                roomId: new ObjectId().toString(),
+            });
+
+            expect(result).toBeTruthy();
+            expect(
+                result,
+            ).toStrictEqual<LoadMessagesByPrivateRoomIdRepository.Output>({
+                page: 1,
+                pageSize: 2,
+                totalPages: 0,
+                messages: [],
+            });
+        });
+
+        it("should return empty values if room has no messages", async () => {
+            const { sut } = makeSut();
+            const users = [await makeUser(), await makeUser()] as [
+                PrivateRoomUser,
+                PrivateRoomUser,
+            ];
+            const room = await makePrivateRoom(users);
+            const result = await sut.loadMessages({
+                page: 1,
+                pageSize: 2,
+                roomId: room.id,
+            });
+
+            expect(result).toBeTruthy();
+            expect(
+                result,
+            ).toStrictEqual<LoadMessagesByPrivateRoomIdRepository.Output>({
+                page: 1,
+                pageSize: 2,
+                totalPages: 0,
+                messages: [],
+            });
         });
     });
 });
