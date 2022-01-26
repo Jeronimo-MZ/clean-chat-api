@@ -97,4 +97,10 @@ describe("DbLoadPrivateRoomMessages", () => {
         await sut.loadMessages(input);
         expect(loadMessagesByPrivateRoomIdRepositorySpy.callsCount).toBe(0);
     });
+
+    it("should not call LoadMessagesByPrivateRoomIdRepository if user is not in room", async () => {
+        const { sut, loadMessagesByPrivateRoomIdRepositorySpy } = makeSut();
+        await sut.loadMessages(mockLoadPrivateRoomMessagesInput());
+        expect(loadMessagesByPrivateRoomIdRepositorySpy.callsCount).toBe(0);
+    });
 });
