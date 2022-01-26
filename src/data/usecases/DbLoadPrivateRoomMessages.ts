@@ -19,13 +19,20 @@ export class DbLoadPrivateRoomMessages implements LoadPrivateRoomMessages {
     }: LoadPrivateRoomMessages.Input): Promise<LoadPrivateRoomMessages.Output> {
         const room = await this.loadPrivateRoomByIdRepository.loadById(roomId);
         if (!room) return new RoomNotFoundError();
-        if (room.participants.includes(userId)) {
+        if (!room.participants.includes(userId))
+            return new UserNotInRoomError();
+        const result =
             await this.loadMessagesByPrivateRoomIdRepository.loadMessages({
                 page,
                 pageSize,
                 roomId,
             });
-        }
-        return new UserNotInRoomError();
+        return {
+            page: result.page,
+            pageSize: result.pageSize,
+            messages: result.messages,
+            totalPages: result.totalPages,
+            roomId,
+        };
     }
 }
