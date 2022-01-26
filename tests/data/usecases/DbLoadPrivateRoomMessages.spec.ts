@@ -114,4 +114,18 @@ describe("DbLoadPrivateRoomMessages", () => {
         const promise = sut.loadMessages(input);
         expect(promise).rejects.toThrow();
     });
+
+    it("should return correct values on success", async () => {
+        const { sut, input, loadMessagesByPrivateRoomIdRepositorySpy } =
+            makeSut();
+        const message = await sut.loadMessages(input);
+        expect(message).toEqual<LoadPrivateRoomMessages.Output>({
+            roomId: input.roomId,
+            messages: loadMessagesByPrivateRoomIdRepositorySpy.output.messages,
+            page: loadMessagesByPrivateRoomIdRepositorySpy.output.page,
+            pageSize: loadMessagesByPrivateRoomIdRepositorySpy.output.pageSize,
+            totalPages:
+                loadMessagesByPrivateRoomIdRepositorySpy.output.totalPages,
+        });
+    });
 });
