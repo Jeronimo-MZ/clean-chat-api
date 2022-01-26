@@ -71,4 +71,14 @@ describe("LoadPrivateRoomMessagesController", () => {
         await sut.handle(mockRequest());
         expect(loadPrivateRoomMessagesSpy.callsCount).toBe(0);
     });
+
+    it("should return 500 if LoadPrivateRoomMessages throws", async () => {
+        const { sut, loadPrivateRoomMessagesSpy } = makeSut();
+        jest.spyOn(
+            loadPrivateRoomMessagesSpy,
+            "loadMessages",
+        ).mockImplementationOnce(throwError);
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
+    });
 });
