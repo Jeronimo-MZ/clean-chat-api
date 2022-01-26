@@ -2,7 +2,11 @@ import faker from "@faker-js/faker";
 
 import { LoadPrivateRoomByIdRepository } from "@/data/protocols/database";
 import { PrivateRoom } from "@/domain/models";
-import { AddPrivateRoom, SendPrivateMessage } from "@/domain/usecases";
+import {
+    AddPrivateRoom,
+    LoadPrivateRoomMessages,
+    SendPrivateMessage,
+} from "@/domain/usecases";
 
 export const mockAddPrivateRoomInput = (): AddPrivateRoom.Input => ({
     currentUserId: faker.datatype.uuid(),
@@ -84,3 +88,11 @@ export class SendPrivateMessageSpy implements SendPrivateMessage {
         return this.output;
     }
 }
+
+export const mockLoadPrivateRoomMessagesInput =
+    (): LoadPrivateRoomMessages.Input => ({
+        page: faker.datatype.number(),
+        pageSize: faker.datatype.number(),
+        roomId: faker.datatype.uuid(),
+        userId: faker.datatype.uuid(),
+    });
