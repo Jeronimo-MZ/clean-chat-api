@@ -1,5 +1,5 @@
 import { LoadPrivateRoomByIdRepository } from "@/data/protocols/database";
-import { RoomNotFoundError } from "@/domain/errors";
+import { RoomNotFoundError, UserNotInRoomError } from "@/domain/errors";
 import { LoadPrivateRoomMessages } from "@/domain/usecases";
 
 export class DbLoadPrivateRoomMessages implements LoadPrivateRoomMessages {
@@ -10,7 +10,8 @@ export class DbLoadPrivateRoomMessages implements LoadPrivateRoomMessages {
     async loadMessages({
         roomId,
     }: LoadPrivateRoomMessages.Input): Promise<LoadPrivateRoomMessages.Output> {
-        this.loadPrivateRoomByIdRepository.loadById(roomId);
-        return new RoomNotFoundError();
+        const room = await this.loadPrivateRoomByIdRepository.loadById(roomId);
+        if (!room) return new RoomNotFoundError();
+        return new UserNotInRoomError();
     }
 }
