@@ -5,3 +5,4 @@ export * from "./DbLoadPrivateRoomMessages";
 export * from "./DbLoadUserByToken";
 export * from "./DbSearchUsersByUsername";
 export * from "./DbSendPrivateMessage";
+export * from "./DbUpdateUserAvatar";
