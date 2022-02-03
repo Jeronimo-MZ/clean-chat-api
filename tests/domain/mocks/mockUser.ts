@@ -6,6 +6,7 @@ import {
     Authentication,
     LoadUserByToken,
     SearchUsersByUsername,
+    UpdateUserAvatar,
 } from "@/domain/usecases";
 
 export const mockAddUserInput = (): AddUser.Input => ({
@@ -97,3 +98,11 @@ export class SearchUsersByUsernameSpy implements SearchUsersByUsername {
         return this.output;
     }
 }
+
+export const mockUpdateUserAvatarInput = (): UpdateUserAvatar.Input => ({
+    userId: faker.datatype.uuid(),
+    file: {
+        buffer: Buffer.from(faker.datatype.string()),
+        mimeType: "image/jpeg",
+    },
+});
