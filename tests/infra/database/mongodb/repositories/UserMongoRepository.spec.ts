@@ -248,4 +248,24 @@ describe("UserMongoRepository", () => {
             });
         });
     });
+
+    describe("updateAvatar()", () => {
+        it("should update the user avatar on success", async () => {
+            const sut = makeSut();
+            const { insertedId } = await usersCollection.insertOne(
+                mockAddUserInput(),
+            );
+
+            const avatar = faker.internet.avatar();
+            await sut.updateAvatar({
+                userId: insertedId.toHexString(),
+                avatar,
+            });
+            const user = (await usersCollection.findOne({
+                _id: insertedId,
+            })) as unknown as User;
+            expect(user).toBeTruthy();
+            expect(user.avatar).toBe(avatar);
+        });
+    });
 });
