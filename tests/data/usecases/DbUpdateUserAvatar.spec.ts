@@ -57,4 +57,11 @@ describe("DbUpdateUserAvatar", () => {
         await sut.update(mockUpdateUserAvatarInput());
         expect(uuidGeneratorStub.callsCount).toBe(1);
     });
+
+    it("should not call UUIDGenerator if LoadUserByIdRepository returns null", async () => {
+        const { sut, uuidGeneratorStub, loadUserByIdRepositorySpy } = makeSut();
+        loadUserByIdRepositorySpy.result = null;
+        await sut.update(mockUpdateUserAvatarInput());
+        expect(uuidGeneratorStub.callsCount).toBe(0);
+    });
 });
