@@ -62,5 +62,12 @@ describe("DiskStorage", () => {
                 path.resolve(staticFilesDirectory, fileName),
             );
         });
+
+        it("should throw if unlink throws", async () => {
+            const { sut } = makeSut();
+            jest.mocked(unlink).mockImplementationOnce(throwError);
+            const promise = sut.delete({ fileName });
+            await expect(promise).rejects.toThrow();
+        });
     });
 });
