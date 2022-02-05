@@ -11,8 +11,8 @@ export class DbUpdateUserAvatar implements UpdateUserAvatar {
     async update({
         userId,
     }: UpdateUserAvatar.Input): Promise<UpdateUserAvatar.Output> {
-        await this.loadUserByIdRepository.loadById(userId);
-        this.uuidGenerator.generate();
+        const user = await this.loadUserByIdRepository.loadById(userId);
+        if (user) this.uuidGenerator.generate();
         return new UserNotFoundError();
     }
 }
