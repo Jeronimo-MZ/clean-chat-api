@@ -39,4 +39,10 @@ describe("DbLoadUserRoomIds", () => {
         const promise = sut.load({ userId });
         await expect(promise).rejects.toThrow();
     });
+
+    it("should return correct values on success", async () => {
+        const { sut, loadUserPrivateRoomIdsRepositorySpy } = makeSut();
+        const { roomIds } = await sut.load({ userId });
+        expect(roomIds).toEqual(loadUserPrivateRoomIdsRepositorySpy.output);
+    });
 });
