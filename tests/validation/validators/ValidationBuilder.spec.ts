@@ -1,12 +1,13 @@
 import faker from "@faker-js/faker";
 
-import { ObjectIdValidatorSpy } from "@/tests/validation/mocks";
+import { ObjectIdValidatorSpy, ValidationSpy } from "@/tests/validation/mocks";
 import {
     CompareFieldsValidation,
     IntegerValidation,
     MinLengthValidation,
     MinValueValidation,
     ObjectIdValidation,
+    ObjectValidation,
     RequiredFieldValidation,
     UsernameValidation,
     ValidationBuilder as sut,
@@ -68,6 +69,15 @@ describe("ValidationBuilder", () => {
             .build();
         expect(validations).toEqual([
             new ObjectIdValidation(field, objectIdValidator),
+        ]);
+    });
+
+    it("should return ObjectValidation", () => {
+        const field = faker.database.column();
+        const objectValidations = [new ValidationSpy(), new ValidationSpy()];
+        const validations = sut.field(field).object(objectValidations).build();
+        expect(validations).toEqual([
+            new ObjectValidation(field, objectValidations),
         ]);
     });
 
