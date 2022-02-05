@@ -8,6 +8,7 @@ import { CompareFieldsValidation } from "./CompareFieldsValidation";
 import { IntegerValidation } from "./IntegerValidation";
 import { MinValueValidation } from "./MinValueValidation";
 import { ObjectIdValidation } from "./ObjectIdValidation";
+import { ObjectValidation } from "./ObjectValidation";
 import { UsernameValidation } from "./UsernameValidation";
 
 export class ValidationBuilder {
@@ -51,6 +52,13 @@ export class ValidationBuilder {
     objectId(objectIdValidator: ObjectIdValidator): ValidationBuilder {
         this.validations.push(
             new ObjectIdValidation(this.fieldName, objectIdValidator),
+        );
+        return this;
+    }
+
+    object(validations: Validation[]): ValidationBuilder {
+        this.validations.push(
+            new ObjectValidation(this.fieldName, validations),
         );
         return this;
     }
