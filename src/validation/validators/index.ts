@@ -3,6 +3,7 @@ export * from "./IntegerValidation";
 export * from "./MinLengthValidation";
 export * from "./MinValueValidation";
 export * from "./ObjectIdValidation";
+export * from "./ObjectValidation";
 export * from "./RequiredFieldValidation";
 export * from "./UsernameValidation";
 export * from "./ValidationBuilder";
