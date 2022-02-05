@@ -1,5 +1,6 @@
 import faker from "@faker-js/faker";
 
+import { InvalidBufferError } from "@/validation/errors/InvalidBufferError";
 import { MaxFileSizeValidation } from "@/validation/validators";
 
 type SutTypes = {
@@ -42,5 +43,11 @@ describe("MaxFileSize Validation", () => {
         const { sut } = makeSut();
         const error = sut.validate({});
         expect(error).toBeNull();
+    });
+
+    it("should return InvalidBufferError if field is not a Buffer", () => {
+        const { sut } = makeSut();
+        const error = sut.validate({ [field]: faker.datatype.number() });
+        expect(error).toEqual(new InvalidBufferError(field));
     });
 });
