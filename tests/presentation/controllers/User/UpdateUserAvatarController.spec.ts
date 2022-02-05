@@ -54,7 +54,7 @@ describe("UpdateUserAvatarController", () => {
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
     });
 
-    it("should calls UpdateUserAvatar with correct values", async () => {
+    it("should call UpdateUserAvatar with correct values", async () => {
         const { sut, updateUserAvatarSpy } = makeSut();
         const request = mockRequest();
         await sut.handle(request);
@@ -64,5 +64,12 @@ describe("UpdateUserAvatarController", () => {
         });
         expect(updateUserAvatarSpy.userId).toBe(request.userId);
         expect(updateUserAvatarSpy.callsCount).toBe(1);
+    });
+
+    it("should not call UpdateUserAvatar if validation fails", async () => {
+        const { sut, updateUserAvatarSpy, validationSpy } = makeSut();
+        validationSpy.error = new Error(faker.random.word());
+        await sut.handle(mockRequest());
+        expect(updateUserAvatarSpy.callsCount).toBe(0);
     });
 });
