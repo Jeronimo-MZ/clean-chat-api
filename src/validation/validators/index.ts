@@ -1,5 +1,6 @@
 export * from "./CompareFieldsValidation";
 export * from "./IntegerValidation";
+export * from "./MaxFileSizeValidation";
 export * from "./MinLengthValidation";
 export * from "./MinValueValidation";
 export * from "./ObjectIdValidation";
