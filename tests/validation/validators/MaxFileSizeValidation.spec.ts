@@ -1,5 +1,6 @@
 import faker from "@faker-js/faker";
 
+import { MaxFileSizeError } from "@/validation/errors";
 import { InvalidBufferError } from "@/validation/errors/InvalidBufferError";
 import { MaxFileSizeValidation } from "@/validation/validators";
 
@@ -49,5 +50,14 @@ describe("MaxFileSize Validation", () => {
         const { sut } = makeSut();
         const error = sut.validate({ [field]: faker.datatype.number() });
         expect(error).toEqual(new InvalidBufferError(field));
+    });
+
+    it("should return MaxFileSizeError if size is greater than maxFileSize", () => {
+        const { sut } = makeSut();
+        const buffer = Buffer.from(
+            new ArrayBuffer(convertMbToBytes(maxSizeInMb + 1)),
+        );
+        const error = sut.validate({ [field]: buffer });
+        expect(error).toEqual(new MaxFileSizeError(field, maxSizeInMb));
     });
 });
