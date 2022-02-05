@@ -16,6 +16,7 @@
         "@types/faker": "^5.5.9",
         "@types/jest": "^27.4.0",
         "@types/jsonwebtoken": "^8.5.8",
+        "@types/multer": "^1.4.7",
         "@types/node": "^17.0.15",
         "@types/pino": "^7.0.5",
         "@types/supertest": "^2.0.11",
@@ -59,6 +60,7 @@
         "express-pino-logger": "^7.0.0",
         "jsonwebtoken": "^8.5.1",
         "mongodb": "^4.3.1",
+        "multer": "^1.4.4",
         "pino": "^7.6.5",
         "socket.io": "^4.4.1"
     }
