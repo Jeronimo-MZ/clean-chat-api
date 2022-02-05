@@ -8,7 +8,9 @@ export class DbLoadUserRoomIds implements LoadUserRoomIds {
     async load({
         userId,
     }: LoadUserRoomIds.Input): Promise<LoadUserRoomIds.Output> {
-        await this.loadUserPrivateRoomIdsRepository.loadRoomIds(userId);
-        return undefined as any;
+        const roomIds = await this.loadUserPrivateRoomIdsRepository.loadRoomIds(
+            userId,
+        );
+        return { roomIds };
     }
 }
