@@ -5,6 +5,7 @@ import {
     AddPrivateRoomRepository,
     LoadMessagesByPrivateRoomIdRepository,
     LoadPrivateRoomByIdRepository,
+    LoadUserPrivateRoomIdsRepository,
 } from "@/data/protocols/database";
 import { PrivateRoom, User } from "@/domain/models";
 import { CollectionNames, MongoHelper } from "@/infra/database/mongodb";
@@ -14,7 +15,8 @@ export class PrivateRoomMongoRepository
         AddPrivateRoomRepository,
         LoadPrivateRoomByIdRepository,
         AddPrivateMessageRepository,
-        LoadMessagesByPrivateRoomIdRepository
+        LoadMessagesByPrivateRoomIdRepository,
+        LoadUserPrivateRoomIdsRepository
 {
     async add(participantsIds: [string, string]): Promise<PrivateRoom> {
         const PrivateRoomCollection = await MongoHelper.getCollection(
@@ -155,5 +157,18 @@ export class PrivateRoomMongoRepository
             messages,
             totalPages: count / messages.length / pageSize,
         };
+    }
+
+    async loadRoomIds(userId: string): Promise<string[]> {
+        const privateRoomCollection = await MongoHelper.getCollection(
+            CollectionNames.PRIVATE_ROOM,
+        );
+        const rooms = await privateRoomCollection
+            .find({
+                participants: { $all: [new ObjectId(userId)] },
+            })
+            .toArray();
+
+        return rooms.map(room => room._id.toHexString());
     }
 }
