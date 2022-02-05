@@ -3,6 +3,7 @@ export * from "./LoginValidationFactory";
 export * from "./SearchUsersByUsernameControllerFactory";
 export * from "./SearchUsersByUsernameValidationFactory";
 export * from "./ShowUserControllerFactory";
-export * from "./SignUpController";
+export * from "./SignUpControllerFactory";
 export * from "./SignUpValidationFactory";
+export * from "./UpdateUserAvatarControllerFactory";
 export * from "./UpdateUserAvatarValidationFactory";
