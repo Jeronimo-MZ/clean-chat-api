@@ -279,4 +279,19 @@ describe("PrivateRoomMongoRepository", () => {
             });
         });
     });
+
+    describe("loadRoomIds()", () => {
+        it("should return an array of ids on success", async () => {
+            const { sut } = makeSut();
+            const users = await makeUsers();
+            const users2 = await makeUsers();
+            const users3 = await makeUsers();
+            users2[0] = users[0];
+            const room = await makePrivateRoom(users);
+            await makePrivateRoom(users3);
+            const room2 = await makePrivateRoom(users2);
+            const roomIds = await sut.loadRoomIds(users[0].id);
+            expect(roomIds).toEqual([room.id, room2.id]);
+        });
+    });
 });
