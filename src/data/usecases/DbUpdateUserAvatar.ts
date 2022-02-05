@@ -20,20 +20,18 @@ export class DbUpdateUserAvatar implements UpdateUserAvatar {
         file,
     }: UpdateUserAvatar.Input): Promise<UpdateUserAvatar.Output> {
         const user = await this.loadUserByIdRepository.loadById(userId);
-        if (user) {
-            const key = this.uuidGenerator.generate();
-            const oldAvatar = user.avatar;
-            const fileName = await this.saveFile.save({
-                file: file.buffer,
-                fileName: `${key}.${file.mimeType.split("/")[1]}`,
-            });
-            await this.updateUserAvatarRepository.updateAvatar({
-                userId: user.id,
-                avatar: fileName,
-            });
-            if (oldAvatar)
-                await this.deleteFile.delete({ fileName: oldAvatar });
-        }
-        return new UserNotFoundError();
+        if (!user) return new UserNotFoundError();
+        const key = this.uuidGenerator.generate();
+        const oldAvatar = user.avatar;
+        const fileName = await this.saveFile.save({
+            file: file.buffer,
+            fileName: `${key}.${file.mimeType.split("/")[1]}`,
+        });
+        await this.updateUserAvatarRepository.updateAvatar({
+            userId: user.id,
+            avatar: fileName,
+        });
+        if (oldAvatar) await this.deleteFile.delete({ fileName: oldAvatar });
+        return { avatarUrl: fileName };
     }
 }
