@@ -106,3 +106,21 @@ export const mockUpdateUserAvatarInput = (): UpdateUserAvatar.Input => ({
         mimeType: "image/jpeg",
     },
 });
+
+export class UpdateUserAvatarSpy implements UpdateUserAvatar {
+    file: { buffer: Buffer; mimeType: string };
+    userId: string;
+    output = {
+        avatarUrl: faker.internet.url(),
+    };
+    callsCount = 0;
+    async update({
+        file,
+        userId,
+    }: UpdateUserAvatar.Input): Promise<UpdateUserAvatar.Output> {
+        this.file = file;
+        this.userId = userId;
+        this.callsCount++;
+        return this.output;
+    }
+}
