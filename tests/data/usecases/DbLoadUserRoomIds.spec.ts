@@ -2,6 +2,7 @@ import faker from "@faker-js/faker";
 
 import { DbLoadUserRoomIds } from "@/data/usecases";
 import { LoadUserPrivateRoomIdsRepositorySpy } from "@/tests/data/mocks";
+import { throwError } from "@/tests/domain/mocks";
 
 type SutTypes = {
     sut: DbLoadUserRoomIds;
@@ -22,10 +23,20 @@ const makeSut = (): SutTypes => {
 };
 
 describe("DbLoadUserRoomIds", () => {
-    it("should call LoadUserPrivateRoomIdsRepositorySpy with correct value", async () => {
+    it("should call LoadUserPrivateRoomIdsRepository with correct value", async () => {
         const { sut, loadUserPrivateRoomIdsRepositorySpy } = makeSut();
         await sut.load({ userId });
         expect(loadUserPrivateRoomIdsRepositorySpy.userId).toBe(userId);
         expect(loadUserPrivateRoomIdsRepositorySpy.callsCount).toBe(1);
+    });
+
+    it("should throw if LoadUserPrivateRoomIdsRepository throws", async () => {
+        const { sut, loadUserPrivateRoomIdsRepositorySpy } = makeSut();
+        jest.spyOn(
+            loadUserPrivateRoomIdsRepositorySpy,
+            "loadRoomIds",
+        ).mockImplementationOnce(throwError);
+        const promise = sut.load({ userId });
+        await expect(promise).rejects.toThrow();
     });
 });
