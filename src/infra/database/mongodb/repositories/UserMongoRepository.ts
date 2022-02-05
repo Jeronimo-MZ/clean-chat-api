@@ -7,6 +7,7 @@ import {
     LoadUserByUsernameRepository,
     SearchUsersByUsernameRepository,
     UpdateAccessTokenRepository,
+    UpdateUserAvatarRepository,
 } from "@/data/protocols/database";
 import { User } from "@/domain/models";
 import { CollectionNames, MongoHelper } from "@/infra/database/mongodb";
@@ -18,7 +19,8 @@ export class UserMongoRepository
         LoadUserByIdRepository,
         UpdateAccessTokenRepository,
         LoadUserByTokenRepository,
-        SearchUsersByUsernameRepository
+        SearchUsersByUsernameRepository,
+        UpdateUserAvatarRepository
 {
     async add(input: AddUserRepository.Input): Promise<User> {
         const usersCollection = await MongoHelper.getCollection(
@@ -89,5 +91,18 @@ export class UserMongoRepository
             totalPages: Math.ceil(numberOfUsers / pageSize),
             users: users.map(MongoHelper.map),
         };
+    }
+
+    async updateAvatar({
+        avatar,
+        userId,
+    }: UpdateUserAvatarRepository.Input): Promise<void> {
+        const usersCollection = await MongoHelper.getCollection(
+            CollectionNames.USER,
+        );
+        await usersCollection.updateOne(
+            { _id: new ObjectId(userId) },
+            { $set: { avatar } },
+        );
     }
 }
