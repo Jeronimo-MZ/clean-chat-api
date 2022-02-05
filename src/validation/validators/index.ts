@@ -1,3 +1,4 @@
+export * from "./AllowedMimeTypeValidation";
 export * from "./CompareFieldsValidation";
 export * from "./IntegerValidation";
 export * from "./MaxFileSizeValidation";

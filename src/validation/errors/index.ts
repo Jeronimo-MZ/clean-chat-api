@@ -1,5 +1,6 @@
 export * from "./InvalidBufferError";
 export * from "./InvalidIntegerError";
+export * from "./InvalidMimeTypeError";
 export * from "./InvalidObjectError";
 export * from "./InvalidObjectIdError";
 export * from "./InvalidUsernameError";
