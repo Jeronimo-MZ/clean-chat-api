@@ -1,3 +1,4 @@
+export * from "./InvalidBufferError";
 export * from "./InvalidIntegerError";
 export * from "./InvalidObjectError";
 export * from "./InvalidObjectIdError";

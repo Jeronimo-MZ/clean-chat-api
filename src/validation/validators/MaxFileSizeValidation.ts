@@ -1,4 +1,5 @@
-import { MaxFileSizeError } from "@/validation/errors";
+import { InvalidBufferError, MaxFileSizeError } from "@/validation/errors";
+import { isAbsent } from "@/validation/helpers";
 import { Validation } from "@/validation/protocols";
 
 export class MaxFileSizeValidation implements Validation {
@@ -7,7 +8,12 @@ export class MaxFileSizeValidation implements Validation {
         private readonly field: string,
     ) {}
 
-    validate(_input: any): MaxFileSizeError | null {
+    validate(input: any): MaxFileSizeError | null {
+        if (
+            !isAbsent(input[this.field]) &&
+            !(input[this.field] instanceof Buffer)
+        )
+            return new InvalidBufferError(this.field);
         return null;
     }
 }
