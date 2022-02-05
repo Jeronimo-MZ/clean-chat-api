@@ -1,5 +1,8 @@
 import { UUIDGenerator } from "@/data/protocols/cryptography";
-import { LoadUserByIdRepository } from "@/data/protocols/database";
+import {
+    LoadUserByIdRepository,
+    UpdateUserAvatarRepository,
+} from "@/data/protocols/database";
 import { SaveFile } from "@/data/protocols/storage";
 import { UserNotFoundError } from "@/domain/errors";
 import { UpdateUserAvatar } from "@/domain/usecases";
@@ -9,6 +12,7 @@ export class DbUpdateUserAvatar implements UpdateUserAvatar {
         private readonly loadUserByIdRepository: LoadUserByIdRepository,
         private readonly uuidGenerator: UUIDGenerator,
         private readonly saveFile: SaveFile,
+        private readonly updateUserAvatarRepository: UpdateUserAvatarRepository,
     ) {}
     async update({
         userId,
@@ -17,9 +21,13 @@ export class DbUpdateUserAvatar implements UpdateUserAvatar {
         const user = await this.loadUserByIdRepository.loadById(userId);
         if (user) {
             const key = this.uuidGenerator.generate();
-            await this.saveFile.save({
+            const fileName = await this.saveFile.save({
                 file: file.buffer,
                 fileName: `${key}.${file.mimeType.split("/")[1]}`,
+            });
+            await this.updateUserAvatarRepository.updateAvatar({
+                userId: user.id,
+                avatar: fileName,
             });
         }
         return new UserNotFoundError();
