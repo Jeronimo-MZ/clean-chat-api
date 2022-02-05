@@ -3,6 +3,7 @@ import { UserNotFoundError } from "@/domain/errors";
 import {
     LoadUserByIdRepositorySpy,
     SaveFileSpy,
+    UpdateUserAvatarRepositorySpy,
     UUIDGeneratorStub,
 } from "@/tests/data/mocks";
 import { mockUpdateUserAvatarInput, throwError } from "@/tests/domain/mocks";
@@ -12,23 +13,27 @@ type SutTypes = {
     loadUserByIdRepositorySpy: LoadUserByIdRepositorySpy;
     uuidGeneratorStub: UUIDGeneratorStub;
     saveFileSpy: SaveFileSpy;
+    updateUserAvatarRepositorySpy: UpdateUserAvatarRepositorySpy;
 };
 
 const makeSut = (): SutTypes => {
     const loadUserByIdRepositorySpy = new LoadUserByIdRepositorySpy();
     const uuidGeneratorStub = new UUIDGeneratorStub();
+    const updateUserAvatarRepositorySpy = new UpdateUserAvatarRepositorySpy();
     const saveFileSpy = new SaveFileSpy();
 
     const sut = new DbUpdateUserAvatar(
         loadUserByIdRepositorySpy,
         uuidGeneratorStub,
         saveFileSpy,
+        updateUserAvatarRepositorySpy,
     );
     return {
         sut,
         loadUserByIdRepositorySpy,
         uuidGeneratorStub,
         saveFileSpy,
+        updateUserAvatarRepositorySpy,
     };
 };
 
@@ -77,6 +82,7 @@ describe("DbUpdateUserAvatar", () => {
         await sut.update(input);
         expect(saveFileSpy.file).toBe(input.file.buffer);
         expect(saveFileSpy.fileName).toBe(`${uuidGeneratorStub.uuid}.jpeg`);
+        expect(saveFileSpy.callsCount).toBe(1);
     });
 
     it("should throw if SaveFile throws", async () => {
@@ -84,5 +90,20 @@ describe("DbUpdateUserAvatar", () => {
         jest.spyOn(saveFileSpy, "save").mockImplementationOnce(throwError);
         const promise = sut.update(mockUpdateUserAvatarInput());
         await expect(promise).rejects.toThrow();
+    });
+
+    it("should call UpdateUserAvatarRepository with correct values", async () => {
+        const {
+            sut,
+            updateUserAvatarRepositorySpy,
+            loadUserByIdRepositorySpy,
+            saveFileSpy,
+        } = makeSut();
+        await sut.update(mockUpdateUserAvatarInput());
+        expect(updateUserAvatarRepositorySpy.userId).toBe(
+            loadUserByIdRepositorySpy.result?.id,
+        );
+        expect(updateUserAvatarRepositorySpy.avatar).toBe(saveFileSpy.output);
+        expect(updateUserAvatarRepositorySpy.callsCount).toBe(1);
     });
 });

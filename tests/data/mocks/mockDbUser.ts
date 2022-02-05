@@ -6,6 +6,7 @@ import {
     LoadUserByTokenRepository,
     SearchUsersByUsernameRepository,
     UpdateAccessTokenRepository,
+    UpdateUserAvatarRepository,
 } from "@/data/protocols/database";
 import { LoadUserByUsernameRepository } from "@/data/protocols/database/LoadUserByUsernameRepository";
 import { User } from "@/domain/models";
@@ -99,5 +100,21 @@ export class SearchUsersByUsernameRepositorySpy
         this.input = input;
         this.callsCount++;
         return this.output;
+    }
+}
+
+export class UpdateUserAvatarRepositorySpy
+    implements UpdateUserAvatarRepository
+{
+    userId: string;
+    avatar: string;
+    callsCount = 0;
+    async updateAvatar({
+        avatar,
+        userId,
+    }: UpdateUserAvatarRepository.Input): Promise<void> {
+        this.userId = userId;
+        this.callsCount++;
+        this.avatar = avatar;
     }
 }
