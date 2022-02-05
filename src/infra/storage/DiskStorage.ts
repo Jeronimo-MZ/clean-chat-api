@@ -1,9 +1,9 @@
-import { writeFile } from "fs/promises";
+import { unlink, writeFile } from "fs/promises";
 import path from "path";
 
-import { SaveFile } from "@/data/protocols/storage";
+import { DeleteFile, SaveFile } from "@/data/protocols/storage";
 
-export class DiskStorage implements SaveFile {
+export class DiskStorage implements SaveFile, DeleteFile {
     constructor(private readonly staticFilesDirectory: string) {}
     async save({ file, fileName }: SaveFile.Input): Promise<string> {
         await writeFile(
@@ -11,5 +11,9 @@ export class DiskStorage implements SaveFile {
             file,
         );
         return fileName;
+    }
+
+    async delete({ fileName }: DeleteFile.Input): Promise<void> {
+        await unlink(path.resolve(this.staticFilesDirectory, fileName));
     }
 }
