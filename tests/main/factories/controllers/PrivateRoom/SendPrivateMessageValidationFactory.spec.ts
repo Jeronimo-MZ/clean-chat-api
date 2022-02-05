@@ -1,4 +1,4 @@
-import { ObjectIdValidatorAdapter } from "@/infra/validators/ObjectIdValidatorAdapter";
+import { ObjectIdValidatorAdapter } from "@/infra/validators";
 import { makeSendPrivateMessageValidation } from "@/main/factories";
 import {
     ValidationBuilder,

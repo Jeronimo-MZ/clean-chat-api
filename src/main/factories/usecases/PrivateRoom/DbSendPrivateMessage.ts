@@ -1,7 +1,7 @@
 import { DbSendPrivateMessage } from "@/data/usecases";
 import { SendPrivateMessage } from "@/domain/usecases";
 import { PrivateRoomMongoRepository } from "@/infra/database/mongodb";
-import { SocketIoAdapter } from "@/infra/events/SocketIoAdapter";
+import { SocketIoAdapter } from "@/infra/events";
 import { io } from "@/main/config/socket";
 
 export const makeDbSendPrivateMessage = (): SendPrivateMessage => {

@@ -4,11 +4,11 @@ import {
     AddUserRepository,
     LoadUserByIdRepository,
     LoadUserByTokenRepository,
+    LoadUserByUsernameRepository,
     SearchUsersByUsernameRepository,
     UpdateAccessTokenRepository,
     UpdateUserAvatarRepository,
 } from "@/data/protocols/database";
-import { LoadUserByUsernameRepository } from "@/data/protocols/database/LoadUserByUsernameRepository";
 import { User } from "@/domain/models";
 import { mockUserModel } from "@/tests/domain/mocks";
 

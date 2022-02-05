@@ -1,7 +1,7 @@
 import faker from "@faker-js/faker";
 import bcrypt from "bcrypt";
 
-import { BcryptAdapter } from "@/infra/cryptography/BcryptAdapter";
+import { BcryptAdapter } from "@/infra/cryptography";
 import { throwError } from "@/tests/domain/mocks";
 
 const generatedHash = faker.random.alphaNumeric(30);

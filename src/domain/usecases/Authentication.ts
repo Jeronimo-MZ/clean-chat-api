@@ -1,4 +1,4 @@
-import { InvalidCredentialsError } from "../errors";
+import { InvalidCredentialsError } from "@/domain/errors";
 
 export interface Authentication {
     auth(input: Authentication.Input): Promise<Authentication.Output>;

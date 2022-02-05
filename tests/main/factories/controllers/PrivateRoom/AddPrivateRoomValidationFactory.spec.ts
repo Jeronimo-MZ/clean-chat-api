@@ -1,4 +1,4 @@
-import { ObjectIdValidatorAdapter } from "@/infra/validators/ObjectIdValidatorAdapter";
+import { ObjectIdValidatorAdapter } from "@/infra/validators";
 import { makeAddPrivateRoomValidation } from "@/main/factories";
 import {
     ValidationBuilder,

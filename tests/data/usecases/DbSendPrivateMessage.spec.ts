@@ -6,7 +6,7 @@ import { SendPrivateMessage } from "@/domain/usecases";
 import {
     AddPrivateMessageRepositorySpy,
     SendMessageMock,
-} from "@/tests/data/mocks/mockDbPrivateRoom";
+} from "@/tests/data/mocks";
 import {
     LoadPrivateRoomByIdRepositorySpy,
     mockSendPrivateMessageInput,

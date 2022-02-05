@@ -1,5 +1,6 @@
 import faker from "@faker-js/faker";
 
+import { ObjectIdValidatorSpy } from "@/tests/validation/mocks";
 import {
     CompareFieldsValidation,
     IntegerValidation,
@@ -10,8 +11,6 @@ import {
     UsernameValidation,
     ValidationBuilder as sut,
 } from "@/validation/validators";
-
-import { ObjectIdValidatorSpy } from "../mocks";
 
 describe("ValidationBuilder", () => {
     it("should return RequiredFieldValidation", () => {

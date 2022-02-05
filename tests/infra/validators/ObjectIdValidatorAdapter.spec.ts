@@ -1,7 +1,7 @@
 import faker from "@faker-js/faker";
 import { ObjectId } from "mongodb";
 
-import { ObjectIdValidatorAdapter } from "@/infra/validators/ObjectIdValidatorAdapter";
+import { ObjectIdValidatorAdapter } from "@/infra/validators";
 import { throwError } from "@/tests/domain/mocks";
 
 jest.mock("mongodb");

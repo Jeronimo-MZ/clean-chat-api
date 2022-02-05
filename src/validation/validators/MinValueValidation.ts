@@ -1,7 +1,6 @@
 import { MinValueError } from "@/validation/errors";
+import { isAbsent } from "@/validation/helpers";
 import { Validation } from "@/validation/protocols";
-
-import { isAbsent } from "../helpers";
 
 export class MinValueValidation implements Validation {
     constructor(readonly field: string, private readonly minValue: number) {}

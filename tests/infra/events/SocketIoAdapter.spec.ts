@@ -1,8 +1,7 @@
 import faker from "@faker-js/faker";
 import socketIo from "socket.io";
 
-import { EventTypes } from "@/infra/events/EventTypes";
-import { SocketIoAdapter } from "@/infra/events/SocketIoAdapter";
+import { EventTypes, SocketIoAdapter } from "@/infra/events";
 import { throwError } from "@/tests/domain/mocks";
 
 const makeSut = () => {

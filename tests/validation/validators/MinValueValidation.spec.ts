@@ -1,7 +1,7 @@
 import faker from "@faker-js/faker";
 
 import { MinValueError } from "@/validation/errors";
-import { MinValueValidation } from "@/validation/validators/MinValueValidation";
+import { MinValueValidation } from "@/validation/validators";
 
 const field = faker.random.word();
 const minValue = faker.datatype.number();

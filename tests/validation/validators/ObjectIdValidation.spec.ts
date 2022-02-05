@@ -3,7 +3,7 @@ import faker from "@faker-js/faker";
 import { throwError } from "@/tests/domain/mocks";
 import { ObjectIdValidatorSpy } from "@/tests/validation/mocks";
 import { InvalidObjectIdError } from "@/validation/errors";
-import { ObjectIdValidation } from "@/validation/validators/ObjectIdValidation";
+import { ObjectIdValidation } from "@/validation/validators";
 
 const field = faker.random.word();
 const value = faker.random.alphaNumeric(12);

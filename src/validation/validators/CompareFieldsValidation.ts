@@ -1,7 +1,6 @@
 import { NotMatchingFieldsError } from "@/validation/errors";
+import { isAbsent } from "@/validation/helpers";
 import { Validation } from "@/validation/protocols";
-
-import { isAbsent } from "../helpers";
 
 export class CompareFieldsValidation implements Validation {
     constructor(

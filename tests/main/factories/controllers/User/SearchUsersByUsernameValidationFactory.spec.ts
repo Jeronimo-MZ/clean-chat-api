@@ -1,4 +1,4 @@
-import { makeSearchUsersByUsernameValidation } from "@/main/factories/controllers/User/SearchUsersByUsernameValidationFactory";
+import { makeSearchUsersByUsernameValidation } from "@/main/factories";
 import {
     ValidationBuilder,
     ValidationComposite,

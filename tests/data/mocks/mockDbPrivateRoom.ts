@@ -3,8 +3,8 @@ import faker from "@faker-js/faker";
 import {
     AddPrivateMessageRepository,
     AddPrivateRoomRepository,
+    LoadMessagesByPrivateRoomIdRepository,
 } from "@/data/protocols/database";
-import { LoadMessagesByPrivateRoomIdRepository } from "@/data/protocols/database/LoadMessagesByPrivateRoomIdRepository";
 import { SendMessage } from "@/data/protocols/event";
 import { PrivateRoom } from "@/domain/models";
 import { mockPrivateRoomModel } from "@/tests/domain/mocks";

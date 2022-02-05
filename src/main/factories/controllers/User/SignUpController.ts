@@ -1,6 +1,6 @@
+import { makeDbAddUser } from "@/main/factories/usecases";
 import { SignUpController } from "@/presentation/controllers";
 
-import { makeDbAddUser } from "../../usecases/User/DbAddUserFactory";
 import { makeSignUpValidation } from ".";
 
 export const makeSignUpController = (): SignUpController => {

@@ -1,8 +1,7 @@
 import { InvalidTokenError } from "@/domain/errors";
 import { LoadUserByToken } from "@/domain/usecases";
+import { ok, serverError, unauthorized } from "@/presentation/helpers";
 import { HttpResponse, Middleware } from "@/presentation/protocols";
-
-import { ok, serverError, unauthorized } from "../helpers";
 
 export class AuthMiddleware
     implements Middleware<AuthMiddleware.Request, AuthMiddleware.Response>

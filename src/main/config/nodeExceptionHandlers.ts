@@ -1,4 +1,5 @@
-import { pinoLogger } from "../adapters";
+import { pinoLogger } from "@/main/adapters";
+
 import { ExitStatus } from "./constants/ExitStatus";
 
 process.on("unhandledRejection", (reason, promise) => {

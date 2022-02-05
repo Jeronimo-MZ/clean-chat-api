@@ -1,10 +1,11 @@
 import { DbAddPrivateRoom } from "@/data/usecases";
 import { UserNotFoundError } from "@/domain/errors";
 import { PrivateRoom } from "@/domain/models";
-import { LoadUserByIdRepositorySpy } from "@/tests/data/mocks";
+import {
+    AddPrivateRoomRepositorySpy,
+    LoadUserByIdRepositorySpy,
+} from "@/tests/data/mocks";
 import { mockAddPrivateRoomInput, throwError } from "@/tests/domain/mocks";
-
-import { AddPrivateRoomRepositorySpy } from "../mocks/mockDbPrivateRoom";
 
 type SutTypes = {
     sut: DbAddPrivateRoom;

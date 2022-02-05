@@ -1,6 +1,6 @@
 import { DbAddUser } from "@/data/usecases";
 import { AddUser } from "@/domain/usecases";
-import { BcryptAdapter } from "@/infra/cryptography/BcryptAdapter";
+import { BcryptAdapter } from "@/infra/cryptography";
 import { UserMongoRepository } from "@/infra/database/mongodb";
 
 export const makeDbAddUser = (): AddUser => {

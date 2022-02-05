@@ -2,13 +2,12 @@ import { LoadMessagesByPrivateRoomIdRepository } from "@/data/protocols/database
 import { DbLoadPrivateRoomMessages } from "@/data/usecases";
 import { RoomNotFoundError, UserNotInRoomError } from "@/domain/errors";
 import { LoadPrivateRoomMessages } from "@/domain/usecases";
+import { LoadMessagesByPrivateRoomIdRepositorySpy } from "@/tests/data/mocks";
 import {
     LoadPrivateRoomByIdRepositorySpy,
     mockLoadPrivateRoomMessagesInput,
     throwError,
 } from "@/tests/domain/mocks";
-
-import { LoadMessagesByPrivateRoomIdRepositorySpy } from "../mocks/mockDbPrivateRoom";
 
 type SutTypes = {
     sut: DbLoadPrivateRoomMessages;
