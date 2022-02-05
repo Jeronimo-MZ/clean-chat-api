@@ -110,7 +110,7 @@ export const mockUpdateUserAvatarInput = (): UpdateUserAvatar.Input => ({
 export class UpdateUserAvatarSpy implements UpdateUserAvatar {
     file: { buffer: Buffer; mimeType: string };
     userId: string;
-    output = {
+    output: UpdateUserAvatar.Output = {
         avatarUrl: faker.internet.url(),
     };
     callsCount = 0;
