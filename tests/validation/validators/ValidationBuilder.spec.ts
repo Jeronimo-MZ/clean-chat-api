@@ -2,8 +2,10 @@ import faker from "@faker-js/faker";
 
 import { ObjectIdValidatorSpy, ValidationSpy } from "@/tests/validation/mocks";
 import {
+    AllowedMimeTypesValidation,
     CompareFieldsValidation,
     IntegerValidation,
+    MaxFileSizeValidation,
     MinLengthValidation,
     MinValueValidation,
     ObjectIdValidation,
@@ -96,6 +98,21 @@ describe("ValidationBuilder", () => {
             new MinLengthValidation(field, length),
             new UsernameValidation(field),
             new IntegerValidation(field),
+        ]);
+    });
+
+    it("should return correct MaxFileSizeValidation", () => {
+        const field = faker.database.column();
+        const size = faker.datatype.number();
+        const validators = sut.field(field).maxFileSize(size).build();
+        expect(validators).toEqual([new MaxFileSizeValidation(size, field)]);
+    });
+
+    it("should return correct MaxFileSizeValidation", () => {
+        const field = faker.database.column();
+        const validators = sut.field(field).allowedMimetypes(["png"]).build();
+        expect(validators).toEqual([
+            new AllowedMimeTypesValidation(["png"], field),
         ]);
     });
 });
