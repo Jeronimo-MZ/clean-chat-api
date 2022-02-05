@@ -1,6 +1,6 @@
 import { UserNotFoundError } from "@/domain/errors";
 import { UpdateUserAvatar } from "@/domain/usecases";
-import { badRequest, forbidden, serverError } from "@/presentation/helpers";
+import { badRequest, forbidden, ok, serverError } from "@/presentation/helpers";
 import { Controller, HttpResponse } from "@/presentation/protocols";
 import { Validation } from "@/validation/protocols";
 
@@ -31,7 +31,7 @@ export class UpdateUserAvatarController
             if (avatarOrError instanceof UserNotFoundError)
                 return forbidden(avatarOrError);
 
-            return undefined as any;
+            return ok({ avatarUrl: avatarOrError.avatarUrl });
         } catch (error) {
             return serverError(error as Error);
         }
