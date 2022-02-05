@@ -106,4 +106,14 @@ describe("DbUpdateUserAvatar", () => {
         expect(updateUserAvatarRepositorySpy.avatar).toBe(saveFileSpy.output);
         expect(updateUserAvatarRepositorySpy.callsCount).toBe(1);
     });
+
+    it("should throw if UpdateUserAvatarRepository throws", async () => {
+        const { sut, updateUserAvatarRepositorySpy } = makeSut();
+        jest.spyOn(
+            updateUserAvatarRepositorySpy,
+            "updateAvatar",
+        ).mockImplementationOnce(throwError);
+        const promise = sut.update(mockUpdateUserAvatarInput());
+        await expect(promise).rejects.toThrow();
+    });
 });
