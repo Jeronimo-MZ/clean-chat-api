@@ -52,4 +52,14 @@ describe("ObjectValidation", () => {
             new InvalidObjectError(field, validationSpies[1].error),
         );
     });
+
+    it("should return the first error if more than one validation fails", () => {
+        const { sut, validationSpies } = makeSut();
+        validationSpies[1].error = new Error();
+        validationSpies[2].error = new RequiredFieldError(field);
+        const error = sut.validate({ [field]: faker.helpers.userCard() });
+        expect(error).toEqual(
+            new InvalidObjectError(field, validationSpies[1].error),
+        );
+    });
 });
