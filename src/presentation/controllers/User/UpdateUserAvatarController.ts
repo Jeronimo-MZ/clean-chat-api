@@ -1,5 +1,6 @@
+import { UserNotFoundError } from "@/domain/errors";
 import { UpdateUserAvatar } from "@/domain/usecases";
-import { badRequest, serverError } from "@/presentation/helpers";
+import { badRequest, forbidden, serverError } from "@/presentation/helpers";
 import { Controller, HttpResponse } from "@/presentation/protocols";
 import { Validation } from "@/validation/protocols";
 
@@ -20,13 +21,16 @@ export class UpdateUserAvatarController
         try {
             const error = this.validation.validate(request);
             if (error) return badRequest(error);
-            await this.updateUserAvatar.update({
+            const avatarOrError = await this.updateUserAvatar.update({
                 file: {
                     buffer: request.file.buffer,
                     mimeType: request.file.mimetype,
                 },
                 userId: request.userId,
             });
+            if (avatarOrError instanceof UserNotFoundError)
+                return forbidden(avatarOrError);
+
             return undefined as any;
         } catch (error) {
             return serverError(error as Error);
