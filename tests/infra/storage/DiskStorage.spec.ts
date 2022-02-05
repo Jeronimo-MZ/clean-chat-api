@@ -1,5 +1,5 @@
 import faker from "@faker-js/faker";
-import { writeFile } from "fs/promises";
+import { unlink, writeFile } from "fs/promises";
 import path from "path";
 
 import { SaveFile } from "@/data/protocols/storage";
@@ -51,6 +51,16 @@ describe("DiskStorage", () => {
             const input = makeSaveFileInput();
             const filename = await sut.save(input);
             expect(filename).toBe(input.fileName);
+        });
+    });
+
+    describe("delete()", () => {
+        it("should call unlink with correct values", async () => {
+            const { sut } = makeSut();
+            await sut.delete({ fileName });
+            expect(unlink).toHaveBeenCalledWith(
+                path.resolve(staticFilesDirectory, fileName),
+            );
         });
     });
 });
