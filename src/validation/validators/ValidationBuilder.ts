@@ -4,8 +4,13 @@ import {
     RequiredFieldValidation,
 } from "@/validation/validators";
 
+import {
+    AllowedMimeTypesValidation,
+    Extension,
+} from "./AllowedMimeTypeValidation";
 import { CompareFieldsValidation } from "./CompareFieldsValidation";
 import { IntegerValidation } from "./IntegerValidation";
+import { MaxFileSizeValidation } from "./MaxFileSizeValidation";
 import { MinValueValidation } from "./MinValueValidation";
 import { ObjectIdValidation } from "./ObjectIdValidation";
 import { ObjectValidation } from "./ObjectValidation";
@@ -66,6 +71,19 @@ export class ValidationBuilder {
     equals(fieldToCompare: string): ValidationBuilder {
         this.validations.push(
             new CompareFieldsValidation(this.fieldName, fieldToCompare),
+        );
+        return this;
+    }
+
+    maxFileSize(maxSizeInMb: number): ValidationBuilder {
+        this.validations.push(
+            new MaxFileSizeValidation(maxSizeInMb, this.fieldName),
+        );
+        return this;
+    }
+    allowedMimetypes(allowed: Extension[]): ValidationBuilder {
+        this.validations.push(
+            new AllowedMimeTypesValidation(allowed, this.fieldName),
         );
         return this;
     }
