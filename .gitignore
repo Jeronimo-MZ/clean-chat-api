@@ -1,6 +1,6 @@
 globalConfig.json
 notes.md
-
+public/**
 # Logs
 logs
 *.log

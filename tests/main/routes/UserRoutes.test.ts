@@ -6,6 +6,7 @@ import request from "supertest";
 
 import { User } from "@/domain/models";
 import { CollectionNames, MongoHelper } from "@/infra/database/mongodb";
+import { DiskStorage } from "@/infra/storage";
 import { app, env, setupRoutes } from "@/main/config";
 
 let usersCollection: Collection;
@@ -138,6 +139,38 @@ describe("User routes", () => {
                 .set("x-access-token", token)
                 .send()
                 .expect(200);
+        });
+    });
+
+    describe("PATCH /users/avatar", () => {
+        const avatarUrl = faker.internet.avatar();
+        beforeAll(() => {
+            jest.mock("@/infra/storage/DiskStorage");
+            jest.spyOn(DiskStorage.prototype, "save").mockImplementation(
+                async () => avatarUrl,
+            );
+        });
+
+        afterAll(() => {
+            jest.restoreAllMocks();
+        });
+
+        it("should return 401 if authorization header is not present", async () => {
+            const { status } = await request(app).patch("/api/users/avatar");
+            expect(status).toBe(401);
+        });
+
+        it("should return 200 with valid data", async () => {
+            const { token } = await makeUserTokenAndId();
+            const { status, body } = await request(app)
+                .patch("/api/users/avatar")
+                .set("x-access-token", token)
+                .attach("avatar", Buffer.from("any_buffer"), {
+                    filename: "any_name",
+                    contentType: "image/png",
+                });
+            expect(status).toBe(200);
+            expect(body).toEqual({ avatarUrl });
         });
     });
 });
