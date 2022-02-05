@@ -1,12 +1,13 @@
 import { Router } from "express";
 
-import { adaptMiddleware, adaptRoute } from "@/main/adapters";
+import { adaptMiddleware, adaptMulter, adaptRoute } from "@/main/adapters";
 import {
     makeAuthMiddleware,
     makeLoginController,
     makeSearchUsersByUsernameController,
     makeShowUserController,
     makeSignUpController,
+    makeUpdateUserAvatarController,
 } from "@/main/factories";
 
 export default (router: Router): void => {
@@ -17,5 +18,11 @@ export default (router: Router): void => {
         "/users",
         adaptMiddleware(makeAuthMiddleware()),
         adaptRoute(makeSearchUsersByUsernameController()),
+    );
+    router.patch(
+        "/users/avatar",
+        adaptMulter,
+        adaptMiddleware(makeAuthMiddleware()),
+        adaptRoute(makeUpdateUserAvatarController()),
     );
 };
