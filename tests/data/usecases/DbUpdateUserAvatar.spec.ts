@@ -2,6 +2,7 @@ import { DbUpdateUserAvatar } from "@/data/usecases";
 import { UserNotFoundError } from "@/domain/errors";
 import {
     LoadUserByIdRepositorySpy,
+    SaveFileSpy,
     UUIDGeneratorStub,
 } from "@/tests/data/mocks";
 import { mockUpdateUserAvatarInput, throwError } from "@/tests/domain/mocks";
@@ -10,20 +11,24 @@ type SutTypes = {
     sut: DbUpdateUserAvatar;
     loadUserByIdRepositorySpy: LoadUserByIdRepositorySpy;
     uuidGeneratorStub: UUIDGeneratorStub;
+    saveFileSpy: SaveFileSpy;
 };
 
 const makeSut = (): SutTypes => {
     const loadUserByIdRepositorySpy = new LoadUserByIdRepositorySpy();
     const uuidGeneratorStub = new UUIDGeneratorStub();
+    const saveFileSpy = new SaveFileSpy();
 
     const sut = new DbUpdateUserAvatar(
         loadUserByIdRepositorySpy,
         uuidGeneratorStub,
+        saveFileSpy,
     );
     return {
         sut,
         loadUserByIdRepositorySpy,
         uuidGeneratorStub,
+        saveFileSpy,
     };
 };
 
@@ -33,6 +38,7 @@ describe("DbUpdateUserAvatar", () => {
         const input = mockUpdateUserAvatarInput();
         await sut.update(input);
         expect(loadUserByIdRepositorySpy.id).toBe(input.userId);
+        expect(loadUserByIdRepositorySpy.callsCount).toBe(1);
     });
 
     it("should return UserNotFoundError if LoadUserByIdRepository returns null", async () => {
@@ -63,5 +69,13 @@ describe("DbUpdateUserAvatar", () => {
         loadUserByIdRepositorySpy.result = null;
         await sut.update(mockUpdateUserAvatarInput());
         expect(uuidGeneratorStub.callsCount).toBe(0);
+    });
+
+    it("should call SaveFile with correct values", async () => {
+        const { sut, uuidGeneratorStub, saveFileSpy } = makeSut();
+        const input = mockUpdateUserAvatarInput();
+        await sut.update(input);
+        expect(saveFileSpy.file).toBe(input.file.buffer);
+        expect(saveFileSpy.fileName).toBe(`${uuidGeneratorStub.uuid}.jpeg`);
     });
 });
