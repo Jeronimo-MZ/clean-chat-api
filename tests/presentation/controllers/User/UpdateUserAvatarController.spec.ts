@@ -3,7 +3,7 @@ import faker from "@faker-js/faker";
 import { UserNotFoundError } from "@/domain/errors";
 import { UpdateUserAvatarController } from "@/presentation/controllers";
 import { ServerError } from "@/presentation/errors";
-import { badRequest, forbidden, serverError } from "@/presentation/helpers";
+import { badRequest, forbidden, ok, serverError } from "@/presentation/helpers";
 import { throwError, UpdateUserAvatarSpy } from "@/tests/domain/mocks";
 import { ValidationSpy } from "@/tests/validation/mocks";
 
@@ -88,5 +88,11 @@ describe("UpdateUserAvatarController", () => {
         updateUserAvatarSpy.output = new UserNotFoundError();
         const response = await sut.handle(mockRequest());
         expect(response).toEqual(forbidden(updateUserAvatarSpy.output));
+    });
+
+    it("should return 200 if on success", async () => {
+        const { sut, updateUserAvatarSpy } = makeSut();
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toEqual(ok(updateUserAvatarSpy.output));
     });
 });
