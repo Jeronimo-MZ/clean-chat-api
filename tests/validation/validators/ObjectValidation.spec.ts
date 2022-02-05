@@ -28,4 +28,10 @@ describe("ObjectValidation", () => {
         const error = sut.validate({ [field]: faker.helpers.userCard() });
         expect(error).toBeNull();
     });
+
+    it("should return null if field is not provided", () => {
+        const { sut } = makeSut();
+        const error = sut.validate({});
+        expect(error).toBeNull();
+    });
 });
