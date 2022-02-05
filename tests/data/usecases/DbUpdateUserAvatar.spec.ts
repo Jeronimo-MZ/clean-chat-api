@@ -1,20 +1,29 @@
 import { DbUpdateUserAvatar } from "@/data/usecases";
 import { UserNotFoundError } from "@/domain/errors";
-import { LoadUserByIdRepositorySpy } from "@/tests/data/mocks";
+import {
+    LoadUserByIdRepositorySpy,
+    UUIDGeneratorStub,
+} from "@/tests/data/mocks";
 import { mockUpdateUserAvatarInput, throwError } from "@/tests/domain/mocks";
 
 type SutTypes = {
     sut: DbUpdateUserAvatar;
     loadUserByIdRepositorySpy: LoadUserByIdRepositorySpy;
+    uuidGeneratorStub: UUIDGeneratorStub;
 };
 
 const makeSut = (): SutTypes => {
     const loadUserByIdRepositorySpy = new LoadUserByIdRepositorySpy();
+    const uuidGeneratorStub = new UUIDGeneratorStub();
 
-    const sut = new DbUpdateUserAvatar(loadUserByIdRepositorySpy);
+    const sut = new DbUpdateUserAvatar(
+        loadUserByIdRepositorySpy,
+        uuidGeneratorStub,
+    );
     return {
         sut,
         loadUserByIdRepositorySpy,
+        uuidGeneratorStub,
     };
 };
 
@@ -41,5 +50,11 @@ describe("DbUpdateUserAvatar", () => {
         ).mockImplementationOnce(throwError);
         const promise = sut.update(mockUpdateUserAvatarInput());
         await expect(promise).rejects.toThrow();
+    });
+
+    it("should call UUIDGenerator", async () => {
+        const { sut, uuidGeneratorStub } = makeSut();
+        await sut.update(mockUpdateUserAvatarInput());
+        expect(uuidGeneratorStub.callsCount).toBe(1);
     });
 });

@@ -5,6 +5,7 @@ import {
     Encrypter,
     HashComparer,
     Hasher,
+    UUIDGenerator,
 } from "@/data/protocols/cryptography";
 
 export class HasherSpy implements Hasher {
@@ -52,5 +53,14 @@ export class DecrypterSpy implements Decrypter {
         this.ciphertext = ciphertext;
         this.callsCount++;
         return this.plaintext;
+    }
+}
+
+export class UUIDGeneratorStub implements UUIDGenerator {
+    uuid: string = faker.datatype.uuid();
+    callsCount = 0;
+    generate(): string {
+        this.callsCount++;
+        return this.uuid;
     }
 }
