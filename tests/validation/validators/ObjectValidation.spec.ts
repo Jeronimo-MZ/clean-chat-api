@@ -1,7 +1,7 @@
 import faker from "@faker-js/faker";
 
 import { ValidationSpy } from "@/tests/validation/mocks";
-import { InvalidObjectError } from "@/validation/errors";
+import { InvalidObjectError, RequiredFieldError } from "@/validation/errors";
 import { ObjectValidation } from "@/validation/validators";
 
 const field = faker.random.word();
@@ -40,5 +40,16 @@ describe("ObjectValidation", () => {
         const { sut } = makeSut();
         const error = sut.validate({ [field]: faker.datatype.number() });
         expect(error).toEqual(new InvalidObjectError(field));
+    });
+
+    it("should return InvalidObjectError with correct error if any validation fails", () => {
+        const { sut, validationSpies } = makeSut();
+        validationSpies[1].error = new RequiredFieldError(
+            faker.database.column(),
+        );
+        const error = sut.validate({ [field]: faker.helpers.userCard() });
+        expect(error).toEqual(
+            new InvalidObjectError(field, validationSpies[1].error),
+        );
     });
 });
