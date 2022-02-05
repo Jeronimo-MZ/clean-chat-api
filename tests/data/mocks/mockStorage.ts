@@ -1,6 +1,6 @@
 import faker from "@faker-js/faker";
 
-import { SaveFile } from "@/data/protocols/storage";
+import { DeleteFile, SaveFile } from "@/data/protocols/storage";
 
 export class SaveFileSpy implements SaveFile {
     file: Buffer;
@@ -13,5 +13,15 @@ export class SaveFileSpy implements SaveFile {
         this.fileName = fileName;
         this.callsCount++;
         return this.output;
+    }
+}
+
+export class DeleteFileMock implements DeleteFile {
+    fileName: string;
+    callsCount = 0;
+
+    async delete({ fileName }: DeleteFile.Input): Promise<void> {
+        this.fileName = fileName;
+        this.callsCount++;
     }
 }

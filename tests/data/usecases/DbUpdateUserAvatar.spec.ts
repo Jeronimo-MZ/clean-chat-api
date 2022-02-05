@@ -1,6 +1,9 @@
+import faker from "@faker-js/faker";
+
 import { DbUpdateUserAvatar } from "@/data/usecases";
 import { UserNotFoundError } from "@/domain/errors";
 import {
+    DeleteFileMock,
     LoadUserByIdRepositorySpy,
     SaveFileSpy,
     UpdateUserAvatarRepositorySpy,
@@ -14,6 +17,7 @@ type SutTypes = {
     uuidGeneratorStub: UUIDGeneratorStub;
     saveFileSpy: SaveFileSpy;
     updateUserAvatarRepositorySpy: UpdateUserAvatarRepositorySpy;
+    deleteFileMock: DeleteFileMock;
 };
 
 const makeSut = (): SutTypes => {
@@ -21,12 +25,14 @@ const makeSut = (): SutTypes => {
     const uuidGeneratorStub = new UUIDGeneratorStub();
     const updateUserAvatarRepositorySpy = new UpdateUserAvatarRepositorySpy();
     const saveFileSpy = new SaveFileSpy();
+    const deleteFileMock = new DeleteFileMock();
 
     const sut = new DbUpdateUserAvatar(
         loadUserByIdRepositorySpy,
         uuidGeneratorStub,
         saveFileSpy,
         updateUserAvatarRepositorySpy,
+        deleteFileMock,
     );
     return {
         sut,
@@ -34,6 +40,7 @@ const makeSut = (): SutTypes => {
         uuidGeneratorStub,
         saveFileSpy,
         updateUserAvatarRepositorySpy,
+        deleteFileMock,
     };
 };
 
@@ -115,5 +122,23 @@ describe("DbUpdateUserAvatar", () => {
         ).mockImplementationOnce(throwError);
         const promise = sut.update(mockUpdateUserAvatarInput());
         await expect(promise).rejects.toThrow();
+    });
+
+    it("should call DeleteFile after update if user already had an avatar", async () => {
+        const {
+            sut,
+            deleteFileMock,
+            loadUserByIdRepositorySpy,
+            updateUserAvatarRepositorySpy,
+        } = makeSut();
+        if (loadUserByIdRepositorySpy.result)
+            loadUserByIdRepositorySpy.result.avatar = faker.internet.avatar();
+        await sut.update(mockUpdateUserAvatarInput());
+
+        expect(updateUserAvatarRepositorySpy.callsCount).toBe(1);
+        expect(deleteFileMock.fileName).toBe(
+            loadUserByIdRepositorySpy.result?.avatar,
+        );
+        expect(deleteFileMock.callsCount).toBe(1);
     });
 });
