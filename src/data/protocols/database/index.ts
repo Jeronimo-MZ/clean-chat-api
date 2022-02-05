@@ -6,6 +6,7 @@ export * from "./LoadPrivateRoomByIdRepository";
 export * from "./LoadUserByIdRepository";
 export * from "./LoadUserByTokenRepository";
 export * from "./LoadUserByUsernameRepository";
+export * from "./LoadUserPrivateRoomIdsRepository";
 export * from "./SearchUsersByUsernameRepository";
 export * from "./UpdateAccessTokenRepository";
 export * from "./UpdateUserAvatarRepository";

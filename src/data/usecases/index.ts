@@ -3,6 +3,7 @@ export * from "./DbAddUser";
 export * from "./DbAuthentication";
 export * from "./DbLoadPrivateRoomMessages";
 export * from "./DbLoadUserByToken";
+export * from "./DbLoadUserRoomIds";
 export * from "./DbSearchUsersByUsername";
 export * from "./DbSendPrivateMessage";
 export * from "./DbUpdateUserAvatar";
