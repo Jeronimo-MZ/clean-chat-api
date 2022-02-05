@@ -141,4 +141,10 @@ describe("DbUpdateUserAvatar", () => {
         );
         expect(deleteFileMock.callsCount).toBe(1);
     });
+
+    it("should not call DeleteFile if user's avatar was null", async () => {
+        const { sut, deleteFileMock } = makeSut();
+        await sut.update(mockUpdateUserAvatarInput());
+        expect(deleteFileMock.fileName).toBeUndefined();
+    });
 });
