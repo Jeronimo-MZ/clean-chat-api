@@ -78,4 +78,11 @@ describe("DbUpdateUserAvatar", () => {
         expect(saveFileSpy.file).toBe(input.file.buffer);
         expect(saveFileSpy.fileName).toBe(`${uuidGeneratorStub.uuid}.jpeg`);
     });
+
+    it("should throw if SaveFile throws", async () => {
+        const { sut, saveFileSpy } = makeSut();
+        jest.spyOn(saveFileSpy, "save").mockImplementationOnce(throwError);
+        const promise = sut.update(mockUpdateUserAvatarInput());
+        await expect(promise).rejects.toThrow();
+    });
 });
