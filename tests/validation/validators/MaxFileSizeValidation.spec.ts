@@ -28,4 +28,13 @@ describe("MaxFileSize Validation", () => {
         const error = sut.validate({ [field]: buffer });
         expect(error).toBeNull();
     });
+
+    it("should return null if size is lesser than maxFileSize", () => {
+        const { sut } = makeSut();
+        const buffer = Buffer.from(
+            new ArrayBuffer(convertMbToBytes(maxSizeInMb - 1)),
+        );
+        const error = sut.validate({ [field]: buffer });
+        expect(error).toBeNull();
+    });
 });
