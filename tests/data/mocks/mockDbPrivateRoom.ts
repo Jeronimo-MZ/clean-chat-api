@@ -4,6 +4,7 @@ import {
     AddPrivateMessageRepository,
     AddPrivateRoomRepository,
     LoadMessagesByPrivateRoomIdRepository,
+    LoadUserPrivateRoomIdsRepository,
 } from "@/data/protocols/database";
 import { SendMessage } from "@/data/protocols/event";
 import { PrivateRoom } from "@/domain/models";
@@ -76,6 +77,19 @@ export class LoadMessagesByPrivateRoomIdRepositorySpy
         input: LoadMessagesByPrivateRoomIdRepository.Input,
     ): Promise<LoadMessagesByPrivateRoomIdRepository.Output> {
         this.input = input;
+        this.callsCount++;
+        return this.output;
+    }
+}
+
+export class LoadUserPrivateRoomIdsRepositorySpy
+    implements LoadUserPrivateRoomIdsRepository
+{
+    userId: string;
+    output: string[] = [0, 0, 0, 0].map(() => faker.datatype.uuid());
+    callsCount = 0;
+    async loadRoomIds(userId: string): Promise<string[]> {
+        this.userId = userId;
         this.callsCount++;
         return this.output;
     }
