@@ -56,4 +56,13 @@ describe("JoinAllRoomsHandler", () => {
             userId: (loadUserByTokenSpy.result as User).id,
         });
     });
+
+    it("should emit server error if LoadUserRoomIds throws", async () => {
+        const { sut, socket, loadUserRoomIdsSpy } = makeSut();
+        jest.spyOn(loadUserRoomIdsSpy, "load").mockRejectedValueOnce(
+            new Error(),
+        );
+        await sut.handle(socket, mockData());
+        expect(socket.emit).toHaveBeenCalledWith("server_error", new Error());
+    });
 });
