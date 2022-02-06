@@ -1,6 +1,7 @@
 import faker from "@faker-js/faker";
 import { Socket } from "socket.io";
 
+import { InvalidTokenError } from "@/domain/errors";
 import { JoinAllRoomsHandler } from "@/presentation/eventHandlers";
 import { LoadUserByTokenSpy } from "@/tests/domain/mocks";
 
@@ -33,5 +34,15 @@ describe("JoinAllRoomsHandler", () => {
         const data = mockData();
         await sut.handle(socket, data);
         expect(loadUserByTokenSpy.accessToken).toEqual(data.accessToken);
+    });
+
+    it("should call socket.emit with error if LoadUserByToken returns InvalidTokenError", async () => {
+        const { sut, socket, loadUserByTokenSpy } = makeSut();
+        loadUserByTokenSpy.result = new InvalidTokenError();
+        const data = mockData();
+        await sut.handle(socket, data);
+        const error = new InvalidTokenError();
+        delete error.stack;
+        expect(socket.emit).toHaveBeenCalledWith("client_error", error);
     });
 });
