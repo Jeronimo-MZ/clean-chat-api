@@ -1,12 +1,15 @@
 import { Socket } from "socket.io";
 
-import { LoadUserByToken } from "@/domain/usecases";
+import { LoadUserByToken, LoadUserRoomIds } from "@/domain/usecases";
 import { EventHandler } from "@/presentation/helpers";
 
 export class JoinAllRoomsHandler
     implements EventHandler<JoinAllRoomsHandler.Data>
 {
-    constructor(private readonly loadUserByToken: LoadUserByToken) {}
+    constructor(
+        private readonly loadUserByToken: LoadUserByToken,
+        private readonly loadUserRoomIds: LoadUserRoomIds,
+    ) {}
 
     async handle(
         socket: Socket,
@@ -16,6 +19,8 @@ export class JoinAllRoomsHandler
         if (userOrError instanceof Error) {
             delete userOrError.stack;
             socket.emit("client_error", userOrError);
+        } else {
+            await this.loadUserRoomIds.load({ userId: userOrError.id });
         }
     }
 }
