@@ -9,11 +9,14 @@ export class JoinAllRoomsHandler
     constructor(private readonly loadUserByToken: LoadUserByToken) {}
 
     async handle(
-        _socket: Socket,
+        socket: Socket,
         { accessToken }: JoinAllRoomsHandler.Data,
     ): Promise<void> {
-        await this.loadUserByToken.load({ accessToken });
-        return undefined as any;
+        const userOrError = await this.loadUserByToken.load({ accessToken });
+        if (userOrError instanceof Error) {
+            delete userOrError.stack;
+            socket.emit("client_error", userOrError);
+        }
     }
 }
 
