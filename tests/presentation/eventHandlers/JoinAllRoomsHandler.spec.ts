@@ -65,4 +65,13 @@ describe("JoinAllRoomsHandler", () => {
         await sut.handle(socket, mockData());
         expect(socket.emit).toHaveBeenCalledWith("server_error", new Error());
     });
+
+    it("should emit server error if LoadUserByToken throws", async () => {
+        const { sut, socket, loadUserByTokenSpy } = makeSut();
+        jest.spyOn(loadUserByTokenSpy, "load").mockRejectedValueOnce(
+            new Error(),
+        );
+        await sut.handle(socket, mockData());
+        expect(socket.emit).toHaveBeenCalledWith("server_error", new Error());
+    });
 });
