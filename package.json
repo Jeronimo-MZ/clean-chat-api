@@ -53,7 +53,8 @@
         "test:integration": "yarn test --watch -c jest-integration.config.js",
         "test:staged": "yarn test --findRelatedTests",
         "test:watch": "yarn test --watch",
-        "test:ci": "yarn test --coverage"
+        "test:ci": "yarn test --coverage",
+        "test:mutation": "stryker run"
     },
     "dependencies": {
         "bcrypt": "^5.0.1",
