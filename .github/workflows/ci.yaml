@@ -18,3 +18,7 @@ jobs:
             - run: yarn
             - run: yarn eslint src/**
             - run: yarn test:ci
+            - name: Codecov
+              uses: codecov/codecov-action@v2.0.2
+              with:
+                  token: ${{ secrets.CODECOV_TOKEN }}
