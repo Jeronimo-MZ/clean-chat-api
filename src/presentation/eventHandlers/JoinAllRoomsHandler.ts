@@ -23,7 +23,10 @@ export class JoinAllRoomsHandler
                 delete userOrError.stack;
                 socket.emit("client_error", userOrError);
             } else {
-                await this.loadUserRoomIds.load({ userId: userOrError.id });
+                const { roomIds } = await this.loadUserRoomIds.load({
+                    userId: userOrError.id,
+                });
+                socket.join(roomIds);
             }
         } catch (error) {
             delete (error as Error).stack;
