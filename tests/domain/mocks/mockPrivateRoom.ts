@@ -5,6 +5,7 @@ import { PrivateRoom } from "@/domain/models";
 import {
     AddPrivateRoom,
     LoadPrivateRoomMessages,
+    LoadUserRoomIds,
     SendPrivateMessage,
 } from "@/domain/usecases";
 
@@ -117,6 +118,19 @@ export class LoadPrivateRoomMessagesSpy implements LoadPrivateRoomMessages {
     async loadMessages(
         input: LoadPrivateRoomMessages.Input,
     ): Promise<LoadPrivateRoomMessages.Output> {
+        this.input = input;
+        this.callsCount++;
+        return this.output;
+    }
+}
+
+export class LoadUserRoomIdsSpy implements LoadUserRoomIds {
+    input: LoadUserRoomIds.Input;
+    output: LoadUserRoomIds.Output = {
+        roomIds: [0, 0].map(() => faker.datatype.uuid()),
+    };
+    callsCount = 0;
+    async load(input: LoadUserRoomIds.Input): Promise<LoadUserRoomIds.Output> {
         this.input = input;
         this.callsCount++;
         return this.output;
