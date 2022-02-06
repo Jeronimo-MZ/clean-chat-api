@@ -15,12 +15,19 @@ export class JoinAllRoomsHandler
         socket: Socket,
         { accessToken }: JoinAllRoomsHandler.Data,
     ): Promise<void> {
-        const userOrError = await this.loadUserByToken.load({ accessToken });
-        if (userOrError instanceof Error) {
-            delete userOrError.stack;
-            socket.emit("client_error", userOrError);
-        } else {
-            await this.loadUserRoomIds.load({ userId: userOrError.id });
+        try {
+            const userOrError = await this.loadUserByToken.load({
+                accessToken,
+            });
+            if (userOrError instanceof Error) {
+                delete userOrError.stack;
+                socket.emit("client_error", userOrError);
+            } else {
+                await this.loadUserRoomIds.load({ userId: userOrError.id });
+            }
+        } catch (error) {
+            delete (error as Error).stack;
+            socket.emit("server_error", error);
         }
     }
 }
