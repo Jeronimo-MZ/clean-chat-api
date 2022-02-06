@@ -82,4 +82,11 @@ describe("JoinAllRoomsHandler", () => {
             loadUserRoomIdsSpy.output.roomIds,
         );
     });
+
+    it("should not call LoaduserByToken if AcessToken is missing", async () => {
+        const { sut, socket, loadUserByTokenSpy } = makeSut();
+        await sut.handle(socket, {} as any);
+        expect(loadUserByTokenSpy.accessToken).toBeUndefined();
+        expect(loadUserByTokenSpy.callsCount).toBe(0);
+    });
 });
