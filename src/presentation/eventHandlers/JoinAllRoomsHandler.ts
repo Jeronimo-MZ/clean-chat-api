@@ -16,6 +16,7 @@ export class JoinAllRoomsHandler
         { accessToken }: JoinAllRoomsHandler.Data,
     ): Promise<void> {
         try {
+            if (!accessToken) return;
             const userOrError = await this.loadUserByToken.load({
                 accessToken,
             });
