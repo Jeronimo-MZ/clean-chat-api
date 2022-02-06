@@ -74,4 +74,12 @@ describe("JoinAllRoomsHandler", () => {
         await sut.handle(socket, mockData());
         expect(socket.emit).toHaveBeenCalledWith("server_error", new Error());
     });
+
+    it("should call socket.join with correct values on success", async () => {
+        const { sut, socket, loadUserRoomIdsSpy } = makeSut();
+        await sut.handle(socket, mockData());
+        expect(socket.join).toHaveBeenCalledWith(
+            loadUserRoomIdsSpy.output.roomIds,
+        );
+    });
 });
