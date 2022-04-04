@@ -1,20 +1,11 @@
 import { RoomNotFoundError, UserNotInRoomError } from "@/domain/errors";
 import { LoadPrivateRoomMessages } from "@/domain/usecases";
-import {
-    badRequest,
-    ok,
-    serverError,
-    unauthorized,
-} from "@/presentation/helpers";
+import { badRequest, ok, serverError, unauthorized } from "@/presentation/helpers";
 import { Controller, HttpResponse } from "@/presentation/protocols";
 import { Validation } from "@/validation/protocols";
 
 export class LoadPrivateRoomMessagesController
-    implements
-        Controller<
-            LoadPrivateRoomMessagesController.Request,
-            LoadPrivateRoomMessagesController.Response
-        >
+    implements Controller<LoadPrivateRoomMessagesController.Request, LoadPrivateRoomMessagesController.Response>
 {
     constructor(
         private readonly validation: Validation,
@@ -30,13 +21,12 @@ export class LoadPrivateRoomMessagesController
             if (error) return badRequest(error);
 
             const { roomId, userId, page, pageSize } = request;
-            const resultOrError =
-                await this.loadPrivateRoomMessages.loadMessages({
-                    page,
-                    pageSize,
-                    roomId,
-                    userId,
-                });
+            const resultOrError = await this.loadPrivateRoomMessages.loadMessages({
+                page,
+                pageSize,
+                roomId,
+                userId,
+            });
             if (resultOrError instanceof RoomNotFoundError) {
                 return badRequest(resultOrError);
             }

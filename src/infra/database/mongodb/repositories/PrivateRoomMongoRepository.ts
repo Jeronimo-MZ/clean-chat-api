@@ -19,12 +19,8 @@ export class PrivateRoomMongoRepository
         LoadUserPrivateRoomIdsRepository
 {
     async add(participantsIds: [string, string]): Promise<PrivateRoom> {
-        const PrivateRoomCollection = await MongoHelper.getCollection(
-            CollectionNames.PRIVATE_ROOM,
-        );
-        const participantsObjectIds = participantsIds.map(
-            id => new ObjectId(id),
-        );
+        const PrivateRoomCollection = await MongoHelper.getCollection(CollectionNames.PRIVATE_ROOM);
+        const participantsObjectIds = participantsIds.map(id => new ObjectId(id));
 
         const room = await PrivateRoomCollection.findOne({
             participants: { $all: participantsObjectIds },
@@ -63,17 +59,12 @@ export class PrivateRoomMongoRepository
             },
         ]);
         const newRoom = (await aggregation.toArray())[0] as PrivateRoom;
-        newRoom.participants = newRoom.participants.map(MongoHelper.map) as [
-            User,
-            User,
-        ];
+        newRoom.participants = newRoom.participants.map(MongoHelper.map) as [User, User];
         return MongoHelper.map(newRoom);
     }
 
     async loadById(id: string): Promise<LoadPrivateRoomByIdRepository.Output> {
-        const privateRoomCollection = await MongoHelper.getCollection(
-            CollectionNames.PRIVATE_ROOM,
-        );
+        const privateRoomCollection = await MongoHelper.getCollection(CollectionNames.PRIVATE_ROOM);
 
         const privateRoom = await privateRoomCollection.findOne({
             _id: new ObjectId(id),
@@ -82,19 +73,13 @@ export class PrivateRoomMongoRepository
         return privateRoom
             ? MongoHelper.map({
                   _id: privateRoom._id,
-                  participants: privateRoom.participants.map((p: any) =>
-                      p.toHexString(),
-                  ),
+                  participants: privateRoom.participants.map((p: any) => p.toHexString()),
               })
             : null;
     }
 
-    async addMessage(
-        input: AddPrivateMessageRepository.Input,
-    ): Promise<AddPrivateMessageRepository.Output> {
-        const privateRoomCollection = await MongoHelper.getCollection(
-            CollectionNames.PRIVATE_ROOM,
-        );
+    async addMessage(input: AddPrivateMessageRepository.Input): Promise<AddPrivateMessageRepository.Output> {
+        const privateRoomCollection = await MongoHelper.getCollection(CollectionNames.PRIVATE_ROOM);
         const message = {
             ...input.message,
             sentAt: new Date(),
@@ -114,9 +99,7 @@ export class PrivateRoomMongoRepository
         page,
         pageSize,
     }: LoadMessagesByPrivateRoomIdRepository.Input): Promise<LoadMessagesByPrivateRoomIdRepository.Output> {
-        const privateRoomCollection = await MongoHelper.getCollection(
-            CollectionNames.PRIVATE_ROOM,
-        );
+        const privateRoomCollection = await MongoHelper.getCollection(CollectionNames.PRIVATE_ROOM);
         const skip = page * pageSize - pageSize;
         const aggregation = privateRoomCollection.aggregate([
             { $match: { _id: new ObjectId(roomId) } },
@@ -148,8 +131,7 @@ export class PrivateRoomMongoRepository
             },
         ]);
         const result = await aggregation.toArray();
-        if (result.length <= 0)
-            return { page, pageSize, messages: [], totalPages: 0 };
+        if (result.length <= 0) return { page, pageSize, messages: [], totalPages: 0 };
         const { messages, count } = result[0];
         return {
             page,
@@ -160,9 +142,7 @@ export class PrivateRoomMongoRepository
     }
 
     async loadRoomIds(userId: string): Promise<string[]> {
-        const privateRoomCollection = await MongoHelper.getCollection(
-            CollectionNames.PRIVATE_ROOM,
-        );
+        const privateRoomCollection = await MongoHelper.getCollection(CollectionNames.PRIVATE_ROOM);
         const rooms = await privateRoomCollection
             .find({
                 participants: { $all: [new ObjectId(userId)] },

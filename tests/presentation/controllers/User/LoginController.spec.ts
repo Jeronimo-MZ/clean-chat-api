@@ -43,9 +43,7 @@ describe("LoginController", () => {
 
     it("should return 500 if Validation throws", async () => {
         const { sut, validationSpy } = makeSut();
-        jest.spyOn(validationSpy, "validate").mockImplementationOnce(
-            throwError,
-        );
+        jest.spyOn(validationSpy, "validate").mockImplementationOnce(throwError);
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
     });
@@ -70,9 +68,7 @@ describe("LoginController", () => {
 
     it("should return 500 if Authentication throws", async () => {
         const { sut, authenticationSpy } = makeSut();
-        jest.spyOn(authenticationSpy, "auth").mockImplementationOnce(
-            throwError,
-        );
+        jest.spyOn(authenticationSpy, "auth").mockImplementationOnce(throwError);
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
     });

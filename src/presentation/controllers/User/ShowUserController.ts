@@ -1,24 +1,12 @@
 import { InvalidTokenError } from "@/domain/errors";
 import { LoadUserByToken } from "@/domain/usecases";
-import {
-    badRequest,
-    ok,
-    serverError,
-    unauthorized,
-} from "@/presentation/helpers";
+import { badRequest, ok, serverError, unauthorized } from "@/presentation/helpers";
 import { Controller, HttpResponse } from "@/presentation/protocols";
 import { Validation } from "@/validation/protocols";
 
-export class ShowUserController
-    implements Controller<ShowUserController.Request>
-{
-    constructor(
-        private readonly validation: Validation,
-        private readonly loadUserByToken: LoadUserByToken,
-    ) {}
-    async handle(
-        request: ShowUserController.Request,
-    ): Promise<HttpResponse<ShowUserController.Response>> {
+export class ShowUserController implements Controller<ShowUserController.Request> {
+    constructor(private readonly validation: Validation, private readonly loadUserByToken: LoadUserByToken) {}
+    async handle(request: ShowUserController.Request): Promise<HttpResponse<ShowUserController.Response>> {
         try {
             const error = this.validation.validate(request);
             if (error) {

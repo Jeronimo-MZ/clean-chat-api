@@ -43,9 +43,7 @@ describe("AddPrivateRoomController", () => {
 
     it("should return 500 if Validation throws", async () => {
         const { sut, validationSpy } = makeSut();
-        jest.spyOn(validationSpy, "validate").mockImplementationOnce(
-            throwError,
-        );
+        jest.spyOn(validationSpy, "validate").mockImplementationOnce(throwError);
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
     });

@@ -3,10 +3,7 @@ import { isAbsent } from "@/validation/helpers";
 import { Validation } from "@/validation/protocols";
 
 export class MaxFileSizeValidation implements Validation {
-    constructor(
-        private readonly maxSizeInMb: number,
-        private readonly field: string,
-    ) {}
+    constructor(private readonly maxSizeInMb: number, private readonly field: string) {}
 
     validate(input: any): MaxFileSizeError | null {
         if (!isAbsent(input[this.field])) {

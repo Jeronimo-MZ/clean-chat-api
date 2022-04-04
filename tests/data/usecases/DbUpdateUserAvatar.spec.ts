@@ -62,10 +62,7 @@ describe("DbUpdateUserAvatar", () => {
 
     it("should throw if LoadUserByIdRepository throws", async () => {
         const { sut, loadUserByIdRepositorySpy } = makeSut();
-        jest.spyOn(
-            loadUserByIdRepositorySpy,
-            "loadById",
-        ).mockImplementationOnce(throwError);
+        jest.spyOn(loadUserByIdRepositorySpy, "loadById").mockImplementationOnce(throwError);
         const promise = sut.update(mockUpdateUserAvatarInput());
         await expect(promise).rejects.toThrow();
     });
@@ -100,45 +97,27 @@ describe("DbUpdateUserAvatar", () => {
     });
 
     it("should call UpdateUserAvatarRepository with correct values", async () => {
-        const {
-            sut,
-            updateUserAvatarRepositorySpy,
-            loadUserByIdRepositorySpy,
-            saveFileSpy,
-        } = makeSut();
+        const { sut, updateUserAvatarRepositorySpy, loadUserByIdRepositorySpy, saveFileSpy } = makeSut();
         await sut.update(mockUpdateUserAvatarInput());
-        expect(updateUserAvatarRepositorySpy.userId).toBe(
-            loadUserByIdRepositorySpy.result?.id,
-        );
+        expect(updateUserAvatarRepositorySpy.userId).toBe(loadUserByIdRepositorySpy.result?.id);
         expect(updateUserAvatarRepositorySpy.avatar).toBe(saveFileSpy.output);
         expect(updateUserAvatarRepositorySpy.callsCount).toBe(1);
     });
 
     it("should throw if UpdateUserAvatarRepository throws", async () => {
         const { sut, updateUserAvatarRepositorySpy } = makeSut();
-        jest.spyOn(
-            updateUserAvatarRepositorySpy,
-            "updateAvatar",
-        ).mockImplementationOnce(throwError);
+        jest.spyOn(updateUserAvatarRepositorySpy, "updateAvatar").mockImplementationOnce(throwError);
         const promise = sut.update(mockUpdateUserAvatarInput());
         await expect(promise).rejects.toThrow();
     });
 
     it("should call DeleteFile after update if user already had an avatar", async () => {
-        const {
-            sut,
-            deleteFileMock,
-            loadUserByIdRepositorySpy,
-            updateUserAvatarRepositorySpy,
-        } = makeSut();
-        if (loadUserByIdRepositorySpy.result)
-            loadUserByIdRepositorySpy.result.avatar = faker.internet.avatar();
+        const { sut, deleteFileMock, loadUserByIdRepositorySpy, updateUserAvatarRepositorySpy } = makeSut();
+        if (loadUserByIdRepositorySpy.result) loadUserByIdRepositorySpy.result.avatar = faker.internet.avatar();
         await sut.update(mockUpdateUserAvatarInput());
 
         expect(updateUserAvatarRepositorySpy.callsCount).toBe(1);
-        expect(deleteFileMock.fileName).toBe(
-            loadUserByIdRepositorySpy.result?.avatar,
-        );
+        expect(deleteFileMock.fileName).toBe(loadUserByIdRepositorySpy.result?.avatar);
         expect(deleteFileMock.callsCount).toBe(1);
     });
 

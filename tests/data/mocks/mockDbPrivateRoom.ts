@@ -21,9 +21,7 @@ export class AddPrivateRoomRepositorySpy implements AddPrivateRoomRepository {
     }
 }
 
-export class AddPrivateMessageRepositorySpy
-    implements AddPrivateMessageRepository
-{
+export class AddPrivateMessageRepositorySpy implements AddPrivateMessageRepository {
     input: AddPrivateMessageRepository.Input;
     output: AddPrivateMessageRepository.Output = {
         message: {
@@ -33,9 +31,7 @@ export class AddPrivateMessageRepositorySpy
         },
     };
     callsCount = 0;
-    async addMessage(
-        input: AddPrivateMessageRepository.Input,
-    ): Promise<AddPrivateMessageRepository.Output> {
+    async addMessage(input: AddPrivateMessageRepository.Input): Promise<AddPrivateMessageRepository.Output> {
         this.input = input;
         this.callsCount++;
         return this.output;
@@ -51,9 +47,7 @@ export class SendMessageMock implements SendMessage {
     }
 }
 
-export class LoadMessagesByPrivateRoomIdRepositorySpy
-    implements LoadMessagesByPrivateRoomIdRepository
-{
+export class LoadMessagesByPrivateRoomIdRepositorySpy implements LoadMessagesByPrivateRoomIdRepository {
     input: LoadMessagesByPrivateRoomIdRepository.Input;
     output: LoadMessagesByPrivateRoomIdRepository.Output = {
         page: 1,
@@ -82,9 +76,7 @@ export class LoadMessagesByPrivateRoomIdRepositorySpy
     }
 }
 
-export class LoadUserPrivateRoomIdsRepositorySpy
-    implements LoadUserPrivateRoomIdsRepository
-{
+export class LoadUserPrivateRoomIdsRepositorySpy implements LoadUserPrivateRoomIdsRepository {
     userId: string;
     output: string[] = [0, 0, 0, 0].map(() => faker.datatype.uuid());
     callsCount = 0;

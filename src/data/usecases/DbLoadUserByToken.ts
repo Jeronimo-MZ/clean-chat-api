@@ -8,14 +8,10 @@ export class DbLoadUserByToken implements LoadUserByToken {
         private readonly decrypter: Decrypter,
         private readonly loadUserByTokenRepository: LoadUserByTokenRepository,
     ) {}
-    async load({
-        accessToken,
-    }: LoadUserByToken.Input): Promise<LoadUserByToken.Output> {
+    async load({ accessToken }: LoadUserByToken.Input): Promise<LoadUserByToken.Output> {
         const isValid = !!(await this.decrypter.decrypt(accessToken));
         if (isValid) {
-            const user = await this.loadUserByTokenRepository.loadByToken(
-                accessToken,
-            );
+            const user = await this.loadUserByTokenRepository.loadByToken(accessToken);
             if (user) return user;
         }
         return new InvalidTokenError();

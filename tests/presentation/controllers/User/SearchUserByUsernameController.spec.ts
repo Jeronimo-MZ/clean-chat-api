@@ -15,10 +15,7 @@ type SutTypes = {
 const makeSut = (): SutTypes => {
     const searchUsersByUsernameSpy = new SearchUsersByUsernameSpy();
     const validationSpy = new ValidationSpy();
-    const sut = new SearchUserByUsernameController(
-        validationSpy,
-        searchUsersByUsernameSpy,
-    );
+    const sut = new SearchUserByUsernameController(validationSpy, searchUsersByUsernameSpy);
     return { sut, validationSpy, searchUsersByUsernameSpy };
 };
 const mockRequest = (): SearchUserByUsernameController.Request => {
@@ -46,9 +43,7 @@ describe("ShowUser Controller", () => {
 
     it("should return 500 if validation throws", async () => {
         const { sut, validationSpy } = makeSut();
-        jest.spyOn(validationSpy, "validate").mockImplementationOnce(
-            throwError,
-        );
+        jest.spyOn(validationSpy, "validate").mockImplementationOnce(throwError);
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
     });
@@ -70,9 +65,7 @@ describe("ShowUser Controller", () => {
 
     it("should return 500 if SearchUserByUsername throws", async () => {
         const { sut, searchUsersByUsernameSpy } = makeSut();
-        jest.spyOn(searchUsersByUsernameSpy, "search").mockImplementationOnce(
-            throwError,
-        );
+        jest.spyOn(searchUsersByUsernameSpy, "search").mockImplementationOnce(throwError);
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
     });

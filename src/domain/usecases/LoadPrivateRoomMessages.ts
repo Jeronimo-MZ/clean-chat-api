@@ -2,9 +2,7 @@ import { RoomNotFoundError, UserNotInRoomError } from "@/domain/errors";
 import { PrivateRoomMessage } from "@/domain/models";
 
 export interface LoadPrivateRoomMessages {
-    loadMessages(
-        input: LoadPrivateRoomMessages.Input,
-    ): Promise<LoadPrivateRoomMessages.Output>;
+    loadMessages(input: LoadPrivateRoomMessages.Input): Promise<LoadPrivateRoomMessages.Output>;
 }
 
 export namespace LoadPrivateRoomMessages {

@@ -1,7 +1,5 @@
 export interface SearchUsersByUsername {
-    search(
-        input: SearchUsersByUsername.Input,
-    ): Promise<SearchUsersByUsername.Output>;
+    search(input: SearchUsersByUsername.Input): Promise<SearchUsersByUsername.Output>;
 }
 
 export namespace SearchUsersByUsername {

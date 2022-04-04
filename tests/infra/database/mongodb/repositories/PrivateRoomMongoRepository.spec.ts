@@ -3,16 +3,8 @@ import mockdate from "mockdate";
 import { Collection, ObjectId } from "mongodb";
 
 import { LoadMessagesByPrivateRoomIdRepository } from "@/data/protocols/database";
-import {
-    PrivateRoom,
-    PrivateRoomMessage,
-    PrivateRoomUser,
-} from "@/domain/models";
-import {
-    CollectionNames,
-    MongoHelper,
-    PrivateRoomMongoRepository,
-} from "@/infra/database/mongodb";
+import { PrivateRoom, PrivateRoomMessage, PrivateRoomUser } from "@/domain/models";
+import { CollectionNames, MongoHelper, PrivateRoomMongoRepository } from "@/infra/database/mongodb";
 
 let userCollection: Collection;
 let privateRoomCollection: Collection;
@@ -38,12 +30,9 @@ const makeSut = (): SutTypes => {
     return { sut };
 };
 
-const makeUsers = (): Promise<[PrivateRoomUser, PrivateRoomUser]> =>
-    Promise.all([makeUser(), makeUser()]);
+const makeUsers = (): Promise<[PrivateRoomUser, PrivateRoomUser]> => Promise.all([makeUser(), makeUser()]);
 
-const makePrivateRoom = async (
-    participants: [PrivateRoomUser, PrivateRoomUser],
-): Promise<PrivateRoom> => {
+const makePrivateRoom = async (participants: [PrivateRoomUser, PrivateRoomUser]): Promise<PrivateRoom> => {
     const roomData = {
         messages: [],
         participants: participants.map(p => new ObjectId(p.id)),
@@ -56,9 +45,7 @@ describe("PrivateRoomMongoRepository", () => {
     beforeAll(async () => {
         await MongoHelper.connect(process.env.MONGO_URL as string);
         userCollection = await MongoHelper.getCollection(CollectionNames.USER);
-        privateRoomCollection = await MongoHelper.getCollection(
-            CollectionNames.PRIVATE_ROOM,
-        );
+        privateRoomCollection = await MongoHelper.getCollection(CollectionNames.PRIVATE_ROOM);
     });
     afterAll(async () => {
         await MongoHelper.disconnect();
@@ -154,9 +141,7 @@ describe("PrivateRoomMongoRepository", () => {
     });
 
     describe("loadMessages()", () => {
-        const makeMessages = (
-            users: [PrivateRoomUser, PrivateRoomUser],
-        ): PrivateRoomMessage[] => [
+        const makeMessages = (users: [PrivateRoomUser, PrivateRoomUser]): PrivateRoomMessage[] => [
             {
                 content: faker.lorem.paragraph(),
                 sentAt: new Date(1002),
@@ -180,10 +165,7 @@ describe("PrivateRoomMongoRepository", () => {
         ];
         it("should return first page values", async () => {
             const { sut } = makeSut();
-            const users = [await makeUser(), await makeUser()] as [
-                PrivateRoomUser,
-                PrivateRoomUser,
-            ];
+            const users = [await makeUser(), await makeUser()] as [PrivateRoomUser, PrivateRoomUser];
             const room = await makePrivateRoom(users);
             const messages = makeMessages(users);
             await privateRoomCollection.updateOne(
@@ -197,9 +179,7 @@ describe("PrivateRoomMongoRepository", () => {
             });
 
             expect(result).toBeTruthy();
-            expect(
-                result,
-            ).toStrictEqual<LoadMessagesByPrivateRoomIdRepository.Output>({
+            expect(result).toStrictEqual<LoadMessagesByPrivateRoomIdRepository.Output>({
                 page: 1,
                 pageSize: 2,
                 totalPages: 2,
@@ -209,10 +189,7 @@ describe("PrivateRoomMongoRepository", () => {
 
         it("should return second page values", async () => {
             const { sut } = makeSut();
-            const users = [await makeUser(), await makeUser()] as [
-                PrivateRoomUser,
-                PrivateRoomUser,
-            ];
+            const users = [await makeUser(), await makeUser()] as [PrivateRoomUser, PrivateRoomUser];
             const room = await makePrivateRoom(users);
             const messages = makeMessages(users);
             await privateRoomCollection.updateOne(
@@ -226,9 +203,7 @@ describe("PrivateRoomMongoRepository", () => {
             });
 
             expect(result).toBeTruthy();
-            expect(
-                result,
-            ).toStrictEqual<LoadMessagesByPrivateRoomIdRepository.Output>({
+            expect(result).toStrictEqual<LoadMessagesByPrivateRoomIdRepository.Output>({
                 page: 2,
                 pageSize: 2,
                 totalPages: 2,
@@ -245,9 +220,7 @@ describe("PrivateRoomMongoRepository", () => {
             });
 
             expect(result).toBeTruthy();
-            expect(
-                result,
-            ).toStrictEqual<LoadMessagesByPrivateRoomIdRepository.Output>({
+            expect(result).toStrictEqual<LoadMessagesByPrivateRoomIdRepository.Output>({
                 page: 1,
                 pageSize: 2,
                 totalPages: 0,
@@ -257,10 +230,7 @@ describe("PrivateRoomMongoRepository", () => {
 
         it("should return empty values if room has no messages", async () => {
             const { sut } = makeSut();
-            const users = [await makeUser(), await makeUser()] as [
-                PrivateRoomUser,
-                PrivateRoomUser,
-            ];
+            const users = [await makeUser(), await makeUser()] as [PrivateRoomUser, PrivateRoomUser];
             const room = await makePrivateRoom(users);
             const result = await sut.loadMessages({
                 page: 1,
@@ -269,9 +239,7 @@ describe("PrivateRoomMongoRepository", () => {
             });
 
             expect(result).toBeTruthy();
-            expect(
-                result,
-            ).toStrictEqual<LoadMessagesByPrivateRoomIdRepository.Output>({
+            expect(result).toStrictEqual<LoadMessagesByPrivateRoomIdRepository.Output>({
                 page: 1,
                 pageSize: 2,
                 totalPages: 0,

@@ -3,12 +3,7 @@ import faker from "@faker-js/faker";
 import { InvalidTokenError } from "@/domain/errors";
 import { ShowUserController } from "@/presentation/controllers";
 import { ServerError } from "@/presentation/errors";
-import {
-    badRequest,
-    ok,
-    serverError,
-    unauthorized,
-} from "@/presentation/helpers";
+import { badRequest, ok, serverError, unauthorized } from "@/presentation/helpers";
 import { LoadUserByTokenSpy, throwError } from "@/tests/domain/mocks";
 import { ValidationSpy } from "@/tests/validation/mocks";
 
@@ -47,9 +42,7 @@ describe("ShowUser Controller", () => {
 
     it("should return 500 if validation throws", async () => {
         const { sut, validationSpy } = makeSut();
-        jest.spyOn(validationSpy, "validate").mockImplementationOnce(
-            throwError,
-        );
+        jest.spyOn(validationSpy, "validate").mockImplementationOnce(throwError);
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
     });
@@ -78,9 +71,7 @@ describe("ShowUser Controller", () => {
 
     it("should return 500 if LoadUserByToken throws", async () => {
         const { sut, loadUserByTokenSpy } = makeSut();
-        jest.spyOn(loadUserByTokenSpy, "load").mockImplementationOnce(
-            throwError,
-        );
+        jest.spyOn(loadUserByTokenSpy, "load").mockImplementationOnce(throwError);
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new Error()));
     });

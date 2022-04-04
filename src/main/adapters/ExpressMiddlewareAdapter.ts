@@ -3,11 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { Middleware } from "@/presentation/protocols";
 
 export const adaptMiddleware = (middleware: Middleware) => {
-    return async (
-        request: Request,
-        response: Response,
-        next: NextFunction,
-    ): Promise<any> => {
+    return async (request: Request, response: Response, next: NextFunction): Promise<any> => {
         const req = {
             accessToken: request.headers?.["x-access-token"],
             ...(request.headers || {}),

@@ -5,16 +5,9 @@ import { Controller, HttpResponse } from "@/presentation/protocols";
 import { Validation } from "@/validation/protocols";
 
 export class UpdateUserAvatarController
-    implements
-        Controller<
-            UpdateUserAvatarController.Request,
-            UpdateUserAvatarController.Response
-        >
+    implements Controller<UpdateUserAvatarController.Request, UpdateUserAvatarController.Response>
 {
-    constructor(
-        private readonly validation: Validation,
-        private readonly updateUserAvatar: UpdateUserAvatar,
-    ) {}
+    constructor(private readonly validation: Validation, private readonly updateUserAvatar: UpdateUserAvatar) {}
     async handle(
         request: UpdateUserAvatarController.Request,
     ): Promise<HttpResponse<UpdateUserAvatarController.Response>> {
@@ -28,8 +21,7 @@ export class UpdateUserAvatarController
                 },
                 userId: request.userId,
             });
-            if (avatarOrError instanceof UserNotFoundError)
-                return forbidden(avatarOrError);
+            if (avatarOrError instanceof UserNotFoundError) return forbidden(avatarOrError);
 
             return ok({ avatarUrl: avatarOrError.avatarUrl });
         } catch (error) {

@@ -3,12 +3,7 @@ import faker from "@faker-js/faker";
 import { RoomNotFoundError, UserNotInRoomError } from "@/domain/errors";
 import { LoadPrivateRoomMessagesController } from "@/presentation/controllers";
 import { ServerError } from "@/presentation/errors";
-import {
-    badRequest,
-    ok,
-    serverError,
-    unauthorized,
-} from "@/presentation/helpers";
+import { badRequest, ok, serverError, unauthorized } from "@/presentation/helpers";
 import { LoadPrivateRoomMessagesSpy, throwError } from "@/tests/domain/mocks";
 import { ValidationSpy } from "@/tests/validation/mocks";
 
@@ -21,10 +16,7 @@ type SutTypes = {
 const makeSut = (): SutTypes => {
     const validationSpy = new ValidationSpy();
     const loadPrivateRoomMessagesSpy = new LoadPrivateRoomMessagesSpy();
-    const sut = new LoadPrivateRoomMessagesController(
-        validationSpy,
-        loadPrivateRoomMessagesSpy,
-    );
+    const sut = new LoadPrivateRoomMessagesController(validationSpy, loadPrivateRoomMessagesSpy);
 
     return { sut, validationSpy, loadPrivateRoomMessagesSpy };
 };
@@ -53,9 +45,7 @@ describe("LoadPrivateRoomMessagesController", () => {
 
     it("should return 500 if Validation throws", async () => {
         const { sut, validationSpy } = makeSut();
-        jest.spyOn(validationSpy, "validate").mockImplementationOnce(
-            throwError,
-        );
+        jest.spyOn(validationSpy, "validate").mockImplementationOnce(throwError);
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
     });
@@ -77,10 +67,7 @@ describe("LoadPrivateRoomMessagesController", () => {
 
     it("should return 500 if LoadPrivateRoomMessages throws", async () => {
         const { sut, loadPrivateRoomMessagesSpy } = makeSut();
-        jest.spyOn(
-            loadPrivateRoomMessagesSpy,
-            "loadMessages",
-        ).mockImplementationOnce(throwError);
+        jest.spyOn(loadPrivateRoomMessagesSpy, "loadMessages").mockImplementationOnce(throwError);
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
     });
@@ -89,9 +76,7 @@ describe("LoadPrivateRoomMessagesController", () => {
         const { sut, loadPrivateRoomMessagesSpy } = makeSut();
         loadPrivateRoomMessagesSpy.output = new RoomNotFoundError();
         const httpResponse = await sut.handle(mockRequest());
-        expect(httpResponse).toEqual(
-            badRequest(loadPrivateRoomMessagesSpy.output),
-        );
+        expect(httpResponse).toEqual(badRequest(loadPrivateRoomMessagesSpy.output));
     });
 
     it("should return 401 if LoadPrivateRoomMessages returns UserNotInRoomError", async () => {

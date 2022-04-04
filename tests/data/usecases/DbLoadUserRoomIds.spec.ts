@@ -12,8 +12,7 @@ type SutTypes = {
 const userId = faker.datatype.uuid();
 
 const makeSut = (): SutTypes => {
-    const loadUserPrivateRoomIdsRepositorySpy =
-        new LoadUserPrivateRoomIdsRepositorySpy();
+    const loadUserPrivateRoomIdsRepositorySpy = new LoadUserPrivateRoomIdsRepositorySpy();
     const sut = new DbLoadUserRoomIds(loadUserPrivateRoomIdsRepositorySpy);
 
     return {
@@ -32,10 +31,7 @@ describe("DbLoadUserRoomIds", () => {
 
     it("should throw if LoadUserPrivateRoomIdsRepository throws", async () => {
         const { sut, loadUserPrivateRoomIdsRepositorySpy } = makeSut();
-        jest.spyOn(
-            loadUserPrivateRoomIdsRepositorySpy,
-            "loadRoomIds",
-        ).mockImplementationOnce(throwError);
+        jest.spyOn(loadUserPrivateRoomIdsRepositorySpy, "loadRoomIds").mockImplementationOnce(throwError);
         const promise = sut.load({ userId });
         await expect(promise).rejects.toThrow();
     });

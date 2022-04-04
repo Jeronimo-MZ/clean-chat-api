@@ -34,10 +34,7 @@ describe("ValidationBuilder", () => {
     it("should return MinValueValidation", () => {
         const length = faker.datatype.number();
         const field = faker.database.column();
-        const validations = sut
-            .field(field)
-            .min(length, { isNumber: true })
-            .build();
+        const validations = sut.field(field).min(length, { isNumber: true }).build();
         expect(validations).toEqual([new MinValueValidation(field, length)]);
     });
 
@@ -51,9 +48,7 @@ describe("ValidationBuilder", () => {
         const field = faker.database.column();
         const fieldToCompare = faker.database.column();
         const validations = sut.field(field).equals(fieldToCompare).build();
-        expect(validations).toEqual([
-            new CompareFieldsValidation(field, fieldToCompare),
-        ]);
+        expect(validations).toEqual([new CompareFieldsValidation(field, fieldToCompare)]);
     });
 
     it("should return IntegerValidation", () => {
@@ -65,34 +60,21 @@ describe("ValidationBuilder", () => {
     it("should return ObjectIdValidation", () => {
         const field = faker.database.column();
         const objectIdValidator = new ObjectIdValidatorSpy();
-        const validations = sut
-            .field(field)
-            .objectId(objectIdValidator)
-            .build();
-        expect(validations).toEqual([
-            new ObjectIdValidation(field, objectIdValidator),
-        ]);
+        const validations = sut.field(field).objectId(objectIdValidator).build();
+        expect(validations).toEqual([new ObjectIdValidation(field, objectIdValidator)]);
     });
 
     it("should return ObjectValidation", () => {
         const field = faker.database.column();
         const objectValidations = [new ValidationSpy(), new ValidationSpy()];
         const validations = sut.field(field).object(objectValidations).build();
-        expect(validations).toEqual([
-            new ObjectValidation(field, objectValidations),
-        ]);
+        expect(validations).toEqual([new ObjectValidation(field, objectValidations)]);
     });
 
     it("should return a list of validations", () => {
         const field = faker.database.column();
         const length = faker.datatype.number();
-        const validations = sut
-            .field(field)
-            .required()
-            .min(length)
-            .username()
-            .integer()
-            .build();
+        const validations = sut.field(field).required().min(length).username().integer().build();
         expect(validations).toEqual([
             new RequiredFieldValidation(field),
             new MinLengthValidation(field, length),
@@ -111,8 +93,6 @@ describe("ValidationBuilder", () => {
     it("should return correct MaxFileSizeValidation", () => {
         const field = faker.database.column();
         const validators = sut.field(field).allowedMimetypes(["png"]).build();
-        expect(validators).toEqual([
-            new AllowedMimeTypesValidation(["png"], field),
-        ]);
+        expect(validators).toEqual([new AllowedMimeTypesValidation(["png"], field)]);
     });
 });

@@ -2,12 +2,7 @@ import faker from "@faker-js/faker";
 
 import { LoadPrivateRoomByIdRepository } from "@/data/protocols/database";
 import { PrivateRoom } from "@/domain/models";
-import {
-    AddPrivateRoom,
-    LoadPrivateRoomMessages,
-    LoadUserRoomIds,
-    SendPrivateMessage,
-} from "@/domain/usecases";
+import { AddPrivateRoom, LoadPrivateRoomMessages, LoadUserRoomIds, SendPrivateMessage } from "@/domain/usecases";
 
 export const mockAddPrivateRoomInput = (): AddPrivateRoom.Input => ({
     currentUserId: faker.datatype.uuid(),
@@ -48,9 +43,7 @@ export class AddPrivateRoomSpy implements AddPrivateRoom {
     }
 }
 
-export class LoadPrivateRoomByIdRepositorySpy
-    implements LoadPrivateRoomByIdRepository
-{
+export class LoadPrivateRoomByIdRepositorySpy implements LoadPrivateRoomByIdRepository {
     id: string;
     output: LoadPrivateRoomByIdRepository.Output = {
         id: faker.datatype.uuid(),
@@ -81,22 +74,19 @@ export class SendPrivateMessageSpy implements SendPrivateMessage {
         },
     };
     callsCount = 0;
-    async send(
-        input: SendPrivateMessage.Input,
-    ): Promise<SendPrivateMessage.Output> {
+    async send(input: SendPrivateMessage.Input): Promise<SendPrivateMessage.Output> {
         this.input = input;
         this.callsCount++;
         return this.output;
     }
 }
 
-export const mockLoadPrivateRoomMessagesInput =
-    (): LoadPrivateRoomMessages.Input => ({
-        page: faker.datatype.number(),
-        pageSize: faker.datatype.number(),
-        roomId: faker.datatype.uuid(),
-        userId: faker.datatype.uuid(),
-    });
+export const mockLoadPrivateRoomMessagesInput = (): LoadPrivateRoomMessages.Input => ({
+    page: faker.datatype.number(),
+    pageSize: faker.datatype.number(),
+    roomId: faker.datatype.uuid(),
+    userId: faker.datatype.uuid(),
+});
 
 export class LoadPrivateRoomMessagesSpy implements LoadPrivateRoomMessages {
     input: LoadPrivateRoomMessages.Input;
@@ -115,9 +105,7 @@ export class LoadPrivateRoomMessagesSpy implements LoadPrivateRoomMessages {
     };
     callsCount = 0;
 
-    async loadMessages(
-        input: LoadPrivateRoomMessages.Input,
-    ): Promise<LoadPrivateRoomMessages.Output> {
+    async loadMessages(input: LoadPrivateRoomMessages.Input): Promise<LoadPrivateRoomMessages.Output> {
         this.input = input;
         this.callsCount++;
         return this.output;

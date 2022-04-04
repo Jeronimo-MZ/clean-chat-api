@@ -6,11 +6,7 @@ import {
     LoadUserByUsernameRepositorySpy,
     UpdateAccessTokenRepositorySpy,
 } from "@/tests/data/mocks";
-import {
-    mockAuthenticationInput,
-    mockUserModel,
-    throwError,
-} from "@/tests/domain/mocks";
+import { mockAuthenticationInput, mockUserModel, throwError } from "@/tests/domain/mocks";
 
 type SutTypes = {
     sut: DbAuthentication;
@@ -21,8 +17,7 @@ type SutTypes = {
 };
 
 const makeSut = (): SutTypes => {
-    const loadUserByUsernameRepositorySpy =
-        new LoadUserByUsernameRepositorySpy();
+    const loadUserByUsernameRepositorySpy = new LoadUserByUsernameRepositorySpy();
     loadUserByUsernameRepositorySpy.result = mockUserModel();
     const hashComparerSpy = new HashComparerSpy();
     const encrypterSpy = new EncrypterSpy();
@@ -48,9 +43,7 @@ describe("DbAuthentication", () => {
         const { sut, loadUserByUsernameRepositorySpy } = makeSut();
         const authenticationInput = mockAuthenticationInput();
         await sut.auth(authenticationInput);
-        expect(loadUserByUsernameRepositorySpy.username).toBe(
-            authenticationInput.username,
-        );
+        expect(loadUserByUsernameRepositorySpy.username).toBe(authenticationInput.username);
     });
 
     it("should return InvalidCredentialsError if LoadUserByUsernameRepository returns null", async () => {
@@ -62,23 +55,17 @@ describe("DbAuthentication", () => {
 
     it("should throw if LoadUserByUsernameRepository throws", async () => {
         const { sut, loadUserByUsernameRepositorySpy } = makeSut();
-        jest.spyOn(
-            loadUserByUsernameRepositorySpy,
-            "loadByUsername",
-        ).mockImplementationOnce(throwError);
+        jest.spyOn(loadUserByUsernameRepositorySpy, "loadByUsername").mockImplementationOnce(throwError);
         const promise = sut.auth(mockAuthenticationInput());
         expect(promise).rejects.toThrow();
     });
 
     it("should call HashComparer with correct values", async () => {
-        const { sut, hashComparerSpy, loadUserByUsernameRepositorySpy } =
-            makeSut();
+        const { sut, hashComparerSpy, loadUserByUsernameRepositorySpy } = makeSut();
         const authenticationInput = mockAuthenticationInput();
         await sut.auth(authenticationInput);
         expect(hashComparerSpy.plaintext).toBe(authenticationInput.password);
-        expect(hashComparerSpy.digest).toBe(
-            loadUserByUsernameRepositorySpy.result?.password,
-        );
+        expect(hashComparerSpy.digest).toBe(loadUserByUsernameRepositorySpy.result?.password);
     });
 
     it("should return InvalidCredentialsError if HashComparer returns false", async () => {
@@ -90,20 +77,15 @@ describe("DbAuthentication", () => {
 
     it("should throw if HashComparer throws", async () => {
         const { sut, hashComparerSpy } = makeSut();
-        jest.spyOn(hashComparerSpy, "compare").mockImplementationOnce(
-            throwError,
-        );
+        jest.spyOn(hashComparerSpy, "compare").mockImplementationOnce(throwError);
         const promise = sut.auth(mockAuthenticationInput());
         expect(promise).rejects.toThrow();
     });
 
     it("should call Encrypter with correct value", async () => {
-        const { sut, encrypterSpy, loadUserByUsernameRepositorySpy } =
-            makeSut();
+        const { sut, encrypterSpy, loadUserByUsernameRepositorySpy } = makeSut();
         await sut.auth(mockAuthenticationInput());
-        expect(encrypterSpy.plaintext).toBe(
-            loadUserByUsernameRepositorySpy.result?.id,
-        );
+        expect(encrypterSpy.plaintext).toBe(loadUserByUsernameRepositorySpy.result?.id);
     });
 
     it("should throw if Encrypter throws", async () => {
@@ -121,27 +103,15 @@ describe("DbAuthentication", () => {
     });
 
     it("should call UpdateAccessTokenRepository with correct values", async () => {
-        const {
-            sut,
-            updateAccessTokenRepositorySpy,
-            loadUserByUsernameRepositorySpy,
-            encrypterSpy,
-        } = makeSut();
+        const { sut, updateAccessTokenRepositorySpy, loadUserByUsernameRepositorySpy, encrypterSpy } = makeSut();
         await sut.auth(mockAuthenticationInput());
-        expect(updateAccessTokenRepositorySpy.id).toBe(
-            loadUserByUsernameRepositorySpy.result?.id,
-        );
-        expect(updateAccessTokenRepositorySpy.token).toBe(
-            encrypterSpy.ciphertext,
-        );
+        expect(updateAccessTokenRepositorySpy.id).toBe(loadUserByUsernameRepositorySpy.result?.id);
+        expect(updateAccessTokenRepositorySpy.token).toBe(encrypterSpy.ciphertext);
     });
 
     it("should throw if UpdateAccessTokenRepository throws", async () => {
         const { sut, updateAccessTokenRepositorySpy } = makeSut();
-        jest.spyOn(
-            updateAccessTokenRepositorySpy,
-            "updateAccessToken",
-        ).mockImplementation(throwError);
+        jest.spyOn(updateAccessTokenRepositorySpy, "updateAccessToken").mockImplementation(throwError);
         const promise = sut.auth(mockAuthenticationInput());
         await expect(promise).rejects.toThrow();
     });

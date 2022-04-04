@@ -16,9 +16,7 @@ const makeSut = (): SutTypes => {
 describe("IntegerValidation", () => {
     it("should return null if a valid integer is provided", () => {
         const { sut } = makeSut();
-        expect(
-            sut.validate({ [field]: Math.round(faker.datatype.number()) }),
-        ).toBeNull();
+        expect(sut.validate({ [field]: Math.round(faker.datatype.number()) })).toBeNull();
     });
 
     it("should return null if no value is given", () => {

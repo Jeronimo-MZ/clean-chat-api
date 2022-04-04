@@ -1,13 +1,7 @@
 import { ObjectIdValidator, Validation } from "@/validation/protocols";
-import {
-    MinLengthValidation,
-    RequiredFieldValidation,
-} from "@/validation/validators";
+import { MinLengthValidation, RequiredFieldValidation } from "@/validation/validators";
 
-import {
-    AllowedMimeTypesValidation,
-    Extension,
-} from "./AllowedMimeTypeValidation";
+import { AllowedMimeTypesValidation, Extension } from "./AllowedMimeTypeValidation";
 import { CompareFieldsValidation } from "./CompareFieldsValidation";
 import { IntegerValidation } from "./IntegerValidation";
 import { MaxFileSizeValidation } from "./MaxFileSizeValidation";
@@ -17,10 +11,7 @@ import { ObjectValidation } from "./ObjectValidation";
 import { UsernameValidation } from "./UsernameValidation";
 
 export class ValidationBuilder {
-    private constructor(
-        private readonly fieldName: string,
-        private readonly validations: Validation[],
-    ) {}
+    private constructor(private readonly fieldName: string, private readonly validations: Validation[]) {}
 
     static field(fieldName: string): ValidationBuilder {
         return new ValidationBuilder(fieldName, []);
@@ -33,13 +24,9 @@ export class ValidationBuilder {
 
     min(value: number, options?: { isNumber: boolean }): ValidationBuilder {
         if (options?.isNumber) {
-            this.validations.push(
-                new MinValueValidation(this.fieldName, value),
-            );
+            this.validations.push(new MinValueValidation(this.fieldName, value));
         } else {
-            this.validations.push(
-                new MinLengthValidation(this.fieldName, value),
-            );
+            this.validations.push(new MinLengthValidation(this.fieldName, value));
         }
         return this;
     }
@@ -55,36 +42,26 @@ export class ValidationBuilder {
     }
 
     objectId(objectIdValidator: ObjectIdValidator): ValidationBuilder {
-        this.validations.push(
-            new ObjectIdValidation(this.fieldName, objectIdValidator),
-        );
+        this.validations.push(new ObjectIdValidation(this.fieldName, objectIdValidator));
         return this;
     }
 
     object(validations: Validation[]): ValidationBuilder {
-        this.validations.push(
-            new ObjectValidation(this.fieldName, validations),
-        );
+        this.validations.push(new ObjectValidation(this.fieldName, validations));
         return this;
     }
 
     equals(fieldToCompare: string): ValidationBuilder {
-        this.validations.push(
-            new CompareFieldsValidation(this.fieldName, fieldToCompare),
-        );
+        this.validations.push(new CompareFieldsValidation(this.fieldName, fieldToCompare));
         return this;
     }
 
     maxFileSize(maxSizeInMb: number): ValidationBuilder {
-        this.validations.push(
-            new MaxFileSizeValidation(maxSizeInMb, this.fieldName),
-        );
+        this.validations.push(new MaxFileSizeValidation(maxSizeInMb, this.fieldName));
         return this;
     }
     allowedMimetypes(allowed: Extension[]): ValidationBuilder {
-        this.validations.push(
-            new AllowedMimeTypesValidation(allowed, this.fieldName),
-        );
+        this.validations.push(new AllowedMimeTypesValidation(allowed, this.fieldName));
         return this;
     }
 

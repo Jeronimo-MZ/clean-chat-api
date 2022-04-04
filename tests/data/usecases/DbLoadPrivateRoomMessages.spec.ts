@@ -3,11 +3,7 @@ import { DbLoadPrivateRoomMessages } from "@/data/usecases";
 import { RoomNotFoundError, UserNotInRoomError } from "@/domain/errors";
 import { LoadPrivateRoomMessages } from "@/domain/usecases";
 import { LoadMessagesByPrivateRoomIdRepositorySpy } from "@/tests/data/mocks";
-import {
-    LoadPrivateRoomByIdRepositorySpy,
-    mockLoadPrivateRoomMessagesInput,
-    throwError,
-} from "@/tests/domain/mocks";
+import { LoadPrivateRoomByIdRepositorySpy, mockLoadPrivateRoomMessagesInput, throwError } from "@/tests/domain/mocks";
 
 type SutTypes = {
     sut: DbLoadPrivateRoomMessages;
@@ -17,13 +13,10 @@ type SutTypes = {
 };
 
 const makeSut = (): SutTypes => {
-    const loadPrivateRoomByIdRepositorySpy =
-        new LoadPrivateRoomByIdRepositorySpy();
-    const loadMessagesByPrivateRoomIdRepositorySpy =
-        new LoadMessagesByPrivateRoomIdRepositorySpy();
+    const loadPrivateRoomByIdRepositorySpy = new LoadPrivateRoomByIdRepositorySpy();
+    const loadMessagesByPrivateRoomIdRepositorySpy = new LoadMessagesByPrivateRoomIdRepositorySpy();
     const input = mockLoadPrivateRoomMessagesInput();
-    input.userId = loadPrivateRoomByIdRepositorySpy.output
-        ?.participants[0] as string;
+    input.userId = loadPrivateRoomByIdRepositorySpy.output?.participants[0] as string;
 
     const sut = new DbLoadPrivateRoomMessages(
         loadPrivateRoomByIdRepositorySpy,
@@ -55,29 +48,21 @@ describe("DbLoadPrivateRoomMessages", () => {
 
     it("should return UserNotInRoomError if user is not in room", async () => {
         const { sut } = makeSut();
-        const output = await sut.loadMessages(
-            mockLoadPrivateRoomMessagesInput(),
-        );
+        const output = await sut.loadMessages(mockLoadPrivateRoomMessagesInput());
         expect(output).toEqual(new UserNotInRoomError());
     });
 
     it("should throw if LoadPrivateRoomByIdRepository throws", async () => {
         const { sut, loadPrivateRoomByIdRepositorySpy, input } = makeSut();
-        jest.spyOn(
-            loadPrivateRoomByIdRepositorySpy,
-            "loadById",
-        ).mockImplementationOnce(throwError);
+        jest.spyOn(loadPrivateRoomByIdRepositorySpy, "loadById").mockImplementationOnce(throwError);
         const promise = sut.loadMessages(input);
         expect(promise).rejects.toThrow();
     });
 
     it("should call LoadMessagesByPrivateRoomIdRepository with correct values", async () => {
-        const { sut, loadMessagesByPrivateRoomIdRepositorySpy, input } =
-            makeSut();
+        const { sut, loadMessagesByPrivateRoomIdRepositorySpy, input } = makeSut();
         await sut.loadMessages(input);
-        expect(
-            loadMessagesByPrivateRoomIdRepositorySpy.input,
-        ).toEqual<LoadMessagesByPrivateRoomIdRepository.Input>({
+        expect(loadMessagesByPrivateRoomIdRepositorySpy.input).toEqual<LoadMessagesByPrivateRoomIdRepository.Input>({
             page: input.page,
             pageSize: input.pageSize,
             roomId: input.roomId,
@@ -86,12 +71,7 @@ describe("DbLoadPrivateRoomMessages", () => {
     });
 
     it("should not call LoadMessagesByPrivateRoomIdRepository if LoadPrivateRoomByIdRepository returns null", async () => {
-        const {
-            sut,
-            loadPrivateRoomByIdRepositorySpy,
-            loadMessagesByPrivateRoomIdRepositorySpy,
-            input,
-        } = makeSut();
+        const { sut, loadPrivateRoomByIdRepositorySpy, loadMessagesByPrivateRoomIdRepositorySpy, input } = makeSut();
         loadPrivateRoomByIdRepositorySpy.output = null;
         await sut.loadMessages(input);
         expect(loadMessagesByPrivateRoomIdRepositorySpy.callsCount).toBe(0);
@@ -104,27 +84,21 @@ describe("DbLoadPrivateRoomMessages", () => {
     });
 
     it("should throw if LoadMessagesByPrivateRoomIdRepository throws", async () => {
-        const { sut, loadMessagesByPrivateRoomIdRepositorySpy, input } =
-            makeSut();
-        jest.spyOn(
-            loadMessagesByPrivateRoomIdRepositorySpy,
-            "loadMessages",
-        ).mockImplementationOnce(throwError);
+        const { sut, loadMessagesByPrivateRoomIdRepositorySpy, input } = makeSut();
+        jest.spyOn(loadMessagesByPrivateRoomIdRepositorySpy, "loadMessages").mockImplementationOnce(throwError);
         const promise = sut.loadMessages(input);
         expect(promise).rejects.toThrow();
     });
 
     it("should return correct values on success", async () => {
-        const { sut, input, loadMessagesByPrivateRoomIdRepositorySpy } =
-            makeSut();
+        const { sut, input, loadMessagesByPrivateRoomIdRepositorySpy } = makeSut();
         const message = await sut.loadMessages(input);
         expect(message).toEqual<LoadPrivateRoomMessages.Output>({
             roomId: input.roomId,
             messages: loadMessagesByPrivateRoomIdRepositorySpy.output.messages,
             page: loadMessagesByPrivateRoomIdRepositorySpy.output.page,
             pageSize: loadMessagesByPrivateRoomIdRepositorySpy.output.pageSize,
-            totalPages:
-                loadMessagesByPrivateRoomIdRepositorySpy.output.totalPages,
+            totalPages: loadMessagesByPrivateRoomIdRepositorySpy.output.totalPages,
         });
     });
 });

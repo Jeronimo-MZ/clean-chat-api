@@ -1,15 +1,7 @@
 import { DbAddUser } from "@/data/usecases";
 import { UsernameInUseError } from "@/domain/errors";
-import {
-    AddUserRepositorySpy,
-    HasherSpy,
-    LoadUserByUsernameRepositorySpy,
-} from "@/tests/data/mocks";
-import {
-    mockAddUserInput,
-    mockUserModel,
-    throwError,
-} from "@/tests/domain/mocks";
+import { AddUserRepositorySpy, HasherSpy, LoadUserByUsernameRepositorySpy } from "@/tests/data/mocks";
+import { mockAddUserInput, mockUserModel, throwError } from "@/tests/domain/mocks";
 
 type SutTypes = {
     sut: DbAddUser;
@@ -20,21 +12,10 @@ type SutTypes = {
 
 const makeSut = (): SutTypes => {
     const hasherSpy = new HasherSpy();
-    const loadUserByUsernameRepositorySpy =
-        new LoadUserByUsernameRepositorySpy();
+    const loadUserByUsernameRepositorySpy = new LoadUserByUsernameRepositorySpy();
     const addUserRepositorySpy = new AddUserRepositorySpy();
-    const sut = new DbAddUser(
-        hasherSpy,
-        loadUserByUsernameRepositorySpy,
-        addUserRepositorySpy,
-    );
-
-    return {
-        sut,
-        hasherSpy,
-        loadUserByUsernameRepositorySpy,
-        addUserRepositorySpy,
-    };
+    const sut = new DbAddUser(hasherSpy, loadUserByUsernameRepositorySpy, addUserRepositorySpy);
+    return { sut, hasherSpy, loadUserByUsernameRepositorySpy, addUserRepositorySpy };
 };
 
 describe("DbAddUser", () => {
@@ -56,9 +37,7 @@ describe("DbAddUser", () => {
         const { sut, loadUserByUsernameRepositorySpy } = makeSut();
         const addUserInput = mockAddUserInput();
         await sut.add(addUserInput);
-        expect(loadUserByUsernameRepositorySpy.username).toBe(
-            addUserInput.username,
-        );
+        expect(loadUserByUsernameRepositorySpy.username).toBe(addUserInput.username);
     });
 
     it("should return UsernameInUseError if LoadUserByUsernameRepository returns a User", async () => {
@@ -69,12 +48,7 @@ describe("DbAddUser", () => {
     });
 
     it("should not call Hasher and AddUserRepository if LoadUserByUsernameRepository returns a User", async () => {
-        const {
-            sut,
-            hasherSpy,
-            addUserRepositorySpy,
-            loadUserByUsernameRepositorySpy,
-        } = makeSut();
+        const { sut, hasherSpy, addUserRepositorySpy, loadUserByUsernameRepositorySpy } = makeSut();
         loadUserByUsernameRepositorySpy.result = mockUserModel();
         await sut.add(mockAddUserInput());
         expect(hasherSpy.callsCount).toBe(0);
@@ -83,10 +57,7 @@ describe("DbAddUser", () => {
 
     it("should throw if LoadUserByUsernameRepository throws", async () => {
         const { sut, loadUserByUsernameRepositorySpy } = makeSut();
-        jest.spyOn(
-            loadUserByUsernameRepositorySpy,
-            "loadByUsername",
-        ).mockImplementationOnce(throwError);
+        jest.spyOn(loadUserByUsernameRepositorySpy, "loadByUsername").mockImplementationOnce(throwError);
         const promise = sut.add(mockAddUserInput());
         expect(promise).rejects.toThrow();
     });
@@ -95,18 +66,13 @@ describe("DbAddUser", () => {
         const { sut, addUserRepositorySpy, hasherSpy } = makeSut();
         const addUserInput = mockAddUserInput();
         await sut.add(addUserInput);
-        expect(addUserRepositorySpy.input).toEqual({
-            ...addUserInput,
-            password: hasherSpy.digest,
-        });
+        expect(addUserRepositorySpy.input).toEqual({ ...addUserInput, password: hasherSpy.digest });
         expect(addUserRepositorySpy.callsCount).toBe(1);
     });
 
     it("should throw if AddUserRepository throws", async () => {
         const { sut, addUserRepositorySpy } = makeSut();
-        jest.spyOn(addUserRepositorySpy, "add").mockImplementationOnce(
-            throwError,
-        );
+        jest.spyOn(addUserRepositorySpy, "add").mockImplementationOnce(throwError);
         const promise = sut.add(mockAddUserInput());
         expect(promise).rejects.toThrow();
     });

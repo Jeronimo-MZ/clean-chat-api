@@ -4,12 +4,7 @@ import { RoomNotFoundError, UserNotInRoomError } from "@/domain/errors";
 import { SendPrivateMessage } from "@/domain/usecases";
 import { SendPrivateMessageController } from "@/presentation/controllers";
 import { ServerError } from "@/presentation/errors";
-import {
-    badRequest,
-    ok,
-    serverError,
-    unauthorized,
-} from "@/presentation/helpers";
+import { badRequest, ok, serverError, unauthorized } from "@/presentation/helpers";
 import { SendPrivateMessageSpy, throwError } from "@/tests/domain/mocks";
 import { ValidationSpy } from "@/tests/validation/mocks";
 
@@ -22,10 +17,7 @@ type SutTypes = {
 const makeSut = (): SutTypes => {
     const validationSpy = new ValidationSpy();
     const sendPrivateMessageSpy = new SendPrivateMessageSpy();
-    const sut = new SendPrivateMessageController(
-        validationSpy,
-        sendPrivateMessageSpy,
-    );
+    const sut = new SendPrivateMessageController(validationSpy, sendPrivateMessageSpy);
 
     return { sut, validationSpy, sendPrivateMessageSpy };
 };
@@ -53,9 +45,7 @@ describe("SendPrivateMessageController", () => {
 
     it("should return 500 if Validation throws", async () => {
         const { sut, validationSpy } = makeSut();
-        jest.spyOn(validationSpy, "validate").mockImplementationOnce(
-            throwError,
-        );
+        jest.spyOn(validationSpy, "validate").mockImplementationOnce(throwError);
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
     });
@@ -80,9 +70,7 @@ describe("SendPrivateMessageController", () => {
 
     it("should return 500 if SendPrivateMessage throws", async () => {
         const { sut, sendPrivateMessageSpy } = makeSut();
-        jest.spyOn(sendPrivateMessageSpy, "send").mockImplementationOnce(
-            throwError,
-        );
+        jest.spyOn(sendPrivateMessageSpy, "send").mockImplementationOnce(throwError);
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
     });

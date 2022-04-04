@@ -24,18 +24,14 @@ const convertMbToBytes = (sizeInMb: number): number => {
 describe("MaxFileSize Validation", () => {
     it("should return null if size equals maxFileSize", () => {
         const { sut } = makeSut();
-        const buffer = Buffer.from(
-            new ArrayBuffer(convertMbToBytes(maxSizeInMb)),
-        );
+        const buffer = Buffer.from(new ArrayBuffer(convertMbToBytes(maxSizeInMb)));
         const error = sut.validate({ [field]: buffer });
         expect(error).toBeNull();
     });
 
     it("should return null if size is lesser than maxFileSize", () => {
         const { sut } = makeSut();
-        const buffer = Buffer.from(
-            new ArrayBuffer(convertMbToBytes(maxSizeInMb - 1)),
-        );
+        const buffer = Buffer.from(new ArrayBuffer(convertMbToBytes(maxSizeInMb - 1)));
         const error = sut.validate({ [field]: buffer });
         expect(error).toBeNull();
     });
@@ -54,9 +50,7 @@ describe("MaxFileSize Validation", () => {
 
     it("should return MaxFileSizeError if size is greater than maxFileSize", () => {
         const { sut } = makeSut();
-        const buffer = Buffer.from(
-            new ArrayBuffer(convertMbToBytes(maxSizeInMb + 1)),
-        );
+        const buffer = Buffer.from(new ArrayBuffer(convertMbToBytes(maxSizeInMb + 1)));
         const error = sut.validate({ [field]: buffer });
         expect(error).toEqual(new MaxFileSizeError(field, maxSizeInMb));
     });

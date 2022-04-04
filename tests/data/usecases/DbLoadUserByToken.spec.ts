@@ -16,10 +16,7 @@ const accessToken = faker.datatype.uuid();
 const makeSut = (): SutTypes => {
     const loadUserByTokenRepositorySpy = new LoadUserByTokenRepositorySpy();
     const decrypterSpy = new DecrypterSpy();
-    const sut = new DbLoadUserByToken(
-        decrypterSpy,
-        loadUserByTokenRepositorySpy,
-    );
+    const sut = new DbLoadUserByToken(decrypterSpy, loadUserByTokenRepositorySpy);
 
     return {
         sut,
@@ -59,10 +56,7 @@ describe("DbLoadUserByToken", () => {
 
     it("should throw if LoadUserByTokenRepository throws", async () => {
         const { sut, loadUserByTokenRepositorySpy } = makeSut();
-        jest.spyOn(
-            loadUserByTokenRepositorySpy,
-            "loadByToken",
-        ).mockImplementationOnce(throwError);
+        jest.spyOn(loadUserByTokenRepositorySpy, "loadByToken").mockImplementationOnce(throwError);
         const promise = sut.load({ accessToken });
         await expect(promise).rejects.toThrow();
     });

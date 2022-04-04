@@ -3,11 +3,7 @@ import { Collection } from "mongodb";
 
 import { SearchUsersByUsernameRepository } from "@/data/protocols/database";
 import { User } from "@/domain/models";
-import {
-    CollectionNames,
-    MongoHelper,
-    UserMongoRepository,
-} from "@/infra/database/mongodb";
+import { CollectionNames, MongoHelper, UserMongoRepository } from "@/infra/database/mongodb";
 import { mockAddUserInput } from "@/tests/domain/mocks";
 
 const makeSut = (): UserMongoRepository => new UserMongoRepository();
@@ -91,9 +87,7 @@ describe("UserMongoRepository", () => {
     describe("updateAccessToken()", () => {
         it("should update the user accessToken on success", async () => {
             const sut = makeSut();
-            const { insertedId } = await usersCollection.insertOne(
-                mockAddUserInput(),
-            );
+            const { insertedId } = await usersCollection.insertOne(mockAddUserInput());
 
             const accessToken = faker.datatype.uuid();
             await sut.updateAccessToken(insertedId.toHexString(), accessToken);
@@ -142,9 +136,7 @@ describe("UserMongoRepository", () => {
         it("should return a user on success", async () => {
             const sut = makeSut();
             const addUserInput = mockAddUserInput();
-            const { insertedId } = await usersCollection.insertOne(
-                addUserInput,
-            );
+            const { insertedId } = await usersCollection.insertOne(addUserInput);
             const user = await sut.loadById(insertedId.toHexString());
             expect(user).toBeTruthy();
             expect(user?.id).toBe(insertedId.toHexString());
@@ -177,9 +169,7 @@ describe("UserMongoRepository", () => {
             });
 
             expect(result).toBeTruthy();
-            expect(
-                result,
-            ).toStrictEqual<SearchUsersByUsernameRepository.Output>({
+            expect(result).toStrictEqual<SearchUsersByUsernameRepository.Output>({
                 page: 1,
                 pageSize: 2,
                 totalPages: 2,
@@ -208,9 +198,7 @@ describe("UserMongoRepository", () => {
             });
 
             expect(result).toBeTruthy();
-            expect(
-                result,
-            ).toStrictEqual<SearchUsersByUsernameRepository.Output>({
+            expect(result).toStrictEqual<SearchUsersByUsernameRepository.Output>({
                 page: 2,
                 pageSize: 2,
                 totalPages: 2,
@@ -238,9 +226,7 @@ describe("UserMongoRepository", () => {
             });
 
             expect(result).toBeTruthy();
-            expect(
-                result,
-            ).toStrictEqual<SearchUsersByUsernameRepository.Output>({
+            expect(result).toStrictEqual<SearchUsersByUsernameRepository.Output>({
                 page: 1,
                 pageSize: 2,
                 totalPages: 0,
@@ -252,9 +238,7 @@ describe("UserMongoRepository", () => {
     describe("updateAvatar()", () => {
         it("should update the user avatar on success", async () => {
             const sut = makeSut();
-            const { insertedId } = await usersCollection.insertOne(
-                mockAddUserInput(),
-            );
+            const { insertedId } = await usersCollection.insertOne(mockAddUserInput());
 
             const avatar = faker.internet.avatar();
             await sut.updateAvatar({

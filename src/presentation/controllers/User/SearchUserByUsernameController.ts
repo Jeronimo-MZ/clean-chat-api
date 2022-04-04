@@ -4,11 +4,7 @@ import { Controller, HttpResponse } from "@/presentation/protocols";
 import { Validation } from "@/validation/protocols";
 
 export class SearchUserByUsernameController
-    implements
-        Controller<
-            SearchUserByUsernameController.Request,
-            SearchUserByUsernameController.Response
-        >
+    implements Controller<SearchUserByUsernameController.Request, SearchUserByUsernameController.Response>
 {
     constructor(
         private readonly validation: Validation,

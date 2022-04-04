@@ -1,12 +1,6 @@
 import faker from "@faker-js/faker";
 
-import {
-    Decrypter,
-    Encrypter,
-    HashComparer,
-    Hasher,
-    UUIDGenerator,
-} from "@/data/protocols/cryptography";
+import { Decrypter, Encrypter, HashComparer, Hasher, UUIDGenerator } from "@/data/protocols/cryptography";
 
 export class HasherSpy implements Hasher {
     plaintext: string;

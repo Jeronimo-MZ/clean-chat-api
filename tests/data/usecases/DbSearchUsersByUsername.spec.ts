@@ -2,10 +2,7 @@ import { SearchUsersByUsernameRepository } from "@/data/protocols/database";
 import { DbSearchUsersByUsername } from "@/data/usecases";
 import { SearchUsersByUsername } from "@/domain/usecases";
 import { SearchUsersByUsernameRepositorySpy } from "@/tests/data/mocks";
-import {
-    mockSearchUsersByUsernameInput,
-    throwError,
-} from "@/tests/domain/mocks";
+import { mockSearchUsersByUsernameInput, throwError } from "@/tests/domain/mocks";
 
 type SutTypes = {
     sut: DbSearchUsersByUsername;
@@ -13,8 +10,7 @@ type SutTypes = {
 };
 
 const makeSut = (): SutTypes => {
-    const searchUsersByUsernameRepositorySpy =
-        new SearchUsersByUsernameRepositorySpy();
+    const searchUsersByUsernameRepositorySpy = new SearchUsersByUsernameRepositorySpy();
 
     const sut = new DbSearchUsersByUsername(searchUsersByUsernameRepositorySpy);
 
@@ -26,9 +22,7 @@ describe("DbSearchUsersByUsername", () => {
         const { sut, searchUsersByUsernameRepositorySpy } = makeSut();
         const input = mockSearchUsersByUsernameInput();
         await sut.search(input);
-        expect(
-            searchUsersByUsernameRepositorySpy.input,
-        ).toStrictEqual<SearchUsersByUsernameRepository.Input>({
+        expect(searchUsersByUsernameRepositorySpy.input).toStrictEqual<SearchUsersByUsernameRepository.Input>({
             page: input.page,
             pageSize: input.pageSize,
             username: input.username,
@@ -38,10 +32,7 @@ describe("DbSearchUsersByUsername", () => {
 
     it("should throw if SearchUsersByUsernameRepository throws", async () => {
         const { sut, searchUsersByUsernameRepositorySpy } = makeSut();
-        jest.spyOn(
-            searchUsersByUsernameRepositorySpy,
-            "searchByUsername",
-        ).mockImplementationOnce(throwError);
+        jest.spyOn(searchUsersByUsernameRepositorySpy, "searchByUsername").mockImplementationOnce(throwError);
         const promise = sut.search(mockSearchUsersByUsernameInput());
         await expect(promise).rejects.toThrowError(new Error());
     });
@@ -50,9 +41,7 @@ describe("DbSearchUsersByUsername", () => {
         const { sut, searchUsersByUsernameRepositorySpy } = makeSut();
         const input = mockSearchUsersByUsernameInput();
         const output = await sut.search(input);
-        expect(output).toStrictEqual<SearchUsersByUsername.Output>(
-            searchUsersByUsernameRepositorySpy.output,
-        );
+        expect(output).toStrictEqual<SearchUsersByUsername.Output>(searchUsersByUsernameRepositorySpy.output);
         expect(searchUsersByUsernameRepositorySpy.callsCount).toBe(1);
     });
 });

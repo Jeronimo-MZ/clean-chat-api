@@ -3,16 +3,9 @@ import { badRequest, forbidden, ok, serverError } from "@/presentation/helpers";
 import { Controller, HttpResponse } from "@/presentation/protocols";
 import { Validation } from "@/validation/protocols";
 
-export class SignUpController
-    implements Controller<SignUpController.Request, SignUpController.Response>
-{
-    constructor(
-        private readonly validation: Validation,
-        private readonly addUser: AddUser,
-    ) {}
-    async handle(
-        request: SignUpController.Request,
-    ): Promise<HttpResponse<SignUpController.Response>> {
+export class SignUpController implements Controller<SignUpController.Request, SignUpController.Response> {
+    constructor(private readonly validation: Validation, private readonly addUser: AddUser) {}
+    async handle(request: SignUpController.Request): Promise<HttpResponse<SignUpController.Response>> {
         try {
             const error = this.validation.validate(request);
             if (error) return badRequest(error);

@@ -27,18 +27,10 @@ describe("UsernameValidation", () => {
 
     it("should return InvalidUsernameError if an invalid username is provided", () => {
         const { sut } = makeSut();
-        expect(sut.validate({ [field]: "user name" })).toEqual(
-            new InvalidUsernameError(field),
-        );
-        expect(sut.validate({ [field]: "" })).toEqual(
-            new InvalidUsernameError(field),
-        );
-        expect(sut.validate({ [field]: "aa" })).toEqual(
-            new InvalidUsernameError(field),
-        );
-        expect(sut.validate({ [field]: "username$" })).toEqual(
-            new InvalidUsernameError(field),
-        );
+        expect(sut.validate({ [field]: "user name" })).toEqual(new InvalidUsernameError(field));
+        expect(sut.validate({ [field]: "" })).toEqual(new InvalidUsernameError(field));
+        expect(sut.validate({ [field]: "aa" })).toEqual(new InvalidUsernameError(field));
+        expect(sut.validate({ [field]: "username$" })).toEqual(new InvalidUsernameError(field));
     });
 
     it("should return null if no value is given", () => {

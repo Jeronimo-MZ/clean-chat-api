@@ -15,9 +15,7 @@ const io = new Server(httpApp, {
 });
 
 io.on("connection", socket => {
-    socket.on("join_rooms", data =>
-        makeJoinAllRoomsHandler().handle(socket, data),
-    );
+    socket.on("join_rooms", data => makeJoinAllRoomsHandler().handle(socket, data));
 
     socket.on("disconnect", () => {
         socket.rooms.forEach(async room => await socket.leave(room));

@@ -1,25 +1,13 @@
 import { RoomNotFoundError, UserNotInRoomError } from "@/domain/errors";
 import { SendPrivateMessage } from "@/domain/usecases";
-import {
-    badRequest,
-    ok,
-    serverError,
-    unauthorized,
-} from "@/presentation/helpers";
+import { badRequest, ok, serverError, unauthorized } from "@/presentation/helpers";
 import { Controller, HttpResponse } from "@/presentation/protocols";
 import { Validation } from "@/validation/protocols";
 
 export class SendPrivateMessageController
-    implements
-        Controller<
-            SendPrivateMessageController.Request,
-            SendPrivateMessageController.Response
-        >
+    implements Controller<SendPrivateMessageController.Request, SendPrivateMessageController.Response>
 {
-    constructor(
-        private readonly validation: Validation,
-        private readonly sendPrivateMessage: SendPrivateMessage,
-    ) {}
+    constructor(private readonly validation: Validation, private readonly sendPrivateMessage: SendPrivateMessage) {}
     async handle(
         request: SendPrivateMessageController.Request,
     ): Promise<HttpResponse<SendPrivateMessageController.Response>> {
@@ -32,10 +20,8 @@ export class SendPrivateMessageController
                 senderId: request.userId,
             });
 
-            if (messageOrError instanceof RoomNotFoundError)
-                return badRequest(messageOrError);
-            if (messageOrError instanceof UserNotInRoomError)
-                return unauthorized();
+            if (messageOrError instanceof RoomNotFoundError) return badRequest(messageOrError);
+            if (messageOrError instanceof UserNotInRoomError) return unauthorized();
             return ok(messageOrError);
         } catch (error) {
             return serverError(error as Error);

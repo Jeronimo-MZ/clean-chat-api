@@ -27,9 +27,7 @@ describe("CompareFieldsValidation", () => {
             [field]: faker.random.word(),
             [fieldToCompare]: faker.random.word(),
         });
-        expect(error).toEqual(
-            new NotMatchingFieldsError(field, fieldToCompare),
-        );
+        expect(error).toEqual(new NotMatchingFieldsError(field, fieldToCompare));
     });
 
     it("should return null if no value is given", () => {

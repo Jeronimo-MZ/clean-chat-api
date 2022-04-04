@@ -35,9 +35,7 @@ describe("ObjectId Validation", () => {
 
     it("should throw if ObjectIdValidator throws", () => {
         const { sut, objectIdValidatorSpy } = makeSut();
-        jest.spyOn(objectIdValidatorSpy, "isValid").mockImplementationOnce(
-            throwError,
-        );
+        jest.spyOn(objectIdValidatorSpy, "isValid").mockImplementationOnce(throwError);
         expect(() => sut.validate({ [field]: value })).toThrowError();
     });
 

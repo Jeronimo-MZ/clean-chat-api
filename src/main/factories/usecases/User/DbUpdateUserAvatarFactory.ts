@@ -9,11 +9,5 @@ export const makeDbUpdateUserAvatar = (): UpdateUserAvatar => {
     const userMongoRepository = new UserMongoRepository();
     const diskStorage = new DiskStorage(env.staticFilesPath);
     const uuidAdapter = new UUIDAdapter();
-    return new DbUpdateUserAvatar(
-        userMongoRepository,
-        uuidAdapter,
-        diskStorage,
-        userMongoRepository,
-        diskStorage,
-    );
+    return new DbUpdateUserAvatar(userMongoRepository, uuidAdapter, diskStorage, userMongoRepository, diskStorage);
 };

@@ -1,7 +1,5 @@
 export interface SearchUsersByUsernameRepository {
-    searchByUsername(
-        input: SearchUsersByUsernameRepository.Input,
-    ): Promise<SearchUsersByUsernameRepository.Output>;
+    searchByUsername(input: SearchUsersByUsernameRepository.Input): Promise<SearchUsersByUsernameRepository.Output>;
 }
 
 export namespace SearchUsersByUsernameRepository {

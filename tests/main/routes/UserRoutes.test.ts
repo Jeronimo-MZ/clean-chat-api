@@ -119,11 +119,7 @@ describe("User routes", () => {
         it("should return 200 on success", async () => {
             const { token } = await makeUserTokenAndId();
 
-            await request(app)
-                .get("/api/users/me")
-                .set("x-access-token", token)
-                .send()
-                .expect(200);
+            await request(app).get("/api/users/me").set("x-access-token", token).send().expect(200);
         });
     });
 
@@ -133,9 +129,7 @@ describe("User routes", () => {
             const { stringToMatch } = await createUsers();
 
             await request(app)
-                .get(
-                    `/api/users?username=${stringToMatch}&pageSize=${2}&page=${2}`,
-                )
+                .get(`/api/users?username=${stringToMatch}&pageSize=${2}&page=${2}`)
                 .set("x-access-token", token)
                 .send()
                 .expect(200);
@@ -146,9 +140,7 @@ describe("User routes", () => {
         const avatarUrl = faker.internet.avatar();
         beforeAll(() => {
             jest.mock("@/infra/storage/DiskStorage");
-            jest.spyOn(DiskStorage.prototype, "save").mockImplementation(
-                async () => avatarUrl,
-            );
+            jest.spyOn(DiskStorage.prototype, "save").mockImplementation(async () => avatarUrl);
         });
 
         afterAll(() => {

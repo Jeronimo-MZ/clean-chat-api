@@ -15,10 +15,7 @@ type SutTypes = {
 const makeSut = (): SutTypes => {
     const validationSpy = new ValidationSpy();
     const updateUserAvatarSpy = new UpdateUserAvatarSpy();
-    const sut = new UpdateUserAvatarController(
-        validationSpy,
-        updateUserAvatarSpy,
-    );
+    const sut = new UpdateUserAvatarController(validationSpy, updateUserAvatarSpy);
 
     return { sut, validationSpy, updateUserAvatarSpy };
 };
@@ -48,9 +45,7 @@ describe("UpdateUserAvatarController", () => {
 
     it("should return 500 if validation throws", async () => {
         const { sut, validationSpy } = makeSut();
-        jest.spyOn(validationSpy, "validate").mockImplementationOnce(
-            throwError,
-        );
+        jest.spyOn(validationSpy, "validate").mockImplementationOnce(throwError);
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
     });
@@ -76,9 +71,7 @@ describe("UpdateUserAvatarController", () => {
 
     it("should return 500 if UpdateUserAvatar throws", async () => {
         const { sut, updateUserAvatarSpy } = makeSut();
-        jest.spyOn(updateUserAvatarSpy, "update").mockImplementationOnce(
-            throwError,
-        );
+        jest.spyOn(updateUserAvatarSpy, "update").mockImplementationOnce(throwError);
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
     });

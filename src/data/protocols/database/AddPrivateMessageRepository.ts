@@ -1,9 +1,7 @@
 import { PrivateRoomMessage } from "@/domain/models";
 
 export interface AddPrivateMessageRepository {
-    addMessage(
-        input: AddPrivateMessageRepository.Input,
-    ): Promise<AddPrivateMessageRepository.Output>;
+    addMessage(input: AddPrivateMessageRepository.Input): Promise<AddPrivateMessageRepository.Output>;
 }
 
 export namespace AddPrivateMessageRepository {

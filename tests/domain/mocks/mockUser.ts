@@ -1,13 +1,7 @@
 import faker from "@faker-js/faker";
 
 import { User } from "@/domain/models";
-import {
-    AddUser,
-    Authentication,
-    LoadUserByToken,
-    SearchUsersByUsername,
-    UpdateUserAvatar,
-} from "@/domain/usecases";
+import { AddUser, Authentication, LoadUserByToken, SearchUsersByUsername, UpdateUserAvatar } from "@/domain/usecases";
 
 export const mockAddUserInput = (): AddUser.Input => ({
     name: faker.name.findName(),
@@ -53,21 +47,18 @@ export class LoadUserByTokenSpy implements LoadUserByToken {
     accessToken: string;
     result: LoadUserByToken.Output = mockUserModel();
     callsCount = 0;
-    async load({
-        accessToken,
-    }: LoadUserByToken.Input): Promise<LoadUserByToken.Output> {
+    async load({ accessToken }: LoadUserByToken.Input): Promise<LoadUserByToken.Output> {
         this.accessToken = accessToken;
         this.callsCount++;
         return this.result;
     }
 }
 
-export const mockSearchUsersByUsernameInput =
-    (): SearchUsersByUsername.Input => ({
-        page: faker.datatype.number(),
-        pageSize: faker.datatype.number(),
-        username: faker.internet.userName(),
-    });
+export const mockSearchUsersByUsernameInput = (): SearchUsersByUsername.Input => ({
+    page: faker.datatype.number(),
+    pageSize: faker.datatype.number(),
+    username: faker.internet.userName(),
+});
 
 export class SearchUsersByUsernameSpy implements SearchUsersByUsername {
     input: SearchUsersByUsername.Input;
@@ -90,9 +81,7 @@ export class SearchUsersByUsernameSpy implements SearchUsersByUsername {
         ],
     };
     callsCount = 0;
-    async search(
-        input: SearchUsersByUsername.Input,
-    ): Promise<SearchUsersByUsername.Output> {
+    async search(input: SearchUsersByUsername.Input): Promise<SearchUsersByUsername.Output> {
         this.input = input;
         this.callsCount++;
         return this.output;
@@ -114,10 +103,7 @@ export class UpdateUserAvatarSpy implements UpdateUserAvatar {
         avatarUrl: faker.internet.url(),
     };
     callsCount = 0;
-    async update({
-        file,
-        userId,
-    }: UpdateUserAvatar.Input): Promise<UpdateUserAvatar.Output> {
+    async update({ file, userId }: UpdateUserAvatar.Input): Promise<UpdateUserAvatar.Output> {
         this.file = file;
         this.userId = userId;
         this.callsCount++;

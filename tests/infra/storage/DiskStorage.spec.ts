@@ -32,10 +32,7 @@ describe("DiskStorage", () => {
             const { sut } = makeSut();
             const input = makeSaveFileInput();
             await sut.save(input);
-            expect(writeFile).toHaveBeenCalledWith(
-                path.resolve(staticFilesDirectory, input.fileName),
-                input.file,
-            );
+            expect(writeFile).toHaveBeenCalledWith(path.resolve(staticFilesDirectory, input.fileName), input.file);
         });
 
         it("should throw if writeFile throws", async () => {
@@ -58,9 +55,7 @@ describe("DiskStorage", () => {
         it("should call unlink with correct values", async () => {
             const { sut } = makeSut();
             await sut.delete({ fileName });
-            expect(unlink).toHaveBeenCalledWith(
-                path.resolve(staticFilesDirectory, fileName),
-            );
+            expect(unlink).toHaveBeenCalledWith(path.resolve(staticFilesDirectory, fileName));
         });
 
         it("should throw if unlink throws", async () => {

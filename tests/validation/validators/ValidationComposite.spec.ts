@@ -11,11 +11,7 @@ type SutTypes = {
 };
 
 const makeSut = (): SutTypes => {
-    const validationSpies = [
-        new ValidationSpy(),
-        new ValidationSpy(),
-        new ValidationSpy(),
-    ];
+    const validationSpies = [new ValidationSpy(), new ValidationSpy(), new ValidationSpy()];
     const sut = new ValidationComposite(validationSpies);
     return {
         sut,

@@ -7,9 +7,7 @@ export const adaptMulter: RequestHandler = (req, res, next) => {
     const upload = multer().single("avatar");
     upload(req, res, error => {
         if (error) {
-            return res
-                .status(500)
-                .json({ error: new ServerError(error).message });
+            return res.status(500).json({ error: new ServerError(error).message });
         }
         next();
     });

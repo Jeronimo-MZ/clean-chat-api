@@ -41,9 +41,7 @@ const makeUserTokenAndId = async () => {
     };
 };
 
-const makePrivateRoom = async (
-    participants: [string, string],
-): Promise<PrivateRoom> => {
+const makePrivateRoom = async (participants: [string, string]): Promise<PrivateRoom> => {
     const roomData = {
         messages: [],
         participants: participants.map(p => new ObjectId(p)),
@@ -56,9 +54,7 @@ describe("PrivateRoom routes", () => {
     beforeAll(async () => {
         await MongoHelper.connect(process.env.MONGO_URL as string);
         usersCollection = await MongoHelper.getCollection(CollectionNames.USER);
-        privateRoomCollection = await MongoHelper.getCollection(
-            CollectionNames.PRIVATE_ROOM,
-        );
+        privateRoomCollection = await MongoHelper.getCollection(CollectionNames.PRIVATE_ROOM);
         setupRoutes(app);
     });
     afterAll(async () => {

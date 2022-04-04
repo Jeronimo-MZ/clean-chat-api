@@ -11,11 +11,7 @@ type SutTypes = {
 };
 
 const makeSut = (): SutTypes => {
-    const validationSpies = [
-        new ValidationSpy(),
-        new ValidationSpy(),
-        new ValidationSpy(),
-    ];
+    const validationSpies = [new ValidationSpy(), new ValidationSpy(), new ValidationSpy()];
     const sut = new ObjectValidation(field, validationSpies);
     return {
         sut,
@@ -44,13 +40,9 @@ describe("ObjectValidation", () => {
 
     it("should return InvalidObjectError with correct error if any validation fails", () => {
         const { sut, validationSpies } = makeSut();
-        validationSpies[1].error = new RequiredFieldError(
-            faker.database.column(),
-        );
+        validationSpies[1].error = new RequiredFieldError(faker.database.column());
         const error = sut.validate({ [field]: faker.helpers.userCard() });
-        expect(error).toEqual(
-            new InvalidObjectError(field, validationSpies[1].error),
-        );
+        expect(error).toEqual(new InvalidObjectError(field, validationSpies[1].error));
     });
 
     it("should return the first error if more than one validation fails", () => {
@@ -58,8 +50,6 @@ describe("ObjectValidation", () => {
         validationSpies[1].error = new Error();
         validationSpies[2].error = new RequiredFieldError(field);
         const error = sut.validate({ [field]: faker.helpers.userCard() });
-        expect(error).toEqual(
-            new InvalidObjectError(field, validationSpies[1].error),
-        );
+        expect(error).toEqual(new InvalidObjectError(field, validationSpies[1].error));
     });
 });

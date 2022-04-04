@@ -19,11 +19,7 @@ const makeSut = (): SutTypes => {
     const loadUserByTokenSpy = new LoadUserByTokenSpy();
     const loadUserRoomIdsSpy = new LoadUserRoomIdsSpy();
     const sut = new JoinAllRoomsHandler(loadUserByTokenSpy, loadUserRoomIdsSpy);
-    const socket = new Socket(
-        undefined as any,
-        undefined as any,
-        undefined as any,
-    ) as jest.Mocked<Socket>;
+    const socket = new Socket(undefined as any, undefined as any, undefined as any) as jest.Mocked<Socket>;
     return { sut, socket, loadUserByTokenSpy, loadUserRoomIdsSpy };
 };
 
@@ -49,8 +45,7 @@ describe("JoinAllRoomsHandler", () => {
     });
 
     it("should call LoadUserRoomIds with correct value", async () => {
-        const { sut, socket, loadUserByTokenSpy, loadUserRoomIdsSpy } =
-            makeSut();
+        const { sut, socket, loadUserByTokenSpy, loadUserRoomIdsSpy } = makeSut();
         await sut.handle(socket, mockData());
         expect(loadUserRoomIdsSpy.input).toEqual({
             userId: (loadUserByTokenSpy.result as User).id,
@@ -59,18 +54,14 @@ describe("JoinAllRoomsHandler", () => {
 
     it("should emit server error if LoadUserRoomIds throws", async () => {
         const { sut, socket, loadUserRoomIdsSpy } = makeSut();
-        jest.spyOn(loadUserRoomIdsSpy, "load").mockRejectedValueOnce(
-            new Error(),
-        );
+        jest.spyOn(loadUserRoomIdsSpy, "load").mockRejectedValueOnce(new Error());
         await sut.handle(socket, mockData());
         expect(socket.emit).toHaveBeenCalledWith("server_error", new Error());
     });
 
     it("should emit server error if LoadUserByToken throws", async () => {
         const { sut, socket, loadUserByTokenSpy } = makeSut();
-        jest.spyOn(loadUserByTokenSpy, "load").mockRejectedValueOnce(
-            new Error(),
-        );
+        jest.spyOn(loadUserByTokenSpy, "load").mockRejectedValueOnce(new Error());
         await sut.handle(socket, mockData());
         expect(socket.emit).toHaveBeenCalledWith("server_error", new Error());
     });
@@ -78,9 +69,7 @@ describe("JoinAllRoomsHandler", () => {
     it("should call socket.join with correct values on success", async () => {
         const { sut, socket, loadUserRoomIdsSpy } = makeSut();
         await sut.handle(socket, mockData());
-        expect(socket.join).toHaveBeenCalledWith(
-            loadUserRoomIdsSpy.output.roomIds,
-        );
+        expect(socket.join).toHaveBeenCalledWith(loadUserRoomIdsSpy.output.roomIds);
     });
 
     it("should not call LoaduserByToken if AcessToken is missing", async () => {

@@ -23,18 +23,14 @@ export class UserMongoRepository
         UpdateUserAvatarRepository
 {
     async add(input: AddUserRepository.Input): Promise<User> {
-        const usersCollection = await MongoHelper.getCollection(
-            CollectionNames.USER,
-        );
+        const usersCollection = await MongoHelper.getCollection(CollectionNames.USER);
         input.username = input.username.toLowerCase();
         await usersCollection.insertOne(input); // propery _id added to input
         return MongoHelper.map(input);
     }
 
     async loadByUsername(username: string): Promise<User | null> {
-        const usersCollection = await MongoHelper.getCollection(
-            CollectionNames.USER,
-        );
+        const usersCollection = await MongoHelper.getCollection(CollectionNames.USER);
         const user = await usersCollection.findOne({
             username: username.toLowerCase(),
         });
@@ -42,27 +38,18 @@ export class UserMongoRepository
     }
 
     async updateAccessToken(id: string, token: string): Promise<void> {
-        const usersCollection = await MongoHelper.getCollection(
-            CollectionNames.USER,
-        );
-        await usersCollection.findOneAndUpdate(
-            { _id: new ObjectId(id) },
-            { $set: { accessToken: token } },
-        );
+        const usersCollection = await MongoHelper.getCollection(CollectionNames.USER);
+        await usersCollection.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: { accessToken: token } });
     }
 
     async loadByToken(token: string): Promise<User | null> {
-        const usersCollection = await MongoHelper.getCollection(
-            CollectionNames.USER,
-        );
+        const usersCollection = await MongoHelper.getCollection(CollectionNames.USER);
         const user = await usersCollection.findOne({ accessToken: token });
         return user ? MongoHelper.map(user) : null;
     }
 
     async loadById(id: string): Promise<User | null> {
-        const usersCollection = await MongoHelper.getCollection(
-            CollectionNames.USER,
-        );
+        const usersCollection = await MongoHelper.getCollection(CollectionNames.USER);
         const user = await usersCollection.findOne({ _id: new ObjectId(id) });
         return user ? MongoHelper.map(user) : null;
     }
@@ -72,9 +59,7 @@ export class UserMongoRepository
         pageSize,
         page,
     }: SearchUsersByUsernameRepository.Input): Promise<SearchUsersByUsernameRepository.Output> {
-        const usersCollection = await MongoHelper.getCollection(
-            CollectionNames.USER,
-        );
+        const usersCollection = await MongoHelper.getCollection(CollectionNames.USER);
 
         const data = usersCollection.find({
             username: { $regex: new RegExp(`${username}`, "i") },
@@ -93,16 +78,8 @@ export class UserMongoRepository
         };
     }
 
-    async updateAvatar({
-        avatar,
-        userId,
-    }: UpdateUserAvatarRepository.Input): Promise<void> {
-        const usersCollection = await MongoHelper.getCollection(
-            CollectionNames.USER,
-        );
-        await usersCollection.updateOne(
-            { _id: new ObjectId(userId) },
-            { $set: { avatar } },
-        );
+    async updateAvatar({ avatar, userId }: UpdateUserAvatarRepository.Input): Promise<void> {
+        const usersCollection = await MongoHelper.getCollection(CollectionNames.USER);
+        await usersCollection.updateOne({ _id: new ObjectId(userId) }, { $set: { avatar } });
     }
 }

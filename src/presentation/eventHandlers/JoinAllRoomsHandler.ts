@@ -3,18 +3,10 @@ import { Socket } from "socket.io";
 import { LoadUserByToken, LoadUserRoomIds } from "@/domain/usecases";
 import { EventHandler } from "@/presentation/helpers";
 
-export class JoinAllRoomsHandler
-    implements EventHandler<JoinAllRoomsHandler.Data>
-{
-    constructor(
-        private readonly loadUserByToken: LoadUserByToken,
-        private readonly loadUserRoomIds: LoadUserRoomIds,
-    ) {}
+export class JoinAllRoomsHandler implements EventHandler<JoinAllRoomsHandler.Data> {
+    constructor(private readonly loadUserByToken: LoadUserByToken, private readonly loadUserRoomIds: LoadUserRoomIds) {}
 
-    async handle(
-        socket: Socket,
-        { accessToken }: JoinAllRoomsHandler.Data,
-    ): Promise<void> {
+    async handle(socket: Socket, { accessToken }: JoinAllRoomsHandler.Data): Promise<void> {
         try {
             if (!accessToken) return;
             const userOrError = await this.loadUserByToken.load({

@@ -1,8 +1,5 @@
 import { UUIDGenerator } from "@/data/protocols/cryptography";
-import {
-    LoadUserByIdRepository,
-    UpdateUserAvatarRepository,
-} from "@/data/protocols/database";
+import { LoadUserByIdRepository, UpdateUserAvatarRepository } from "@/data/protocols/database";
 import { DeleteFile, SaveFile } from "@/data/protocols/storage";
 import { UserNotFoundError } from "@/domain/errors";
 import { UpdateUserAvatar } from "@/domain/usecases";
@@ -15,10 +12,7 @@ export class DbUpdateUserAvatar implements UpdateUserAvatar {
         private readonly updateUserAvatarRepository: UpdateUserAvatarRepository,
         private readonly deleteFile: DeleteFile,
     ) {}
-    async update({
-        userId,
-        file,
-    }: UpdateUserAvatar.Input): Promise<UpdateUserAvatar.Output> {
+    async update({ userId, file }: UpdateUserAvatar.Input): Promise<UpdateUserAvatar.Output> {
         const user = await this.loadUserByIdRepository.loadById(userId);
         if (!user) return new UserNotFoundError();
         const key = this.uuidGenerator.generate();

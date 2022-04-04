@@ -50,9 +50,7 @@ describe("SignUp Controller", () => {
 
     it("should return 500 if validation throws", async () => {
         const { sut, validationSpy } = makeSut();
-        jest.spyOn(validationSpy, "validate").mockImplementationOnce(
-            throwError,
-        );
+        jest.spyOn(validationSpy, "validate").mockImplementationOnce(throwError);
         const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(serverError(new ServerError(undefined)));
     });
@@ -94,8 +92,6 @@ describe("SignUp Controller", () => {
     it("should return 200 if valid data is provided", async () => {
         const { sut, addUserSpy } = makeSut();
         const httpResponse = await sut.handle(mockRequest());
-        expect(httpResponse).toEqual(
-            ok({ user: { ...addUserSpy.output, password: undefined } }),
-        );
+        expect(httpResponse).toEqual(ok({ user: { ...addUserSpy.output, password: undefined } }));
     });
 });

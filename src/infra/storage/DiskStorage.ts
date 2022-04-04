@@ -6,10 +6,7 @@ import { DeleteFile, SaveFile } from "@/data/protocols/storage";
 export class DiskStorage implements SaveFile, DeleteFile {
     constructor(private readonly staticFilesDirectory: string) {}
     async save({ file, fileName }: SaveFile.Input): Promise<string> {
-        await writeFile(
-            path.resolve(this.staticFilesDirectory, fileName),
-            file,
-        );
+        await writeFile(path.resolve(this.staticFilesDirectory, fileName), file);
         return fileName;
     }
 

@@ -12,9 +12,7 @@ import {
 import { User } from "@/domain/models";
 import { mockUserModel } from "@/tests/domain/mocks";
 
-export class LoadUserByUsernameRepositorySpy
-    implements LoadUserByUsernameRepository
-{
+export class LoadUserByUsernameRepositorySpy implements LoadUserByUsernameRepository {
     username: string;
     result: User | null = null;
 
@@ -36,9 +34,7 @@ export class AddUserRepositorySpy implements AddUserRepository {
     }
 }
 
-export class UpdateAccessTokenRepositorySpy
-    implements UpdateAccessTokenRepository
-{
+export class UpdateAccessTokenRepositorySpy implements UpdateAccessTokenRepository {
     id: string;
     token: string;
 
@@ -71,9 +67,7 @@ export class LoadUserByIdRepositorySpy implements LoadUserByIdRepository {
     }
 }
 
-export class SearchUsersByUsernameRepositorySpy
-    implements SearchUsersByUsernameRepository
-{
+export class SearchUsersByUsernameRepositorySpy implements SearchUsersByUsernameRepository {
     input: SearchUsersByUsernameRepository.Input;
     output: SearchUsersByUsernameRepository.Output = {
         page: 1,
@@ -103,16 +97,11 @@ export class SearchUsersByUsernameRepositorySpy
     }
 }
 
-export class UpdateUserAvatarRepositorySpy
-    implements UpdateUserAvatarRepository
-{
+export class UpdateUserAvatarRepositorySpy implements UpdateUserAvatarRepository {
     userId: string;
     avatar: string;
     callsCount = 0;
-    async updateAvatar({
-        avatar,
-        userId,
-    }: UpdateUserAvatarRepository.Input): Promise<void> {
+    async updateAvatar({ avatar, userId }: UpdateUserAvatarRepository.Input): Promise<void> {
         this.userId = userId;
         this.callsCount++;
         this.avatar = avatar;
